@@ -59,8 +59,8 @@ public:
 	FourSectionDictionary(HDTSpecification &spec);
 	~FourSectionDictionary();
 
-	std::string idToString(unsigned int id, TripleComponentRole position);
-	unsigned int stringToId(std::string &str, TripleComponentRole position);
+	std::string idToString(const unsigned int id, const TripleComponentRole position)const;
+	unsigned int stringToId(const std::string &str, const TripleComponentRole position)const;
 
     size_t getNumberOfElements();
 
@@ -95,11 +95,11 @@ public:
     void getSuggestions(const char *base, TripleComponentRole role, std::vector<string> &out, int maxResults);
 
 private:
-	csd::CSD *getDictionarySection(unsigned int id, TripleComponentRole position);
-	unsigned int getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position);
-	unsigned int getGlobalId(unsigned int id, DictionarySection position);
-	unsigned int getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position);
-	unsigned int getLocalId(unsigned int id, TripleComponentRole position);
+	csd::CSD *getDictionarySection(unsigned int id, TripleComponentRole position)const;
+	unsigned int getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position)const;
+	unsigned int getGlobalId(unsigned int id, DictionarySection position)const;
+	unsigned int getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position)const;
+	unsigned int getLocalId(unsigned int id, TripleComponentRole position)const;
 };
 
 }

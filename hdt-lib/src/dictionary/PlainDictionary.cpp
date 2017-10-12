@@ -91,9 +91,9 @@ PlainDictionary::~PlainDictionary() {
 
 }
 
-std::string PlainDictionary::idToString(unsigned int id, TripleComponentRole position)
+std::string PlainDictionary::idToString(const unsigned int id, const TripleComponentRole position)const
 {
-	vector<DictionaryEntry*> &vector = getDictionaryEntryVector(id, position);
+	const vector<DictionaryEntry*> &vector = getDictionaryEntryVector(id, position);
 
 	unsigned int localid = getLocalId(id, position);
 
@@ -106,7 +106,7 @@ std::string PlainDictionary::idToString(unsigned int id, TripleComponentRole pos
 	return string();
 }
 
-unsigned int PlainDictionary::stringToId(std::string &key, TripleComponentRole position)
+unsigned int PlainDictionary::stringToId(const std::string &key, const TripleComponentRole position)const
 {
 	DictEntryIt ret;
 
@@ -281,7 +281,7 @@ uint64_t PlainDictionary::size()
 }
 
 
-unsigned int PlainDictionary::insert(std::string & str, TripleComponentRole pos)
+unsigned int PlainDictionary::insert(const std::string & str, const TripleComponentRole pos)
 {
 	if(str=="") return 0;
 
@@ -529,7 +529,7 @@ void PlainDictionary::convertMapping(unsigned int mapping) {
 	}
 }
 
-vector<DictionaryEntry*> &PlainDictionary::getDictionaryEntryVector(unsigned int id, TripleComponentRole position) {
+const vector<DictionaryEntry*> &PlainDictionary::getDictionaryEntryVector(unsigned int id, TripleComponentRole position) const{
 	switch (position) {
 	case SUBJECT:
 		if(id<= shared.size()) {
@@ -552,7 +552,7 @@ vector<DictionaryEntry*> &PlainDictionary::getDictionaryEntryVector(unsigned int
 	throw std::runtime_error("Item not found");
 }
 
-unsigned int PlainDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) {
+unsigned int PlainDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) const{
 	switch (position) {
 		case NOT_SHARED_SUBJECT:
 			return shared.size()+id+1;
@@ -576,11 +576,11 @@ unsigned int PlainDictionary::getGlobalId(unsigned int mapping, unsigned int id,
 }
 
 
-unsigned int PlainDictionary::getGlobalId(unsigned int id, DictionarySection position) {
+unsigned int PlainDictionary::getGlobalId(unsigned int id, DictionarySection position) const{
 	return getGlobalId(this->mapping, id, position);
 }
 
-unsigned int PlainDictionary::getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position) {
+unsigned int PlainDictionary::getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position) const{
 	switch (position) {
 		case SUBJECT:
 			if(id<=shared.size()) {
@@ -607,7 +607,7 @@ unsigned int PlainDictionary::getLocalId(unsigned int mapping, unsigned int id, 
 		throw std::runtime_error("Item not found");
 }
 
-unsigned int PlainDictionary::getLocalId(unsigned int id, TripleComponentRole position) {
+unsigned int PlainDictionary::getLocalId(unsigned int id, TripleComponentRole position) const{
 	return getLocalId(mapping,id,position);
 }
 

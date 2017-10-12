@@ -90,12 +90,12 @@ KyotoDictionary::~KyotoDictionary() {
 #endif
 }
 
-std::string KyotoDictionary::idToString(unsigned int id, TripleComponentRole position)
+std::string KyotoDictionary::idToString(const unsigned int id, const TripleComponentRole position)const
 {
 	throw std::logic_error("Not implemented");
 }
 
-unsigned int KyotoDictionary::stringToId(std::string &key, TripleComponentRole position)
+unsigned int KyotoDictionary::stringToId(const std::string &key, const TripleComponentRole position)const
 {
 
 	unsigned int ret;
@@ -352,7 +352,7 @@ uint64_t KyotoDictionary::size()
 }
 
 
-unsigned int KyotoDictionary::insert(std::string & str, TripleComponentRole pos)
+unsigned int KyotoDictionary::insert(const std::string & str, const TripleComponentRole pos)
 {
 
 	if(str=="") return 0;
@@ -370,7 +370,7 @@ unsigned int KyotoDictionary::insert(std::string & str, TripleComponentRole pos)
 }
 
 
-unsigned int KyotoDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) {
+unsigned int KyotoDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) const{
 	switch (position) {
 		case NOT_SHARED_SUBJECT:
 			return shared.count()+id+1;
@@ -394,11 +394,11 @@ unsigned int KyotoDictionary::getGlobalId(unsigned int mapping, unsigned int id,
 }
 
 
-unsigned int KyotoDictionary::getGlobalId(unsigned int id, DictionarySection position) {
+unsigned int KyotoDictionary::getGlobalId(unsigned int id, DictionarySection position) const{
 	return getGlobalId(this->mapping, id, position);
 }
 
-unsigned int KyotoDictionary::getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position) {
+unsigned int KyotoDictionary::getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position) const{
 	switch (position) {
 		case SUBJECT:
 			if(id<=shared.count()) {
@@ -425,7 +425,7 @@ unsigned int KyotoDictionary::getLocalId(unsigned int mapping, unsigned int id, 
 		throw std::runtime_error("Item not found");
 }
 
-unsigned int KyotoDictionary::getLocalId(unsigned int id, TripleComponentRole position) {
+unsigned int KyotoDictionary::getLocalId(unsigned int id, TripleComponentRole position) const{
 	return getLocalId(mapping,id,position);
 }
 

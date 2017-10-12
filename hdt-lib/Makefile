@@ -51,10 +51,12 @@ ifeq ($(CPP), g++)
 FLAGS:=$(FLAGS) #-fopenmp
 endif
 
-SRCS=$(wildcard src/*.cpp) $(wildcard src/**/*.cpp) $(wildcard src/**/**/*.cpp)
+SRCS_TO_REMOVE = src/permutation/PermutationId.cpp src/triples/BitmapIdentifiableTriples.cpp  
+HEADERS_TO_REMOVE = src/permutation/PermutationId.hpp src/triples/BitmapIdentifiableTriples.hpp  
+SRCS=$(filter-out $(SRCS_TO_REMOVE),$(wildcard src/*.cpp) $(wildcard src/**/*.cpp) $(wildcard src/**/**/*.cpp))
 THIRD=$(wildcard third/*.cpp) $(wildcard third/**/*.cpp)
 OBJECTS=$(patsubst %.cpp,%.o, $(SRCS) $(THIRD))
-HEADERS=$(wildcard include/*.hpp) $(wildcard include/*.h) $(wildcard src/*.hpp) $(wildcard src/*.h) $(wildcard src/**/*.hpp)
+HEADERS=$(filter-out src/permutation/PermutationId.hpp, $(wildcard include/*.hpp) $(wildcard include/*.h) $(wildcard src/*.hpp) $(wildcard src/*.h) $(wildcard src/**/*.hpp))
 TOOLS=$(patsubst %.cpp,%, $(wildcard tools/*.cpp))
 TESTS=$(patsubst %.cpp,%, $(wildcard tests/*.cpp))
 EXAMPLES=$(patsubst %.cpp,%, $(wildcard examples/*.cpp))

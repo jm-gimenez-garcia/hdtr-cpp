@@ -60,8 +60,8 @@ public:
 	LiteralDictionary(HDTSpecification &spec);
 	~LiteralDictionary();
 
-	std::string idToString(unsigned int id, TripleComponentRole position);
-	unsigned int stringToId(std::string &str, TripleComponentRole position);
+	std::string idToString(const unsigned int id, const TripleComponentRole position)const;
+	unsigned int stringToId(const std::string &str, const TripleComponentRole position)const;
 
 	/** Returns the number of IDs that contain s[1,..len] as a substring. It also
 	 * return in occs the IDs. Otherwise return 0.
@@ -102,7 +102,7 @@ public:
     IteratorUCharString *getObjects();
     IteratorUCharString *getShared();
 
-	unsigned int insert(std::string &str, TripleComponentRole position);
+	unsigned int insert(const std::string &str, const TripleComponentRole position);
 
 	void startProcessing(ProgressListener *listener = NULL);
 	void stopProcessing(ProgressListener *listener = NULL);
@@ -113,11 +113,11 @@ public:
 	void getSuggestions(const char *base, TripleComponentRole role, std::vector<string> &out, int maxResults);
 
 private:
-	csd::CSD *getDictionarySection(unsigned int id, TripleComponentRole position);
-	unsigned int getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position);
-	unsigned int getGlobalId(unsigned int id, DictionarySection position);
-	unsigned int getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position);
-	unsigned int getLocalId(unsigned int id, TripleComponentRole position);
+	csd::CSD *getDictionarySection(unsigned int id, TripleComponentRole position)const;
+	unsigned int getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position)const;
+	unsigned int getGlobalId(unsigned int id, DictionarySection position)const;
+	unsigned int getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position)const;
+	unsigned int getLocalId(unsigned int id, TripleComponentRole position)const;
 };
 
 }

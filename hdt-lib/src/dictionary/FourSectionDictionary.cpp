@@ -80,7 +80,7 @@ csd::CSD *loadSection(IteratorUCharString *iterator, uint32_t blocksize, Progres
 }
 
 
-std::string FourSectionDictionary::idToString(unsigned int id, TripleComponentRole position)
+std::string FourSectionDictionary::idToString(const unsigned int id, const TripleComponentRole position)const
 {
 	csd::CSD *section = getDictionarySection(id, position);
 
@@ -100,7 +100,7 @@ std::string FourSectionDictionary::idToString(unsigned int id, TripleComponentRo
 	return string();
 }
 
-unsigned int FourSectionDictionary::stringToId(std::string &key, TripleComponentRole position)
+unsigned int FourSectionDictionary::stringToId(const std::string &key, const TripleComponentRole position)const
 {
 	unsigned int ret;
 
@@ -435,7 +435,7 @@ unsigned int FourSectionDictionary::getMapping() {
 }
 
 
-csd::CSD *FourSectionDictionary::getDictionarySection(unsigned int id, TripleComponentRole position) {
+csd::CSD *FourSectionDictionary::getDictionarySection(unsigned int id, TripleComponentRole position) const{
 	switch (position) {
 	case SUBJECT:
 		if(id<=shared->getLength()) {
@@ -458,7 +458,7 @@ csd::CSD *FourSectionDictionary::getDictionarySection(unsigned int id, TripleCom
 	throw std::runtime_error("Item not found");
 }
 
-unsigned int FourSectionDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) {
+unsigned int FourSectionDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) const{
 	switch (position) {
 	case NOT_SHARED_SUBJECT:
 		return shared->getLength()+id;
@@ -482,11 +482,11 @@ unsigned int FourSectionDictionary::getGlobalId(unsigned int mapping, unsigned i
 }
 
 
-unsigned int FourSectionDictionary::getGlobalId(unsigned int id, DictionarySection position) {
+unsigned int FourSectionDictionary::getGlobalId(unsigned int id, DictionarySection position) const{
 	return getGlobalId(this->mapping, id, position);
 }
 
-unsigned int FourSectionDictionary::getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position) {
+unsigned int FourSectionDictionary::getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position) const{
 	switch (position) {
 	case SUBJECT:
 		if(id<=shared->getLength()) {
@@ -513,7 +513,7 @@ unsigned int FourSectionDictionary::getLocalId(unsigned int mapping, unsigned in
 	throw std::runtime_error("Item not found");
 }
 
-unsigned int FourSectionDictionary::getLocalId(unsigned int id, TripleComponentRole position) {
+unsigned int FourSectionDictionary::getLocalId(unsigned int id, TripleComponentRole position) const{
 	return getLocalId(mapping,id,position);
 }
 

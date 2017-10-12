@@ -87,7 +87,7 @@ csd::CSD *loadSectionFMIndex(IteratorUCharString *iterator, bool sparse_bitseque
 	return new csd::CSD_FMIndex(iterator, sparse_bitsequence, bparam, bwt_sample, use_sample, listener);
 }
 
-std::string LiteralDictionary::idToString(unsigned int id, TripleComponentRole position) {
+std::string LiteralDictionary::idToString(const unsigned int id, const TripleComponentRole position)const {
 	csd::CSD *section = getDictionarySection(id, position);
 	unsigned int localid = getLocalId(id, position);
 
@@ -107,7 +107,7 @@ std::string LiteralDictionary::idToString(unsigned int id, TripleComponentRole p
 	return string();
 }
 
-unsigned int LiteralDictionary::stringToId(std::string &key, TripleComponentRole position) {
+unsigned int LiteralDictionary::stringToId(const std::string &key, const TripleComponentRole position)const {
 	unsigned int ret;
 
 	if (key.length() == 0) {
@@ -556,8 +556,8 @@ void LiteralDictionary::stopProcessing(ProgressListener *listener) {
 
 }
 
-unsigned int LiteralDictionary::insert(std::string & str,
-		TripleComponentRole position) {
+unsigned int LiteralDictionary::insert(const std::string & str,
+		const TripleComponentRole position) {
 	throw std::runtime_error("This dictionary does not support insertions.");
 }
 
@@ -569,7 +569,7 @@ unsigned int LiteralDictionary::getMapping() {
 	return mapping;
 }
 
-csd::CSD *LiteralDictionary::getDictionarySection(unsigned int id, TripleComponentRole position) {
+csd::CSD *LiteralDictionary::getDictionarySection(unsigned int id, TripleComponentRole position) const{
 	switch (position) {
 	case SUBJECT:
 		if (id <= shared->getLength()) {
@@ -607,7 +607,7 @@ csd::CSD *LiteralDictionary::getDictionarySection(unsigned int id, TripleCompone
 	throw std::runtime_error("Item not found");
 }
 
-unsigned int LiteralDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) {
+unsigned int LiteralDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) const{
 	switch (position) {
 	case NOT_SHARED_SUBJECT:
 		return shared->getLength() + id;
@@ -630,11 +630,11 @@ unsigned int LiteralDictionary::getGlobalId(unsigned int mapping, unsigned int i
 	throw std::runtime_error("Item not found");
 }
 
-unsigned int LiteralDictionary::getGlobalId(unsigned int id, DictionarySection position) {
+unsigned int LiteralDictionary::getGlobalId(unsigned int id, DictionarySection position) const{
 	return getGlobalId(this->mapping, id, position);
 }
 
-unsigned int LiteralDictionary::getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position) {
+unsigned int LiteralDictionary::getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position) const{
 	switch (position) {
 	case SUBJECT:
 		if (id <= shared->getLength()) {
@@ -670,7 +670,7 @@ unsigned int LiteralDictionary::getLocalId(unsigned int mapping, unsigned int id
 	throw std::runtime_error("Item not found");
 }
 
-unsigned int LiteralDictionary::getLocalId(unsigned int id, TripleComponentRole position) {
+unsigned int LiteralDictionary::getLocalId(unsigned int id, TripleComponentRole position) const{
 	return getLocalId(mapping, id, position);
 }
 

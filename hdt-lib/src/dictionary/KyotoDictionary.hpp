@@ -69,8 +69,8 @@ public:
 	KyotoDictionary(HDTSpecification &spec);
 	~KyotoDictionary();
 
-	std::string idToString(unsigned int id, TripleComponentRole position);
-	unsigned int stringToId(std::string &str, TripleComponentRole position);
+	std::string idToString(const unsigned int id, const TripleComponentRole position)const;
+	unsigned int stringToId(const std::string &str, const TripleComponentRole position)const;
 
 	size_t getNumberOfElements();
 
@@ -99,7 +99,7 @@ public:
     IteratorUCharString *getObjects();
     IteratorUCharString *getShared();
 
-	unsigned int insert(std::string &str, TripleComponentRole position);
+	unsigned int insert(const std::string &str, const TripleComponentRole position);
 
 	void startProcessing(ProgressListener *listener = NULL);
 	void stopProcessing(ProgressListener *listener = NULL);
@@ -114,10 +114,10 @@ private:
     void updateIDs(DB *db);
 
 public:
-	unsigned int getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position);
-	unsigned int getGlobalId(unsigned int id, DictionarySection position);
-	unsigned int getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position);
-	unsigned int getLocalId(unsigned int id, TripleComponentRole position);
+	unsigned int getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position)const;
+	unsigned int getGlobalId(unsigned int id, DictionarySection position)const;
+	unsigned int getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position)const;
+	unsigned int getLocalId(unsigned int id, TripleComponentRole position)const;
 
 	void dumpSizes(std::ostream &out);
 

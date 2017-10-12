@@ -73,11 +73,16 @@ public:
 	 * @param object
 	 * @return
 	 */
-	TripleID(unsigned int subject, unsigned int predicate, unsigned int object) {
-		this->subject = subject;
-		this->predicate = predicate;
-		this->object = object;
-	}
+	TripleID(const unsigned int subj, const unsigned int pred, const unsigned int obj) :
+		subject(subj),
+		predicate(pred),
+		object(obj){}
+
+	TripleID(const TripleID& tid):
+		subject(tid.subject),
+		predicate(tid.predicate),
+		object(tid.object){}
+	
 
 	~TripleID() {
 	}
@@ -94,7 +99,7 @@ public:
 	 * Set the Subject component of this tripleID.
 	 * @return
 	 */
-	inline void setSubject(unsigned int subject) {
+	inline void setSubject(const unsigned int subject) {
 		this->subject = subject;
 	}
 
@@ -110,7 +115,7 @@ public:
 	 * Set the Predicate component of this tripleID.
 	 * @return
 	 */
-	inline void setPredicate(unsigned int predicate) {
+	inline void setPredicate(const unsigned int predicate) {
 		this->predicate = predicate;
 	}
 
@@ -126,11 +131,11 @@ public:
 	 * Set the Object component of this tripleID.
 	 * @return
 	 */
-	inline void setObject(unsigned int object) {
+	inline void setObject(const unsigned int object) {
 		this->object = object;
 	}
 
-	inline void setAll(unsigned int subject, unsigned int predicate, unsigned int object) {
+	inline void setAll(const unsigned int subject, const unsigned int predicate, const unsigned int object) {
 		this->subject = subject;
 		this->predicate = predicate;
 		this->object = object;
@@ -163,7 +168,7 @@ public:
 	 * @param operand The operand to compare with
 	 * @return boolean
 	 */
-	bool operator==(TripleID &operand) {
+	bool operator==(const TripleID &operand) {
 		// Subject comparison
 		if (this->subject != operand.subject) {
 			return false;
@@ -187,7 +192,7 @@ public:
 	 * @param operand The operand to compare with
 	 * @return boolean
 	 */
-	bool operator!=(TripleID &operand) {
+	bool operator!=(const TripleID &operand) {
 		return !(this->operator==(operand));
 	} // !=()
 
@@ -197,7 +202,7 @@ public:
 	 * @param other
 	 * @return
 	 */
-	int compare(TripleID &other) {
+	int compare(const TripleID &other) {
 		int result = this->subject - other.subject;
 
 		if(result==0) {
@@ -219,7 +224,7 @@ public:
 	 * @param pattern The pattern to match against
 	 * @return boolean
 	 */
-	inline bool match(TripleID &pattern) {
+	inline bool match(const TripleID &pattern) {
 		unsigned int subject = pattern.getSubject();
 		unsigned int predicate = pattern.getPredicate();
                 unsigned int object = pattern.getObject();
@@ -282,7 +287,7 @@ public:
  */
 class TripleString
 {
-private:
+protected:
 	std::string subject;
 	std::string predicate;
 	std::string object;
@@ -302,17 +307,15 @@ public:
 	 * @param object
 	 * @return
 	 */
-	TripleString(std::string subject, std::string predicate, std::string object) {
-		this->subject = subject;
-		this->predicate = predicate;
-		this->object = object;
-	}
+	TripleString(const std::string subj, const std::string pred, const std::string obj):
+		subject(subj),
+		predicate(pred),
+		object(obj){}
 
-	TripleString(const TripleString &other) {
-		this->subject = other.subject;
-		this->predicate = other.predicate;
-		this->object = other.object;
-	}
+	TripleString(const TripleString &other) :
+		subject(other.subject),
+		predicate(other.predicate),
+		object(other.object){}
 
 	TripleString & operator=(const TripleString &other) {
 		if(this!=&other) {
@@ -323,9 +326,6 @@ public:
 		return *this;
 	}
 
-
-
-
 	~TripleString() {
 
 	}
@@ -334,37 +334,35 @@ public:
 	 * Get Subject.
 	 * @return
 	 */
-	std::string &getSubject() {
-		return subject;
-	}
+	const std::string &getSubject()const {return subject;}
+	std::string &getSubject() {return subject;}
 
 	/**
 	 * Set Subject.
 	 * @param subject
 	 */
-	void setSubject(std::string &subject) {
-		this->subject = subject;
+	void setSubject(const std::string &subj) {
+		subject = subj;
 	}
 
-	inline void setAll(std:: string &subject, std:: string &predicate, std:: string &object) {
-		this->subject = subject;
-		this->predicate = predicate;
-		this->object = object;
+	inline void setAll(const std:: string &subj, const std:: string &pred, const std:: string &obj) {
+		subject = subj;
+		predicate = pred;
+		object = obj;
 	}
 
 	/**
 	 * Get Predicate.
 	 * @return
 	 */
-	std::string &getPredicate() {
-		return predicate;
-	}
+	const std::string &getPredicate()const {return predicate;}
+	std::string &getPredicate() {return predicate;}
 
 	/** Set Predicate
 	 *
 	 * @param predicate
 	 */
-	void setPredicate(std::string &predicate) {
+	void setPredicate(const std::string &predicate) {
 		this->predicate = predicate;
 	}
 
@@ -372,15 +370,14 @@ public:
 	 * Get Object.
 	 * @return
 	 */
-	std::string &getObject() {
-		return object;
-	}
+	const std::string &getObject() const{return object;}
+	std::string &getObject() {return object;}
 
 	/**
 	 * Set Object.
 	 * @param object
 	 */
-	void setObject(std::string &object) {
+	void setObject(const std::string &object) {
 		this->object = object;
 	}
 
@@ -396,7 +393,7 @@ public:
 		return stream;
 	}
 
-        bool operator==(TripleString &operand) {
+        bool operator==(const TripleString &operand) {
                 // Subject comparison
                 if (this->subject != operand.subject) {
                         return false;
@@ -414,11 +411,11 @@ public:
                 return true;
         }
 
-        bool operator!=(TripleString &operand) {
+        bool operator!=(const TripleString &operand) {
                 return !(this->operator==(operand));
         }
 
-        inline bool match(TripleString &pattern) {
+        inline bool match(const TripleString &pattern) {
             string subject = pattern.getSubject();
             string predicate = pattern.getPredicate();
             string object = pattern.getObject();
@@ -461,7 +458,7 @@ public:
 	 * Read a TripleString from a stream, where each component is represented using an empty space.
 	 * @param line
 	 */
-	void read(std::string line){
+	void read(const std::string line){
 		size_t pos_a = 0, pos_b;
 
 		// Reads the subject
