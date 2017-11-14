@@ -146,6 +146,7 @@ size_t TriplesList::load(unsigned char *ptr, unsigned char *ptrMax, ProgressList
 
     return count;
 }
+#undef CHECKPTR
 
 void TriplesList::load(ModifiableTriples &input, ProgressListener *listener)
 {

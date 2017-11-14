@@ -48,7 +48,7 @@ namespace hdt {
 class PredicateIndex;
 
 class BitmapTriples : public Triples {
-private:
+protected:
 	ControlInformation controlInformation;
 	HDTSpecification spec;
 	IntSequence *arrayY, *arrayZ, *arrayIndex;

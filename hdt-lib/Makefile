@@ -13,10 +13,10 @@ CPP=g++
 ifeq ($(CPP), g++)
 FLAGS=-O3 -Wno-deprecated -Wall -Wextra -Wno-unused-parameter -Wno-sign-compare -Wno-unused-but-set-variable -Wno-unknown-warning-option
 else
-FLAGS=-O3 -Wno-deprecated -Wall -Wextra -Wno-unused-parameter -Wno-sign-compare -Wno-unknown-warning-option
+FLAGS=-O3 -Wno-deprecated -Wall -Wextra -Wno-unused-parameter -Wno-sign-compare -Wno-unknown-warning-option 
 endif
 
-INCLUDES=-I $(LIBCDSPATH)/includes/ -I /usr/local/include -I ./include -I /opt/local/include -I /usr/include
+INCLUDES=-I $(LIBCDSPATH)/includes/ -Isrc/permutation -I../libcds-v1.0.12/src/static/permutation  -I /usr/local/include -I ./include -I /opt/local/include -I /usr/include
 LDFLAGS=
 DOXYGEN=doxygen
 DEFINES= -DHAVE_CDS
@@ -51,8 +51,8 @@ ifeq ($(CPP), g++)
 FLAGS:=$(FLAGS) #-fopenmp
 endif
 
-SRCS_TO_REMOVE = src/permutation/PermutationId.cpp src/triples/BitmapIdentifiableTriples.cpp  
-HEADERS_TO_REMOVE = src/permutation/PermutationId.hpp src/triples/BitmapIdentifiableTriples.hpp  
+SRCS_TO_REMOVE = ooooooo#src/permutation/PermutationId.cpp src/triples/BitmapIdentifiableTriples.cpp  
+HEADERS_TO_REMOVE = ooooooo#src/permutation/PermutationId.hpp src/triples/BitmapIdentifiableTriples.hpp  
 SRCS=$(filter-out $(SRCS_TO_REMOVE),$(wildcard src/*.cpp) $(wildcard src/**/*.cpp) $(wildcard src/**/**/*.cpp))
 THIRD=$(wildcard third/*.cpp) $(wildcard third/**/*.cpp)
 OBJECTS=$(patsubst %.cpp,%.o, $(SRCS) $(THIRD))

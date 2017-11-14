@@ -1,5 +1,5 @@
 /*
- * File: SingleTriple.hpp
+ * File: SingleQuad.hpp
  * Last modified: $Date$
  * Revision: $Revision$
  * Last modified by: $Author$
@@ -37,6 +37,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include "SingleTriple.hpp"
 
 using namespace std;
 
@@ -95,7 +96,7 @@ public:
 	}
 
 	/**
-	 * Set the Object component of this QuadID.
+	 * Set the identifier component of this QuadID.
 	 * @return
 	 */
 	void setIdentifier(const unsigned int ident) {
@@ -138,24 +139,8 @@ public:
 	 * @param operand The operand to compare with
 	 * @return boolean
 	 */
-	bool operator==(const QuadID &operand) {
-		// Subject comparison
-		if (subject != operand.subject) 
-			return false;
-
-		// Object comparison (since subject was successful)
-		if (object != operand.object) 
-			return false;
-
-		// Predicate comparison (since subject and object were successful)
-		if (predicate != operand.predicate) 
-			return false;
-
-		// Identifier comparison (since subject, object and predicate were successful)
-		if (identifier != operand.identifier) 
-			return false;
-
-		return true;
+	bool operator==(const QuadID &op) {
+		return (subject == op.subject) && (object == op.object) && (predicate == op.predicate) && (identifier == op.identifier)
 	}
 
 	/**
@@ -226,7 +211,7 @@ public:
 	 * @return boolean
 	 */
 	bool isValid() const {
-        return this->subject != 0 && this->predicate != 0 && this->object != 0;
+        return subject != 0 && predicate != 0 && object != 0;
 	}
 
 	/**
@@ -259,15 +244,11 @@ public:
 	QuadString() {}
 
 	QuadString(const QuadString& q):
-		subject(q.subject),
-		predicate(q.predicate),
-		object(q.object),
+		TripleString(q.subject, q.predicate, q.object),
 		identifier(q.identifier){}
 
 	QuadString(const TripleString& t, const std::string ident):
-		subject(q.subject),
-		predicate(q.predicate),
-		object(q.object),
+		TripleString(t.getSubject(), t.getPredicate(), t.getObject()),
 		identifier(ident){}
 
 
@@ -281,18 +262,17 @@ public:
 	 * @return
 	 */
 	QuadString(const std::string subj, const std::string pred, const std::string obj, const std::string ident) :
-		subject(subj),
-		predicate(pred),
-		object(obj),
+		TripleString(subj,pred,obj),
 		identifier(ident){}
 
 
-	TripleString& operator=(const TripleString& other) {
+	QuadString& operator=(const QuadString& other) {
 		if(this!=&other) 
 		{
 			subject = other.subject;
 			predicate = other.predicate;
 			object = other.object;
+			identifier = other.identifier;
 		}
 		return *this;
 	}

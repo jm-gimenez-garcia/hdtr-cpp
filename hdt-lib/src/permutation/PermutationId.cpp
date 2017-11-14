@@ -4,7 +4,9 @@
 #include <cmath>
 #include <string.h>
 
-#include "PermutationId.h"
+#include "PermutationId.hpp"
+#include "PermutationMRRR.h"
+#include "HDTListener.hpp"
 
 
 #include "../util/bitutil.h"
@@ -12,64 +14,80 @@
 
 #include "../util/crc8.h"
 #include "../util/crc32.h"
-
+#include <sstream>
 using namespace std;
+using namespace cds_static;
+
+namespace hdt{
+
+const uint8_t PermutationId::TYPE_PERMUTATION = 1;
 
 void PermutationId::save(ostream & out)
 {
 	CRC8 crch;
-	CRC32 crcd;
-	unsigned char arr[9];
 
 	// Write type
 	unsigned char type=TYPE_PERMUTATION;
-	crch.writeData(out, &type, sizeof(type));
+	crch.writeData(out, (unsigned char*)&type, sizeof(unsigned char));
 
-	// Write header CRC
+	stringstream oss;
+	// Write permutation	
+	permu->save(oss);
+	const string& tmpString = oss.str();   
+	const char* cstr = tmpString.c_str();
+
+	size_t tmp_stream_len=oss.tellp();
+	crch.writeData(out, (unsigned char*)&tmp_stream_len, sizeof(size_t));
 	crch.writeCRC(out);
 
-	// Write data
-	perm->save(out);
-
-	// Write Data CRC
+	CRC32 crcd;
+	crcd.writeData(out, (unsigned char*)&cstr[0], tmp_stream_len);
 	crcd.writeCRC(out);
 
 }
 
 
 
+#define CHECKPTR(base, max, size) if(((base)+(size))>(max)) throw std::runtime_error("Could not read completely the HDT from the file.");
 
-void PermutationId::load(std::istream & in)
+void PermutationId::load(std::istream & in, ProgressListener *listener/*=NULL*/)
 {
-	size_t count=0;
 
-    // Check type
-	CHECKPTR(&ptr[count], maxPtr, 1);
-    if(ptr[count++]!=TYPE_PERMUTATION) {
-        throw std::runtime_error("Trying to read a PermutationId but the type does not match");
-    }
-
-
-    // CRC
-    CRC8 crch;
-    crch.update(&ptr[0], count);
-    CHECKPTR(&ptr[count], maxPtr, 1);
-    if(ptr[count++]!=crch.getValue()) {
-        throw std::runtime_error("Wrong checksum in PermutationId Header.");
-    }
-
+	CRC8 crch;
+	unsigned char type;
+	crch.readData(in, (unsigned char*)&type, sizeof(unsigned char));
+	if(type!=TYPE_PERMUTATION) {
+		//throw std::runtime_error("Trying to read a PermutationId but data is not PermutationId");
+	}
 	
-	perm->load(in);
+	size_t tmp_stream_len;
+	// Read numbits
+	crch.readData(in, (unsigned char*)&tmp_stream_len, sizeof(size_t));
+
+	// Validate Checksum Header
+	crc8_t filecrch = crc8_read(in);
+	if(crch.getValue()!=filecrch) {
+		throw std::runtime_error("Checksum error while reading PermutationId header.");
+	}
+
+	char* cstr = new char[tmp_stream_len];
+
+	CRC32 crcd;
+	crcd.readData(in, (unsigned char*)&cstr[0], tmp_stream_len);
+
+	stringstream oss;
+	oss.write(cstr,tmp_stream_len);
+	delete[]cstr;cstr=NULL;
 	
-
-
-	// Validate checksum data
-	crc32_t filecrcd = crc32_read(in);
-	if(crcd.getValue()!=filecrcd) {
-		throw std::runtime_error("Checksum error while reading PermutationId Data");
+	permu = PermutationMRRR::load(oss);
+	
+	// Validate Checksum
+	crc32_t filecrch2 = crc32_read(in);
+	if(crcd.getValue()!=filecrch2) {
+		throw std::runtime_error("Checksum error while reading LogSequence2 Data");
 	}
 
 
-
 }
-
+#undef CHECKPTR
+}

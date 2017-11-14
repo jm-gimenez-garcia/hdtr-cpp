@@ -185,6 +185,7 @@ size_t ControlInformation::load(const unsigned char *ptr, const unsigned char *m
 	return count;
 }
 
+#undef CHECKPTR
 void ControlInformation::clear() {
     this->type = UNKNOWN_CI;
     this->format.clear();

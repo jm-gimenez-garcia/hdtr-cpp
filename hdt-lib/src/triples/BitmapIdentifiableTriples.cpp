@@ -1,4 +1,7 @@
 #include "BitmapIdentifiableTriples.hpp"
+#include "SingleQuad.hpp"
+
+namespace hdt{
 
 void BitmapIdentifiableTriples::load(ModifiableTriples &triples, ProgressListener *listener) 
 {
@@ -10,7 +13,7 @@ void BitmapIdentifiableTriples::load(ModifiableTriples &triples, ProgressListene
 	bitmapZ = new BitSequence375(triples.getNumberOfElements());
 	bitmapId = new BitSequence375(triples.getNumberOfElements());
 
-	LogSequence2* permId_tmp = vector<unsigned int>;
+	LogSequence2* permId_tmp = std::vector<unsigned int> permId_tmp;
 	permId_tmp.reserve(triples.getNumberOfElements()/2);
 
 	LogSequence2 *vectorY = new LogSequence2(bits(triples.getNumberOfElements()));
@@ -29,12 +32,7 @@ void BitmapIdentifiableTriples::load(ModifiableTriples &triples, ProgressListene
 		x = triple->getSubject();
 		y = triple->getPredicate();
 		z = triple->getObject();
-
-		QuadID* quad = dynamic_cast<QuadID*>(triple);
-		if (quad==NULL)
-			gr = 0;
-		else
-			gr = triple->getGraph();
+		gr = triple->getIdentifier(); // returns 0 if triple is a TripleID
 
 
 		if(x==0 || y==0 || z==0) {
@@ -153,22 +151,10 @@ void BitmapIdentifiableTriples::save(std::ostream &output, ControlInformation &c
 	iListener.setRange(70,80);
 	iListener.notifyProgress(0, "BitmapIdentifiableTriples saving Bitmap Id");
 	bitmapId->save(output);
-
-
 	
 	iListener.setRange(80,100);
-	iListener.notifyProgress(0, "BitmapIdentifiableTriples saving Permutation");
-
-	CRC32 crcd;
-	std::stringstream oss;
-	permId->save(oss);
-	const std::string& tmpString = oss.str();   
-	const char* cstr = tmpString.c_str();
-	crcd.writeData(out, cstr, oss.tellp());
-
-	crcd.writeCRC(out);
-
-
+	iListener.notifyProgress(0, "BitmapIdentifiableTriples saving Permutation Id");
+	permId->save(output);
 
 }
 void BitmapIdentifiableTriples::load(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener = NULL)
@@ -212,35 +198,20 @@ void BitmapIdentifiableTriples::load(std::istream &input, ControlInformation &co
 	iListener.notifyProgress(0, "BitmapTriples loading Bitmap Id");
 	delete bitmapId;
 	bitmapId = BitSequence375::load(input);
-	if(bitmapZ==NULL){
+	if(bitmapId==NULL){
 		throw std::runtime_error("Could not read Bitmap Id.");
 	}
-
-
 
 
 	iListener.setRange(40,50);
 	iListener.notifyProgress(0, "BitmapTriples loading Permutation");
 	delete permId;
-	permId = IntSequence::getArray(input);
-
-	CRC32 crcd;
-	std::stringstream iss;
-
-    permId->load(iss);
-
-	const std::string& tmpString = iss.str();   
-	const char* cstr = tmpString.c_str();
-	crcd.readData(input, cstr, iss.tellp());
-
-	// Validate checksum for permutation data
-	crc32_t filecrcd = crc32_read(input);
-	if(crcd.getValue()!=filecrcd)
-        throw std::runtime_error("Checksum error while reading Permutation Data.");
-
-
+	permId->load(input);
+	if(permId==NULL){
+		throw std::runtime_error("Could not read permId.");
+	}
 
 }
 
-
+}
 

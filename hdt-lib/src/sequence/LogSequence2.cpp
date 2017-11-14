@@ -291,6 +291,8 @@ size_t LogSequence2::load(const unsigned char *ptr, const unsigned char *ptrMax,
 	return count;
 }
 
+#undef CHECKPTR
+
 void LogSequence2::save(std::ostream & out)
 {
 	CRC8 crch;

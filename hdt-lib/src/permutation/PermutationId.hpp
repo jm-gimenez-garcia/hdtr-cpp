@@ -1,9 +1,11 @@
 #ifndef __PERMUTATIONID_HPP__
 #define __PERMUTATIONID_HPP__
 
-class ProgressListener;
-class permutation;
+#include <stdint.h>
+#include "Permutation.h"
 
+namespace hdt{
+class ProgressListener;
 class PermutationId{
 
 	public:
@@ -11,10 +13,10 @@ class PermutationId{
 		void save(std::ostream & f);
 
 	private:
-		static const uint8_t TYPE_PERMUTATION = 1;
-		permutation* perm;
+		static const uint8_t TYPE_PERMUTATION;
+		cds_static::PermutationMRRR* permu;
 
 };
-
+}
 
 #endif

@@ -249,6 +249,8 @@ size_t BitSequence375::load(const unsigned char *ptr, const unsigned char *maxPt
 	return count;
 }
 
+#undef CHECKPTR
+
 BitSequence375 * BitSequence375::load(istream & in)
 {
 	CRC8 crch;

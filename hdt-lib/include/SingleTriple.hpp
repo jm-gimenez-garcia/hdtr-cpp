@@ -135,6 +135,21 @@ public:
 		this->object = object;
 	}
 
+	/**
+	 * Get the identifier component of this QuadID.
+	 * @return
+	 */
+	virtual unsigned int getIdentifier() const {
+		return 0;
+	}
+
+	/**
+	 * Set the identifier component of this QuadID.
+	 * @return
+	 */
+	virtual void setIdentifier(const unsigned int ident) {}
+	
+
 	inline void setAll(const unsigned int subject, const unsigned int predicate, const unsigned int object) {
 		this->subject = subject;
 		this->predicate = predicate;
