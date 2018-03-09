@@ -13,8 +13,9 @@ void BitmapIdentifiableTriples::load(ModifiableTriples &triples, ProgressListene
 	bitmapZ = new BitSequence375(triples.getNumberOfElements());
 	bitmapId = new BitSequence375(triples.getNumberOfElements());
 
-	LogSequence2* permId_tmp = std::vector<unsigned int> permId_tmp;
-	permId_tmp.reserve(triples.getNumberOfElements()/2);
+	//LogSequence2* permId_tmp = std::vector<unsigned int> permId_tmp;
+	LogSequence2* permId_tmp = new LogSequence2(bits(triples.getNumberOfElements()),triples.getNumberOfElements());
+	//permId_tmp.reserve(triples.getNumberOfElements()/2);
 
 	LogSequence2 *vectorY = new LogSequence2(bits(triples.getNumberOfElements()));
 	LogSequence2 *vectorZ = new LogSequence2(bits(triples.getNumberOfElements()),triples.getNumberOfElements());
@@ -102,14 +103,17 @@ void BitmapIdentifiableTriples::load(ModifiableTriples &triples, ProgressListene
 	delete arrayZ;
 	arrayZ = vectorZ;
 
+	permId_tmp->reduceBits();
 
 	BitSequenceBuilder* bit_seq_build = new BitSequenceBuilderRG(4);
-	permId =new PermutationMRRR(&permId_tmp[0],permId_tmp.size(),bit_seq_build);
+	// 1024 just to try
+	permId = new PermutationMRRR(permId_tmp.getArray(),permId_tmp.size(),1024, bit_seq_build);
 
 	//PermutationBuilder* permBuild = new PermutationBuilderMRRR(ceil(log2((double)permId_tmp.size())),bit_seq_build);
 	//permId = permBuild->build(&permId_tmp[0],permId_tmp.size());
 
 	delete bit_seq_build ; bit_seq_build=NULL;
+	//delete permId_tmp;  this array is not deleted as permutation points to it
 
 
 #if 0

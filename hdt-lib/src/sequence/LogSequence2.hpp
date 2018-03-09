@@ -211,6 +211,11 @@ public:
 	 * Get type of the data structure.
 	 */
 	std::string getType();
+
+	/**
+	 * Get the pointer of data structure.
+	 */
+	size_t* getArray(){return array;}
 };
 
 
