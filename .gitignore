@@ -10,6 +10,7 @@ README
 autom4te.cache/
 config.h
 *~
+*.swp
 config.log
 config.status
 stamp-h1
