@@ -40,14 +40,14 @@
 
 namespace hdt {
 
-class GraphFourSectionDictionary : public ThreeSectionDictionary {
+class GraphsFourSectionDictionary : public ThreeSectionDictionary {
 private:
 	csd::CSD *graphs;
 
 public:
-	GraphFourSectionDictionary();
-	GraphFourSectionDictionary(HDTSpecification &spec);
-	~GraphFourSectionDictionary();
+	GraphsFourSectionDictionary();
+	GraphsFourSectionDictionary(HDTSpecification &spec);
+	~GraphsFourSectionDictionary();
 
 	unsigned int stringToId(const std::string &str, const TripleComponentRole position)const;
 	void loadFourthSection((std::istream & input, const IntermediateListener& iListener);

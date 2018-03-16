@@ -26,9 +26,7 @@ unsigned int TriplesFourSectionDictionary::stringToId(const std::string &key, co
         	if(key.length()==0)
 			return 0;
 		ret = predicates->locate((const unsigned char *)key.c_str(), key.length());
-		if(ret!=0) 
-			return getGlobalId(ret, NOT_SHARED_PREDICATE);
-        	return 0;
+		if(ret==0) ? 0 :  getGlobalId(ret, NOT_SHARED_PREDICATE);
 	}
 }
 

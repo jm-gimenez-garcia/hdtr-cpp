@@ -1,22 +1,22 @@
 namespace hdt {
 
-GraphFourSectionDictionary::GraphFourSectionDictionary() 
+GraphsFourSectionDictionary::GraphsFourSectionDictionary() 
 {
 	graphs = new csd::CSD_PFC();
 }
 
 
-GraphFourSectionDictionary::GraphFourSectionDictionary(HDTSpecification & spec)
+GraphsFourSectionDictionary::GraphsFourSectionDictionary(HDTSpecification & spec)
 {
 	graphs = new csd::CSD_PFC();
 }
 
-GraphFourSectionDictionary::~GraphFourSectionDictionary()
+GraphsFourSectionDictionary::~GraphsFourSectionDictionary()
 {
 	delete graphs;
 }
 
-unsigned int GraphFourSectionDictionary::stringToId(const std::string &key, const TripleComponentRole position)const
+unsigned int GraphsFourSectionDictionary::stringToId(const std::string &key, const TripleComponentRole position)const
 {
 	if (position!=GRAPH)
 		return ThreeSectionDictionary::stringToId(key, position);
@@ -32,7 +32,7 @@ unsigned int GraphFourSectionDictionary::stringToId(const std::string &key, cons
 	}
 }
 
-void GraphFourSectionDictionary::loadFourthSection((std::istream & input, const IntermediateListener& iListener){
+void GraphsFourSectionDictionary::loadFourthSection((std::istream & input, const IntermediateListener& iListener){
 
 	iListener.setRange(50,75);
 	iListener.notifyProgress(0, "Dictionary read graphs.");
@@ -45,7 +45,7 @@ void GraphFourSectionDictionary::loadFourthSection((std::istream & input, const 
 	graphs = new csd::CSD_Cache2(graphs);
 }
 
-void GraphFourSectionDictionary::loadFourthSection(unsigned char *ptr, int& count, const IntermediateListener& iListener){
+void GraphsFourSectionDictionary::loadFourthSection(unsigned char *ptr, int& count, const IntermediateListener& iListener){
 
     iListener.setRange(50,75);
     iListener.notifyProgress(0, "Dictionary read graphs.");
@@ -59,7 +59,7 @@ void GraphFourSectionDictionary::loadFourthSection(unsigned char *ptr, int& coun
     graphs = new csd::CSD_Cache2(graphs);
 }
 
-void GraphFourSectionDictionary::importFourthSection(Dictionary *other, IntermediateListener& iListener) {
+void GraphsFourSectionDictionary::importFourthSection(Dictionary *other, IntermediateListener& iListener) {
 	try {
 		NOTIFY(listener, "DictionaryPFC loading graphs", 25, 30);
 		iListener.setRange(20, 21);
@@ -74,51 +74,51 @@ void GraphFourSectionDictionary::importFourthSection(Dictionary *other, Intermed
 	}
 }
 
-IteratorUCharString* GraphFourSectionDictionary::getGraphs()const {
+IteratorUCharString* GraphsFourSectionDictionary::getGraphs()const {
 	return graphs->listAll();
 }
 
-void GraphFourSectionDictionary::saveFourthSection(std::ostream & output, IntermediateListener& listener){
+void GraphsFourSectionDictionary::saveFourthSection(std::ostream & output, IntermediateListener& listener){
 
 	iListener.setRange(45,60);
 	iListener.notifyProgress(0, "Dictionary save graphs.");
 	graphs->save(output);
 }
 
-unsigned int GraphFourSectionDictionary::getNgraphs()const
+unsigned int GraphsFourSectionDictionary::getNgraphs()const
 {return graphs->getLength();}
-unsigned int GraphFourSectionDictionary::getMaxGraphID()const
+unsigned int GraphsFourSectionDictionary::getMaxGraphID()const
 {return graphs->getLength();}
 
-unsigned int GraphFourSectionDictionary::getFourthSectionLength()const{
+unsigned int GraphsFourSectionDictionary::getFourthSectionLength()const{
 return graphs->getLength();
 }
-unsigned int GraphFourSectionDictionary::getFourthSectionSize()const{
+unsigned int GraphsFourSectionDictionary::getFourthSectionSize()const{
 return graphs->getSize();
 }
 
 
 
-csd::CSD *GraphFourSectionDictionary::getDictionarySection(unsigned int id, TripleComponentRole position) const{
+csd::CSD *GraphsFourSectionDictionary::getDictionarySection(unsigned int id, TripleComponentRole position) const{
 	if(position==GRAPH) 
                 return graphs;
 	else
 		return ThreeSectionDictionary::getDictionarySection(id, position);
 }
 
-unsigned int GraphFourSectionDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) const{
+unsigned int GraphsFourSectionDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) const{
 	return (position == NOT_SHARED_GRAPH) ? id : ThreeSectionDictionary::getGlobalId(mapping, id, position);
 }
-unsigned int GraphFourSectionDictionary::getGlobalId(unsigned int id, DictionarySection position)const
+unsigned int GraphsFourSectionDictionary::getGlobalId(unsigned int id, DictionarySection position)const
 {return getGlobalId(mapping, id, position);}
 
-unsigned int GraphFourSectionDictionary::getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position) const{
+unsigned int GraphsFourSectionDictionary::getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position) const{
 	return (position==GRAPH) ? id : ThreeSectionDictionary::getLocalId(mapping, id, position);
 }
-unsigned int GraphFourSectionDictionary::getLocalId(unsigned int id, TripleComponentRole position)const
+unsigned int GraphsFourSectionDictionary::getLocalId(unsigned int id, TripleComponentRole position)const
 {return getLocalId(mapping,id,position);}
 
-void GraphFourSectionDictionary::getSuggestions(const char *base, hdt::TripleComponentRole role, std::vector<std::string> &out, int maxResults)
+void GraphsFourSectionDictionary::getSuggestions(const char *base, hdt::TripleComponentRole role, std::vector<std::string> &out, int maxResults)
 {
 	if(role==GRAPH)
 	{ 

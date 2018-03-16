@@ -110,36 +110,10 @@ public:
      */
     virtual uint64_t size()=0;
 
-    /* Return the number of different subjects of the current dictionary. */
-    virtual unsigned int getNsubjects()=0;
-
-    /* Return the number of diferent predicates of the current dictionary */
-    virtual unsigned int getNpredicates()=0;
-
-    /* Return the number of different objects of the current dictionary */
-    virtual unsigned int getNobjects()=0;
-
-    /* Return the number of shared subjects-objects of the current dictionary */
-    virtual unsigned int getNshared()=0;
-
     /* Return the maximum id assigned to the overall dictionary. */
     virtual unsigned int getMaxID()=0;
 
-    /* Return the maximum subject ID of the dictionary. */
-    virtual unsigned int getMaxSubjectID()=0;
-
-    /* Return the maximum predicate ID of the dictionary. */
-    virtual unsigned int getMaxPredicateID()=0;
-
-    /* Return the maximum object ID of the dictionary. */
-    virtual unsigned int getMaxObjectID()=0;
-
     virtual void import(Dictionary *other, ProgressListener *listener=NULL)=0;
-
-    virtual IteratorUCharString *getSubjects()=0;
-    virtual IteratorUCharString *getPredicates()=0;
-    virtual IteratorUCharString *getObjects()=0;
-    virtual IteratorUCharString *getShared()=0;
 
     /**
     * Add to the supplied header all relevant information about the current Dictionary
@@ -164,13 +138,26 @@ public:
 
     virtual size_t load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener=NULL)=0;
 
+
+    virtual unsigned int getNsubjects()=0;
+    virtual unsigned int getNobjects()=0;
+    virtual unsigned int getNshared()=0;
+
+    virtual unsigned int getMaxSubjectID()=0;
+    virtual unsigned int getMaxObjectID()=0;
+
+    virtual IteratorUCharString *getSubjects()=0;
+    virtual IteratorUCharString *getObjects()=0;
+    virtual IteratorUCharString *getShared()=0;
+
+
     virtual string getType()=0;
-	virtual unsigned int getMapping()=0;
+    virtual unsigned int getMapping()=0;
 
     virtual void getSuggestions(const char *base, TripleComponentRole role, std::vector<string> &out, int maxResults)=0;
 };
 
-class ModifiableDictionary : public Dictionary {
+class ModifiableDictionary : public virtual Dictionary {
 public:
 	virtual ~ModifiableDictionary(){ }
 
