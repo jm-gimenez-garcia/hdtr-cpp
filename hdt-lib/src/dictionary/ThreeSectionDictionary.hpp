@@ -58,21 +58,38 @@ protected:
 public:
 	ThreeSectionDictionary();
 	ThreeSectionDictionary(HDTSpecification &spec);
-	~ThreeSectionDictionary();
+	virtual ~ThreeSectionDictionary();
 
 	std::string idToString(const unsigned int id, const TripleComponentRole position)const;
 	virtual unsigned int stringToId(const std::string &str, const TripleComponentRole position)const;
+
 	void load(std::istream & input, ControlInformation & ci, ProgressListener *listener=NULL);
-	virtual void loadFourthSection((std::istream & input, ControlInformation & ci, ProgressListener *listener)=0;
+	void loadControlInfo(std::istream & input, ControlInformation & ci);
+	void loadShared(std::istream & input, IntermediateListener& listener);
+	void loadSubjects(std::istream & input, IntermediateListener& listener);
+	virtual void loadFourthSection(std::istream & input, IntermediateListener& listener)=0;
+	void loadObjects(std::istream & input, IntermediateListener& listener);
+
 	size_t load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener=NULL);
-	virtual void loadFourthSection(unsigned char *ptr, int& count, const IntermediateListener& iListener)=0;
+	void loadControlInfo(unsigned char *ptr, unsigned char *ptrMax, size_t& count);
+	void loadShared(unsigned char *ptr, unsigned char *ptrMax, size_t& count, IntermediateListener& iListener);
+	void loadSubjects(unsigned char *ptr, unsigned char *ptrMax, size_t& count, IntermediateListener& iListener);
+	virtual void loadFourthSection(unsigned char *ptr, unsigned char *ptrMax, size_t& count, IntermediateListener& iListener)=0;
+	void loadObjects(unsigned char *ptr, unsigned char *ptrMax, size_t& count, IntermediateListener& iListener);
+
 	void import(Dictionary *other, ProgressListener *listener);
 	virtual void importFourthSection(Dictionary *other, IntermediateListener& iListener=NULL)=0;
 	IteratorUCharString* getSubjects()const;
 	IteratorUCharString* getObjects()const;
 	IteratorUCharString* getShared()const;
-	void save(std::ostream & output, ControlInformation & controlInformation, ProgressListener *listener=NULL);
-	virtual void saveFourthSection(std::ostream & output, IntermediateListener& listener)=0;
+
+	void save(std::ostream& output, ControlInformation& controlInformation, ProgressListener *listener);
+	void saveControlInfo(std::ostream& output, ControlInformation& controlInformation);
+	void saveShared(std::ostream & output, ProgressListener *listener);
+	void saveSubjects(std::ostream & output, ProgressListener *listener);
+	virtual void saveFourthSection(std::ostream & output, IntermediateListener& iListener)=0;
+	void saveObjects(std::ostream & output, ProgressListener *listener);
+
 	void populateHeader(Header & header, string rootNode);
 	unsigned int getNsubjects()const;
 	unsigned int getNobjects()const;
@@ -80,10 +97,8 @@ public:
 	unsigned int getMaxID()const;
 	unsigned int getMaxSubjectID()const;
 	unsigned int getMaxObjectID()const;
-	size_t getNumberOfElements()const;
-	virtual unsigned int getFourthSectionLength()const=0;
-    	uint64_t size()const;
-    	virtual uint64_t getFourthSectionSize()const=0;
+	virtual size_t getNumberOfElements()const;
+    	virtual uint64_t size()const;
 	string getType()const;
 	unsigned int getMapping()const;
 
@@ -93,6 +108,10 @@ protocted:
 	virtual unsigned int getGlobalId(unsigned int id, DictionarySection position)const=0;
 	virtual unsigned int getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position)const;
 	virtual unsigned int getLocalId(unsigned int id, TripleComponentRole position)const=0;
+
+protected:
+	virtual void clear();
+	virtual void create();
 	
 };
 

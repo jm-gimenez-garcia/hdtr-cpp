@@ -1,20 +1,33 @@
 namespace hdt {
 
 
-TriplesFourSectionDictionary::TriplesFourSectionDictionary() 
-{
-	predicates = new csd::CSD_PFC();
-}
+TriplesFourSectionDictionary::TriplesFourSectionDictionary() : predicates(new csd::CSD_PFC()){}
 
-TriplesFourSectionDictionary::TriplesFourSectionDictionary(HDTSpecification & spec)
-{
-	predicates = new csd::CSD_PFC();
-}
+TriplesFourSectionDictionary::TriplesFourSectionDictionary(HDTSpecification & spec): predicates(new csd::CSD_PFC()){}
 
 TriplesFourSectionDictionary::~TriplesFourSectionDictionary()
+{clear();}
+
+void TriplesFourSectionDictionary::clear()
 {
-	delete predicates;
+	if (predicates!=NULL)
+		{delete predicates; predicates=NULL;}	
 }
+void TriplesFourSectionDictionary::create()
+{
+	clear();
+	if (predicates==NULL)
+		{predicates = new csd::CSD_PFC();}
+}
+
+size_t TriplesFourSectionDictionary::getNumberOfElements()const{
+	return ThreeSectionDictionary::getNumberOfElements()+predicates->getLength();
+}
+
+uint64_t TriplesFourSectionDictionary::size()const{
+	return ThreeSectionDictionary::size()+predicates->getLength();
+}
+
 
 unsigned int TriplesFourSectionDictionary::stringToId(const std::string &key, const TripleComponentRole position)const
 {
@@ -31,8 +44,8 @@ unsigned int TriplesFourSectionDictionary::stringToId(const std::string &key, co
 }
 
 
-void TriplesFourSectionDictionary::loadFourthSection((std::istream & input, const IntermediateListener& iListener){
-
+void TriplesFourSectionDictionary::loadFourthSection(std::istream & input, IntermediateListener& iListener)
+{
 	iListener.setRange(50,75);
 	iListener.notifyProgress(0, "Dictionary read predicates.");
 	delete predicates;
@@ -44,8 +57,8 @@ void TriplesFourSectionDictionary::loadFourthSection((std::istream & input, cons
 	predicates = new csd::CSD_Cache2(predicates);
 }
 
-void TriplesFourSectionDictionary::loadFourthSection(unsigned char *ptr, int& count, const IntermediateListener& iListener){
-
+void TriplesFourSectionDictionary::loadFourthSection(unsigned char *ptr, unsigned char *ptrMax, size_t& count, IntermediateListener& iListener)
+{
     iListener.setRange(50,75);
     iListener.notifyProgress(0, "Dictionary read predicates.");
     delete predicates;
@@ -56,45 +69,37 @@ void TriplesFourSectionDictionary::loadFourthSection(unsigned char *ptr, int& co
     }
     count += predicates->load(&ptr[count], ptrMax);
     predicates = new csd::CSD_Cache2(predicates);
-
 }
 
-void ThreeSectionDictionary::importFourthSection(Dictionary *other, IntermediateListener& iListener) {
-	try {
-		NOTIFY(listener, "DictionaryPFC loading predicates", 25, 30);
-		iListener.setRange(20, 21);
-		IteratorUCharString *itPred = other->getPredicates();
-		delete predicates;
-		predicates = loadSection(itPred, blocksize, &iListener);
-		delete itPred;
-	} catch (std::exception& e) {
-		delete predicates;
-		predicates = new csd::CSD_PFC();
-		throw;
-	}
+void TriplesFourSectionDictionary::importFourthSection(Dictionary *other, ProgressListener *listener, IntermediateListener& iListener) 
+{
+	NOTIFY(listener, "DictionaryPFC loading predicates", 25, 30);
+	iListener.setRange(20, 21);
+	IteratorUCharString *itPred = other->getPredicates();
+	delete predicates;
+	predicates = loadSection(itPred, blocksize, &iListener);
+	delete itPred;
 }
+
+
+
 
 IteratorUCharString *TriplesFourSectionDictionary::getPredicates()const {
 	return predicates->listAll();
 }
 
-void TriplesFourSectionDictionary::saveFourthSection(std::ostream & output, IntermediateListener& listener){
+void TriplesFourSectionDictionary::saveFourthSection(std::ostream& output, IntermediateListener& iListener){
 
 	iListener.setRange(45,60);
 	iListener.notifyProgress(0, "Dictionary save predicates.");
 	predicates->save(output);
 }
+
 unsigned int TriplesFourSectionDictionary::getNpredicates()const
 {return predicates->getLength();}
 unsigned int TriplesFourSectionDictionary::getMaxPredicateID()const
 {return predicates->getLength();}
 
-unsigned int TriplesFourSectionDictionary::getFourthSectionLength()const{
-return predicates->getLength();
-}
-unsigned int TriplesFourSectionDictionary::getFourthSectionSize()const{
-return predicates->getSize();
-}
 
 
 

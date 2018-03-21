@@ -16,6 +16,15 @@ GraphsFourSectionDictionary::~GraphsFourSectionDictionary()
 	delete graphs;
 }
 
+uint64_t GraphsFourSectionDictionary::size()const{
+	return ThreeSectionDictionary::size()+graphs->getLength();
+}
+
+size_t GraphsFourSectionDictionary::getNumberOfElements()const{
+	return ThreeSectionDictionary::getNumberOfElements()+graphs->getLength();
+}
+
+
 unsigned int GraphsFourSectionDictionary::stringToId(const std::string &key, const TripleComponentRole position)const
 {
 	if (position!=GRAPH)
@@ -32,8 +41,8 @@ unsigned int GraphsFourSectionDictionary::stringToId(const std::string &key, con
 	}
 }
 
-void GraphsFourSectionDictionary::loadFourthSection((std::istream & input, const IntermediateListener& iListener){
-
+void GraphsFourSectionDictionary::loadFourthSection(std::istream & input, IntermediateListener& iListener)
+{
 	iListener.setRange(50,75);
 	iListener.notifyProgress(0, "Dictionary read graphs.");
 	delete graphs;
@@ -45,7 +54,10 @@ void GraphsFourSectionDictionary::loadFourthSection((std::istream & input, const
 	graphs = new csd::CSD_Cache2(graphs);
 }
 
-void GraphsFourSectionDictionary::loadFourthSection(unsigned char *ptr, int& count, const IntermediateListener& iListener){
+
+
+void GraphsFourSectionDictionary::loadFourthSection(unsigned char *ptr, unsigned char *ptrMax, size_t& count, IntermediateListener& iListener)
+{
 
     iListener.setRange(50,75);
     iListener.notifyProgress(0, "Dictionary read graphs.");
@@ -59,26 +71,22 @@ void GraphsFourSectionDictionary::loadFourthSection(unsigned char *ptr, int& cou
     graphs = new csd::CSD_Cache2(graphs);
 }
 
-void GraphsFourSectionDictionary::importFourthSection(Dictionary *other, IntermediateListener& iListener) {
-	try {
-		NOTIFY(listener, "DictionaryPFC loading graphs", 25, 30);
-		iListener.setRange(20, 21);
-		IteratorUCharString *itGr = other->getGraphs();
-		delete graphs;
-		graphs = loadSection(itGr, blocksize, &iListener);
-		delete itGr;
-	} catch (std::exception& e) {
-		delete graphs;
-		graphs = new csd::CSD_PFC();
-		throw;
-	}
+
+void GraphsFourSectionDictionary::importFourthSection(Dictionary *other, ProgressListener *listener, IntermediateListener& iListener) 
+{
+	NOTIFY(listener, "DictionaryPFC loading graphs", 25, 30);
+	iListener.setRange(20, 21);
+	IteratorUCharString *itPred = other->getGraphs();
+	delete predicates;
+	graphs = loadSection(itPred, blocksize, &iListener);
 }
+
 
 IteratorUCharString* GraphsFourSectionDictionary::getGraphs()const {
 	return graphs->listAll();
 }
 
-void GraphsFourSectionDictionary::saveFourthSection(std::ostream & output, IntermediateListener& listener){
+void GraphsFourSectionDictionary::saveFourthSection(std::ostream& output, IntermediateListener& iListener){
 
 	iListener.setRange(45,60);
 	iListener.notifyProgress(0, "Dictionary save graphs.");
@@ -90,12 +98,6 @@ unsigned int GraphsFourSectionDictionary::getNgraphs()const
 unsigned int GraphsFourSectionDictionary::getMaxGraphID()const
 {return graphs->getLength();}
 
-unsigned int GraphsFourSectionDictionary::getFourthSectionLength()const{
-return graphs->getLength();
-}
-unsigned int GraphsFourSectionDictionary::getFourthSectionSize()const{
-return graphs->getSize();
-}
 
 
 

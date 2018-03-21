@@ -50,15 +50,17 @@ public:
 	~TriplesFourSectionDictionary();
 
 	unsigned int stringToId(const std::string &str, const TripleComponentRole position)const;
-	void loadFourthSection(std::istream & input, const IntermediateListener& iListener);
-	void loadFourthSection(unsigned char *ptr, int& count, const IntermediateListener& iListener);
+
+	void loadFourthSection(std::istream & input, IntermediateListener& iListener);
+	void loadFourthSection(unsigned char *ptr, unsigned char *ptrMax, size_t& count, IntermediateListener& iListener);
+
 	void importFourthSection(Dictionary *other, IntermediateListener& iListener);
 	IteratorUCharString* getPredicates()const;
-	void saveFourthSection(std::ostream & output, IntermediateListener& listener);
+	void saveFourthSection(std::ostream & output, IntermediateListener& iListener);
 	unsigned int getNpredicates()const;
 	unsigned int getMaxPredicateID()const;
-	unsigned int getFourthSectionLength()const;
-    	uint64_t getFourthSectionSize()const;
+	uint64_t size()const;
+	size_t getNumberOfElements()const;
 
 private:
 	csd::CSD* getDictionarySection(unsigned int id, TripleComponentRole position) const;
@@ -68,6 +70,10 @@ private:
 	unsigned int getLocalId(unsigned int id, TripleComponentRole position)const;
 
 };
+
+protected:
+	void clear();
+	void create();
 
 }
 
