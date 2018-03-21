@@ -1,20 +1,23 @@
 namespace hdt {
 
-GraphsFourSectionDictionary::GraphsFourSectionDictionary() 
-{
-	graphs = new csd::CSD_PFC();
-}
+GraphsFourSectionDictionary::GraphsFourSectionDictionary() : graphs(new csd::CSD_PFC()){}
 
-
-GraphsFourSectionDictionary::GraphsFourSectionDictionary(HDTSpecification & spec)
-{
-	graphs = new csd::CSD_PFC();
-}
+GraphsFourSectionDictionary::GraphsFourSectionDictionary(HDTSpecification & spec) : graphs(new csd::CSD_PFC()){}
 
 GraphsFourSectionDictionary::~GraphsFourSectionDictionary()
+{clear();}
+void GraphsFourSectionDictionary::clear()
 {
-	delete graphs;
+	if (graphs!=NULL)
+		{delete graphs; graphs=NULL;}	
 }
+void GraphsFourSectionDictionary::create()
+{
+	clear();
+	if (graphs==NULL)
+		{graphs = new csd::CSD_PFC();}
+}
+
 
 uint64_t GraphsFourSectionDictionary::size()const{
 	return ThreeSectionDictionary::size()+graphs->getLength();
