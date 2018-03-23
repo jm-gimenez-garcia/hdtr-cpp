@@ -20,18 +20,18 @@ void GraphsFourSectionDictionary::create()
 
 
 uint64_t GraphsFourSectionDictionary::size()const{
-	return ThreeSectionDictionary::size()+graphs->getLength();
+	return BaseFourSectionDictionary::size()+graphs->getLength();
 }
 
 size_t GraphsFourSectionDictionary::getNumberOfElements()const{
-	return ThreeSectionDictionary::getNumberOfElements()+graphs->getLength();
+	return BaseFourSectionDictionary::getNumberOfElements()+graphs->getLength();
 }
 
 
 unsigned int GraphsFourSectionDictionary::stringToId(const std::string &key, const TripleComponentRole position)const
 {
 	if (position!=GRAPH)
-		return ThreeSectionDictionary::stringToId(key, position);
+		return BaseFourSectionDictionary::stringToId(key, position);
 	else
 	{
 		unsigned int ret;
@@ -108,17 +108,17 @@ csd::CSD *GraphsFourSectionDictionary::getDictionarySection(unsigned int id, Tri
 	if(position==GRAPH) 
                 return graphs;
 	else
-		return ThreeSectionDictionary::getDictionarySection(id, position);
+		return BaseFourSectionDictionary::getDictionarySection(id, position);
 }
 
 unsigned int GraphsFourSectionDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) const{
-	return (position == NOT_SHARED_GRAPH) ? id : ThreeSectionDictionary::getGlobalId(mapping, id, position);
+	return (position == NOT_SHARED_GRAPH) ? id : BaseFourSectionDictionary::getGlobalId(mapping, id, position);
 }
 unsigned int GraphsFourSectionDictionary::getGlobalId(unsigned int id, DictionarySection position)const
 {return getGlobalId(mapping, id, position);}
 
 unsigned int GraphsFourSectionDictionary::getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position) const{
-	return (position==GRAPH) ? id : ThreeSectionDictionary::getLocalId(mapping, id, position);
+	return (position==GRAPH) ? id : BaseFourSectionDictionary::getLocalId(mapping, id, position);
 }
 unsigned int GraphsFourSectionDictionary::getLocalId(unsigned int id, TripleComponentRole position)const
 {return getLocalId(mapping,id,position);}
@@ -131,7 +131,7 @@ void GraphsFourSectionDictionary::getSuggestions(const char *base, hdt::TripleCo
 		return;
 	}
 	else
-		ThreeSectionDictionary::getSuggestions(base, role, out, maxResults);	
+		BaseFourSectionDictionary::getSuggestions(base, role, out, maxResults);	
 }
 
 

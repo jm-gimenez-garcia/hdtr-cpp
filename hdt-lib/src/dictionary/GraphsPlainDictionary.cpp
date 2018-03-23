@@ -23,13 +23,19 @@ unsigned int GraphsPlainDictionary::stringToId(const std::string &key, const Tri
    		return ret==hashGraph.end() ? 0 : ret->second->id;
 	}
 }
+
+void GraphsPlainDictionary::getNumberOfElements()const
+{return BasePlainDictionary::getNumberOfElements + graphs.size();}
+
+
+
 void GraphsPlainDictionary::startProcessing(ProgressListener *listener)
 {
 	graphs.clear();
 	BasePlainDictionary::startProcessing(listener);
 }
 
-void GraphsPlainDictionary::saveFourthSection(std::ostream &output, ProgressListener *listener, const char marker)
+void GraphsPlainDictionary::saveFourthSection(std::ostream &output, ProgressListener *listener, unsigned int& counter, const char marker)
 {
 	//graphs
 	for (unsigned int i = 0; i < graphs.size(); i++) {
@@ -40,7 +46,7 @@ void GraphsPlainDictionary::saveFourthSection(std::ostream &output, ProgressList
 	}
 }
 
-void GraphsPlainDictionary::insertFourthRegion(IntermediateListener& iListener, const std::string& line, const unsigned char region)
+void GraphsPlainDictionary::insertFourthRegion(IntermediateListener& iListener, const std::string& line, unsigned int& numLine, unsigned int& numElements)
 {
 	NOTIFYCOND(&iListener, "Dictionary loading graphs.", numLine, numElements);
 	insert(line, NOT_SHARED_GRAPH);	

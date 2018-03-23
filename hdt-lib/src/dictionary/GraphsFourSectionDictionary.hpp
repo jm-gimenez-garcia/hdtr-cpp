@@ -40,7 +40,7 @@
 
 namespace hdt {
 
-class GraphsFourSectionDictionary : public ThreeSectionDictionary {
+class GraphsFourSectionDictionary : public BaseFourSectionDictionary {
 private:
 	csd::CSD *graphs;
 

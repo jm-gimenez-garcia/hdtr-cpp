@@ -29,8 +29,8 @@
  *
  */
 
-#ifndef HDT_TS_DICTIONARY_HPP_
-#define HDT_TS_DICTIONARY_HPP_
+#ifndef HDT_BFS_DICTIONARY_HPP_
+#define HDT_BFS_DICTIONARY_HPP_
 
 #include <Iterator.hpp>
 #include <HDTSpecification.hpp>
@@ -40,7 +40,7 @@
 
 namespace hdt {
 
-class ThreeSectionDictionary : public virtual Dictionary {
+class BaseFourSectionDictionary : public virtual Dictionary {
 protected:
 
 	unsigned int mapping;
@@ -56,9 +56,9 @@ protected:
 	HDTSpecification spec;
 
 public:
-	ThreeSectionDictionary();
-	ThreeSectionDictionary(HDTSpecification &spec);
-	virtual ~ThreeSectionDictionary();
+	BaseFourSectionDictionary();
+	BaseFourSectionDictionary(HDTSpecification &spec);
+	virtual ~BaseFourSectionDictionary();
 
 	std::string idToString(const unsigned int id, const TripleComponentRole position)const;
 	virtual unsigned int stringToId(const std::string &str, const TripleComponentRole position)const;

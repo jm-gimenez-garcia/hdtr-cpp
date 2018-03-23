@@ -24,6 +24,8 @@ unsigned int TriplesPlainDictionary::stringToId(const std::string &key, const Tr
 	}
 }
 
+void TriplesPlainDictionary::getNumberOfElements()const
+{return BasePlainDictionary::getNumberOfElements + predicates.size();}
 
 void TriplesPlainDictionary::startProcessing(ProgressListener *listener)
 {
@@ -32,7 +34,7 @@ void TriplesPlainDictionary::startProcessing(ProgressListener *listener)
 }
 
 
-void TriplesPlainDictionary::saveFourthSection(std::ostream &output, ProgressListener *listener, const char marker)
+void TriplesPlainDictionary::saveFourthSection(std::ostream &output, ProgressListener *listener, unsigned int& counter, const char marker)
 {
 	//predicates
 	for (unsigned int i = 0; i < predicates.size(); i++) {
@@ -43,7 +45,7 @@ void TriplesPlainDictionary::saveFourthSection(std::ostream &output, ProgressLis
 	}
 }
 
-void TriplesPlainDictionary::insertFourthRegion(IntermediateListener& iListener, const std::string& line, const unsigned char region)
+void TriplesPlainDictionary::insertFourthRegion(IntermediateListener& iListener, const std::string& line, unsigned int& numLine, unsigned int& numElements)
 {
 	NOTIFYCOND(&iListener, "Dictionary loading predicates.", numLine, numElements);
 	insert(line, NOT_SHARED_PREDICATE);	

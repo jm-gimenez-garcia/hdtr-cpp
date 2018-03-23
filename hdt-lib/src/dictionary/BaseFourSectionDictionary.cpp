@@ -1,8 +1,8 @@
 namespace hdt {
 
-ThreeSectionDictionary::ThreeSectionDictionary(): blocksize(16), subjects(new csd::CSD_PFC()), objects(new csd::CSD_PFC()), shared(new csd::CSD_PFC()) {}
+BaseFourSectionDictionary::BaseFourSectionDictionary(): blocksize(16), subjects(new csd::CSD_PFC()), objects(new csd::CSD_PFC()), shared(new csd::CSD_PFC()) {}
 
-ThreeSectionDictionary::ThreeSectionDictionary(HDTSpecification & spec): blocksize(16), subjects(new csd::CSD_PFC()), objects(new csd::CSD_PFC()), shared(new csd::CSD_PFC())
+BaseFourSectionDictionary::BaseFourSectionDictionary(HDTSpecification & spec): blocksize(16), subjects(new csd::CSD_PFC()), objects(new csd::CSD_PFC()), shared(new csd::CSD_PFC())
 {
 	string blockSizeStr = "";
 	try{
@@ -14,10 +14,10 @@ ThreeSectionDictionary::ThreeSectionDictionary(HDTSpecification & spec): blocksi
 	}
 }
 
-ThreeSectionDictionary::~ThreeSectionDictionary()
+BaseFourSectionDictionary::~BaseFourSectionDictionary()
 {clear();}
 
-void ThreeSectionDictionary::clear()
+void BaseFourSectionDictionary::clear()
 {
 	if (subjects!=NULL)
 		{delete subjects; subjects=NULL;}
@@ -26,7 +26,7 @@ void ThreeSectionDictionary::clear()
 	if (shared!=NULL)
 		{delete shared; shared=NULL;}
 }
-void ThreeSectionDictionary::create()
+void BaseFourSectionDictionary::create()
 {
 	clear();
 	subjects = new csd::CSD_PFC();
@@ -44,7 +44,7 @@ csd::CSD *loadSection(IteratorUCharString *iterator, uint32_t blocksize, Progres
 
 
 
-std::string ThreeSectionDictionary::idToString(const unsigned int id, const TripleComponentRole position)const
+std::string BaseFourSectionDictionary::idToString(const unsigned int id, const TripleComponentRole position)const
 {
 	csd::CSD *section = getDictionarySection(id, position);
 
@@ -64,7 +64,7 @@ std::string ThreeSectionDictionary::idToString(const unsigned int id, const Trip
 	return string();
 }
 
-unsigned int ThreeSectionDictionary::stringToId(const std::string &key, const TripleComponentRole position)const
+unsigned int BaseFourSectionDictionary::stringToId(const std::string &key, const TripleComponentRole position)const
 {
 	unsigned int ret;
 
@@ -109,18 +109,18 @@ void GraphsFourSectionDictionary::load(std::istream & input, ControlInformation 
 	loadObjects(input, iListener);
 }
 
-void ThreeSectionDictionary::loadControlInfo(std::istream & input, ControlInformation & ci)
+void BaseFourSectionDictionary::loadControlInfo(std::istream & input, ControlInformation & ci)
 {
 	std::string format = ci.getFormat();
 	if(format!=getType()) {
-		throw std::runtime_error("Trying to read a ThreeSectionDictionary but the data is not ThreeSectionDictionary");
+		throw std::runtime_error("Trying to read a BaseFourSectionDictionary but the data is not BaseFourSectionDictionary");
 	}
 	//this->mapping = ci.getUint("mapping");
 	this->mapping = MAPPING2;
 	//this->sizeStrings = ci.getUint("sizeStrings");
 }
 
-void ThreeSectionDictionary::loadShared(std::istream & input, IntermediateListener& iListener)
+void BaseFourSectionDictionary::loadShared(std::istream & input, IntermediateListener& iListener)
 {
 	iListener.setRange(0,25);
 	iListener.notifyProgress(0, "Dictionary read shared area.");
@@ -132,7 +132,7 @@ void ThreeSectionDictionary::loadShared(std::istream & input, IntermediateListen
 	}
 	//shared = new csd::CSD_Cache(shared);
 }
-void ThreeSectionDictionary::loadSubjects(std::istream & input, IntermediateListener& iListener)
+void BaseFourSectionDictionary::loadSubjects(std::istream & input, IntermediateListener& iListener)
 {
 	iListener.setRange(25,50);
 	iListener.notifyProgress(0, "Dictionary read subjects.");
@@ -144,7 +144,7 @@ void ThreeSectionDictionary::loadSubjects(std::istream & input, IntermediateList
 	}
 	//subjects = new csd::CSD_Cache(subjects);
 }
-void ThreeSectionDictionary::loadObjects(std::istream & input, IntermediateListener& iListener)
+void BaseFourSectionDictionary::loadObjects(std::istream & input, IntermediateListener& iListener)
 {
 	iListener.setRange(75,100);
 	iListener.notifyProgress(0, "Dictionary read objects.");
@@ -171,7 +171,7 @@ size_t GraphsFourSectionDictionary::load(unsigned char *ptr, unsigned char *ptrM
 
     return count;
 }
-void ThreeSectionDictionary::loadControlInfo(unsigned char *ptr, unsigned char *ptrMax, size_t& count){
+void BaseFourSectionDictionary::loadControlInfo(unsigned char *ptr, unsigned char *ptrMax, size_t& count){
     ControlInformation ci;
     count += ci.load(&ptr[count], ptrMax);
 
@@ -180,7 +180,7 @@ void ThreeSectionDictionary::loadControlInfo(unsigned char *ptr, unsigned char *
     //this->sizeStrings = ci.getUint("sizeStrings");
 }
 
-void ThreeSectionDictionary::loadShared(unsigned char *ptr, unsigned char *ptrMax, size_t& count, IntermediateListener& iListener)
+void BaseFourSectionDictionary::loadShared(unsigned char *ptr, unsigned char *ptrMax, size_t& count, IntermediateListener& iListener)
 {
     iListener.setRange(0,25);
     iListener.notifyProgress(0, "Dictionary read shared area.");
@@ -194,7 +194,7 @@ void ThreeSectionDictionary::loadShared(unsigned char *ptr, unsigned char *ptrMa
     //shared = new csd::CSD_Cache(shared);
 }
 
-void ThreeSectionDictionary::loadSubjects(unsigned char *ptr, unsigned char *ptrMax, size_t& count, IntermediateListener& iListener)
+void BaseFourSectionDictionary::loadSubjects(unsigned char *ptr, unsigned char *ptrMax, size_t& count, IntermediateListener& iListener)
 {
     iListener.setRange(25,50);
     iListener.notifyProgress(0, "Dictionary read subjects.");
@@ -207,7 +207,7 @@ void ThreeSectionDictionary::loadSubjects(unsigned char *ptr, unsigned char *ptr
     count += subjects->load(&ptr[count], ptrMax);
     //subjects = new csd::CSD_Cache(subjects);
 }
-void ThreeSectionDictionary::loadObjects(unsigned char *ptr, unsigned char *ptrMax, size_t& count, IntermediateListener& iListener)
+void BaseFourSectionDictionary::loadObjects(unsigned char *ptr, unsigned char *ptrMax, size_t& count, IntermediateListener& iListener)
 {
     iListener.setRange(75,100);
     iListener.notifyProgress(0, "Dictionary read objects.");
@@ -239,14 +239,14 @@ void TriplesFourSectionDictionary::import(Dictionary *other, ProgressListener *l
 	}
 	catch (std::exception& e) 
 	{
-		ThreeSectionDictionary::clear();
+		BaseFourSectionDictionary::clear();
 		clear();
-		ThreeSectionDictionary::create();
+		BaseFourSectionDictionary::create();
 		create();
 		throw;
 	}
 }	
-void ThreeSectionDictionary::importSubjects(Dictionary *other, ProgressListener *listener, IntermediateListener& iListener) 
+void BaseFourSectionDictionary::importSubjects(Dictionary *other, ProgressListener *listener, IntermediateListener& iListener) 
 {
 	NOTIFY(listener, "DictionaryPFC loading subjects", 0, 100);
 	iListener.setRange(0, 20);
@@ -255,7 +255,7 @@ void ThreeSectionDictionary::importSubjects(Dictionary *other, ProgressListener 
 	subjects = loadSection(itSubj, blocksize, &iListener);
 	delete itSubj;
 }
-void ThreeSectionDictionary::importObjects(Dictionary *other, ProgressListener *listener, IntermediateListener& iListener) 
+void BaseFourSectionDictionary::importObjects(Dictionary *other, ProgressListener *listener, IntermediateListener& iListener) 
 {
 	NOTIFY(listener, "DictionaryPFC loading objects", 30, 90);
 	iListener.setRange(21, 90);
@@ -264,7 +264,7 @@ void ThreeSectionDictionary::importObjects(Dictionary *other, ProgressListener *
 	objects = loadSection(itObj, blocksize, &iListener);
 	delete itObj;
 }
-void ThreeSectionDictionary::importShared(Dictionary *other, ProgressListener *listener, IntermediateListener& iListener) 
+void BaseFourSectionDictionary::importShared(Dictionary *other, ProgressListener *listener, IntermediateListener& iListener) 
 {
 	NOTIFY(listener, "DictionaryPFC loading shared", 90, 100);
 	iListener.setRange(90, 100);
@@ -274,13 +274,13 @@ void ThreeSectionDictionary::importShared(Dictionary *other, ProgressListener *l
 	delete itShared;
 }
 
-IteratorUCharString *ThreeSectionDictionary::getSubjects()const {
+IteratorUCharString *BaseFourSectionDictionary::getSubjects()const {
 	return subjects->listAll();
 }
-IteratorUCharString *ThreeSectionDictionary::getObjects()const {
+IteratorUCharString *BaseFourSectionDictionary::getObjects()const {
 	return objects->listAll();
 }
-IteratorUCharString *ThreeSectionDictionary::getShared()const {
+IteratorUCharString *BaseFourSectionDictionary::getShared()const {
 	return shared->listAll();
 }
 
@@ -297,7 +297,7 @@ void TriplesFourSectionDictionary::save(std::ostream& output, ControlInformation
 	saveObjects(output, iListener);	
 }
 
-void ThreeSectionDictionary::saveControlInfo(std::ostream& output, ControlInformation & controlInformation)
+void BaseFourSectionDictionary::saveControlInfo(std::ostream& output, ControlInformation & controlInformation)
 {
 	controlInformation.setFormat(HDTVocabulary::DICTIONARY_TYPE_FOUR);
 	controlInformation.setUint("mapping", this->mapping);
@@ -305,19 +305,19 @@ void ThreeSectionDictionary::saveControlInfo(std::ostream& output, ControlInform
 	controlInformation.save(output);
 }
 
-void ThreeSectionDictionary::saveShared(std::ostream& output, IntermediateListener& iListener)
+void BaseFourSectionDictionary::saveShared(std::ostream& output, IntermediateListener& iListener)
 {
 	iListener.setRange(0,10);
 	iListener.notifyProgress(0, "Dictionary save shared area.");
 	shared->save(output);
 }
-void ThreeSectionDictionary::saveSubjects(std::ostream& output, IntermediateListener& iListener)
+void BaseFourSectionDictionary::saveSubjects(std::ostream& output, IntermediateListener& iListener)
 {
 	iListener.setRange(10,45);
 	iListener.notifyProgress(0, "Dictionary save subjects.");
 	subjects->save(output);
 }
-void ThreeSectionDictionary::saveObjects(std::ostream& output, IntermediateListener& iListener)
+void BaseFourSectionDictionary::saveObjects(std::ostream& output, IntermediateListener& iListener)
 {
 	iListener.setRange(60,100);
 	iListener.notifyProgress(0, "Dictionary save objects.");
@@ -325,7 +325,7 @@ void ThreeSectionDictionary::saveObjects(std::ostream& output, IntermediateListe
 }
 
 
-void ThreeSectionDictionary::populateHeader(Header& header, string rootNode)
+void BaseFourSectionDictionary::populateHeader(Header& header, string rootNode)
 {
 	header.insert(rootNode, HDTVocabulary::DICTIONARY_TYPE, getType());
 #if 0
@@ -342,14 +342,14 @@ void ThreeSectionDictionary::populateHeader(Header& header, string rootNode)
 	header.insert(rootNode, HDTVocabulary::DICTIONARY_BLOCK_SIZE, this->blocksize);
 }
 
-unsigned int ThreeSectionDictionary::getNsubjects()const
+unsigned int BaseFourSectionDictionary::getNsubjects()const
 {return shared->getLength()+subjects->getLength();}
-unsigned int ThreeSectionDictionary::getNobjects()const
+unsigned int BaseFourSectionDictionary::getNobjects()const
 {return shared->getLength()+objects->getLength();}
-unsigned int ThreeSectionDictionary::getNshared()const
+unsigned int BaseFourSectionDictionary::getNshared()const
 {return shared->getLength();}
 
-unsigned int ThreeSectionDictionary::getMaxID()const
+unsigned int BaseFourSectionDictionary::getMaxID()const
 {
 	unsigned int s = subjects->getLength();
 	unsigned int o = objects->getLength();
@@ -358,20 +358,20 @@ unsigned int ThreeSectionDictionary::getMaxID()const
 
 	return (mapping ==MAPPING2) ? sh+max : sh+s+o;
 }
-unsigned int ThreeSectionDictionary::getMaxSubjectID()const
+unsigned int BaseFourSectionDictionary::getMaxSubjectID()const
 {return getNsubjects();}
 
-unsigned int ThreeSectionDictionary::getMaxObjectID()const{
+unsigned int BaseFourSectionDictionary::getMaxObjectID()const{
 	unsigned int s = subjects->getLength();
 	unsigned int o = objects->getLength();
 	unsigned int sh = shared->getLength();
 
 	return (mapping == MAPPING2) ? sh+o : sh+s+o;
 }
-size_t ThreeSectionDictionary::getNumberOfElements()const{
+size_t BaseFourSectionDictionary::getNumberOfElements()const{
 	return shared->getLength()+subjects->getLength()+objects->getLength();
 }
-uint64_t ThreeSectionDictionary::size()const{
+uint64_t BaseFourSectionDictionary::size()const{
 	return shared->getSize()+subjects->getSize()+objects->getSize();
 }
 
@@ -384,7 +384,7 @@ unsigned int FourSectionDictionary::getMapping()const
 
 
 
-csd::CSD *ThreeSectionDictionary::getDictionarySection(unsigned int id, TripleComponentRole position) const{
+csd::CSD *BaseFourSectionDictionary::getDictionarySection(unsigned int id, TripleComponentRole position) const{
 	if (position == SUBJECT) 
 		return (id<=shared->getLength()) ? shared : subjects;
 	else if (position == OBJECT)
@@ -393,7 +393,7 @@ csd::CSD *ThreeSectionDictionary::getDictionarySection(unsigned int id, TripleCo
 	throw std::runtime_error("Item not found");
 }
 
-unsigned int ThreeSectionDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) const{
+unsigned int BaseFourSectionDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) const{
 	switch (position) {
 	case NOT_SHARED_SUBJECT:
 		return shared->getLength()+id;
@@ -407,7 +407,7 @@ unsigned int ThreeSectionDictionary::getGlobalId(unsigned int mapping, unsigned 
 	throw std::runtime_error("Item not found");
 }
 
-unsigned int ThreeSectionDictionary::getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position) const{
+unsigned int BaseFourSectionDictionary::getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position) const{
 	switch (position) {
 	case SUBJECT:
 		return (id<=shared->getLength()) ? id : id-shared->getLength();
@@ -423,7 +423,7 @@ unsigned int ThreeSectionDictionary::getLocalId(unsigned int mapping, unsigned i
 	throw std::runtime_error("Item not found");
 }
 
-void ThreeSectionDictionary::getSuggestions(const char *base, hdt::TripleComponentRole role, std::vector<std::string> &out, int maxResults)
+void BaseFourSectionDictionary::getSuggestions(const char *base, hdt::TripleComponentRole role, std::vector<std::string> &out, int maxResults)
 {
 
 	vector<string> v1,v2;

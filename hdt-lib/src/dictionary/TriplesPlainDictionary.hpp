@@ -16,9 +16,9 @@ public:
 	TriplesPlainDictionary(){}
 	~TriplesPlainDictionary(){}
 	unsigned int stringToId(const std::string &str, const TripleComponentRole position)const;
-	void saveFourthSection(std::ostream &output, ProgressListener *listener, const char marker);
-	void insertFourthRegion(IntermediateListener& iListener, const std::string& line, const unsigned char region);
-	void getFourthSectionSize()const{return predicates.size();}
+	void saveFourthSection(std::ostream &output, ProgressListener *listener, unsigned int& counter, const char marker);
+	void insertFourthRegion(IntermediateListener& iListener, const std::string& line, unsigned int& numLine, unsigned int& numElements);
+	void getNumberOfElements()const;
 	unsigned int getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position)const;
 	unsigned int getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position)const;
 	void updateID(unsigned int oldid, unsigned int newid, DictionarySection position);

@@ -64,10 +64,16 @@ public:
 	virtual unsigned int stringToId(const std::string &str, const TripleComponentRole position)const;
 	virtual void startProcessing(ProgressListener *listener = NULL);
 	void stopProcessing(ProgressListener *listener = NULL);
+
 	void save(std::ostream &output, ControlInformation &ci, ProgressListener *listener = NULL);
-	virtual void saveFourthSection(std::ostream &output, ProgressListener *listener, const char marker)=0;
+	void saveControlInfo(std::ostream &output, ControlInformation &controlInformation);
+	void saveShared(std::ostream &output, ProgressListener *listener, unsigned int& counter, const char marker);
+	void saveSubjects(std::ostream &output, ProgressListener *listener, unsigned int& counter, const char marker);
+	void saveObjects(std::ostream &output, ProgressListener *listener, unsigned int& counter, const char marker);
+	virtual void saveFourthSection(std::ostream &output, ProgressListener *listener, unsigned int& counter, const char marker)=0;
+
 	void load(std::istream &input, ControlInformation &ci, ProgressListener *listener = NULL);
-	virtual void insertFourthRegion(IntermediateListener& iListener, const std::string& line, const unsigned char region)=0;
+	virtual void insertFourthRegion(IntermediateListener& iListener, const std::string& line, unsigned int& numLine, unsigned int& numElements)=0;
 	virtual void getFourthSectionSize()const=0;
 	unsigned int insert(const std::string &str, const TripleComponentRole position);
 	virtual unsigned int getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position)const;
@@ -95,9 +101,9 @@ private:
 
 public:
 
-    size_t getNumberOfElements();
+	virtual size_t getNumberOfElements()const;
 
-    uint64_t size();
+	uint64_t size();
 
 	unsigned int getNsubjects();
 	unsigned int getNobjects();

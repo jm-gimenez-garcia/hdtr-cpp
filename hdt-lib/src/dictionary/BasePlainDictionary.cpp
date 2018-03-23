@@ -139,50 +139,63 @@ void BasePlainDictionary::stopProcessing(ProgressListener *listener)
 	//dumpSizes(cout);
 }
 
-
-void BasePlainDictionary::save(std::ostream &output, ControlInformation &controlInformation, ProgressListener *listener)
+void BasePlainDictionary::saveControlInfo(std::ostream &output, ControlInformation &controlInformation)
 {
 	controlInformation.setFormat(HDTVocabulary::DICTIONARY_TYPE_PLAIN);
 	controlInformation.setUint("mapping", this->mapping);
 	controlInformation.setUint("sizeStrings", this->sizeStrings);
 	controlInformation.setUint("numEntries", this->getNumberOfElements());
-
 	controlInformation.save(output);
+}
 
-	unsigned int i = 0;
-	unsigned int counter=0;
-	const char marker = '\1';
-
+void BasePlainDictionary::saveShared(std::ostream &output, ProgressListener *listener, unsigned int& counter, const char marker)
+{
 	//shared subjects-objects from subjects
-	for (i = 0; i < shared.size(); i++) {
+	for (unsigned int i = 0; i < shared.size(); i++) {
 		output << shared[i]->str;
 		output.put(marker); //character to split file
 		counter++;
 		NOTIFYCOND(listener, "BasePlainDictionary saving shared", counter, getNumberOfElements());
 	}
-
 	output.put(marker); //extra line to set the begining of next part of dictionary
+}
 
+void BasePlainDictionary::saveSubjects(std::ostream &output, ProgressListener *listener, unsigned int& counter, const char marker)
+{
 	//not shared subjects
-	for (i = 0; i < subjects.size(); i++) {
+	for (unsigned int i = 0; i < subjects.size(); i++) {
 		output << subjects[i]->str;
 		output.put(marker); //character to split file
 		counter++;
 		NOTIFYCOND(listener, "BasePlainDictionary saving subjects", counter, getNumberOfElements());
 	}
-
 	output.put(marker); //extra line to set the begining of next part of dictionary
+}
 
+void BasePlainDictionary::saveObjects(std::ostream &output, ProgressListener *listener, unsigned int& counter, const char marker)
+{
 	//not shared objects
-	for (i = 0; i < objects.size(); i++) {
+	for (unsigned int i = 0; i < objects.size(); i++) {
 		output << objects[i]->str;
 		output.put(marker); //character to split file
 		counter++;
 		NOTIFYCOND(listener, "BasePlainDictionary saving objects", counter, getNumberOfElements());
 	}
-
 	output.put(marker); //extra line to set the begining of next part of dictionary
-	saveFourthSection(output, listener, marker);
+}
+
+
+
+void BasePlainDictionary::save(std::ostream &output, ControlInformation &controlInformation, ProgressListener *listener)
+{
+	unsigned int counter=0;
+	const char marker = '\1';
+
+	saveControlInfo(output, controlInformation);
+	saveShared(output, listener, counter, marker);
+	saveSubjects(output, listener, counter, marker);
+	saveObjects(output, listener, counter, marker);
+	saveFourthSection(output, listener, counter, marker);
 
 	output.put(marker);
 }
@@ -218,7 +231,7 @@ void BasePlainDictionary::load(std::istream & input, ControlInformation &ci, Pro
 			} else if (region == 3) { //not shared Objects
 				NOTIFYCOND(&iListener, "Dictionary loading objects.", numLine, numElements);
 				insert(line, NOT_SHARED_OBJECT);
-			} else if (region == 4) { //predicates
+			} else if (region == 4) { //predicates or graphs
 				insertFourthRegion(iListener, line, region);
 			}
 		} else {
@@ -254,13 +267,11 @@ IteratorUCharString *BasePlainDictionary::getShared() {
 	return new DictIterator(this->shared);
 }
 
-size_t BasePlainDictionary::getNumberOfElements()
-{
-	return shared.size() + subjects.size() + objects.size() + getFourthSectionSize();
+size_t BasePlainDictionary::getNumberOfElements()const{
+	return shared.size() + subjects.size() + objects.size();
 }
 
-uint64_t BasePlainDictionary::size()
-{
+uint64_t BasePlainDictionary::size()const{
     return sizeStrings;
 }
 

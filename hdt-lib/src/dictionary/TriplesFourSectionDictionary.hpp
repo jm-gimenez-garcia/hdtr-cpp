@@ -40,7 +40,7 @@
 
 namespace hdt {
 
-class TriplesFourSectionDictionary : public ThreeSectionDictionary {
+class TriplesFourSectionDictionary : public BaseFourSectionDictionary {
 private:
 	csd::CSD *predicates;
 

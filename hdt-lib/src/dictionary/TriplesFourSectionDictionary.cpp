@@ -21,18 +21,18 @@ void TriplesFourSectionDictionary::create()
 }
 
 size_t TriplesFourSectionDictionary::getNumberOfElements()const{
-	return ThreeSectionDictionary::getNumberOfElements()+predicates->getLength();
+	return BaseFourSectionDictionary::getNumberOfElements()+predicates->getLength();
 }
 
 uint64_t TriplesFourSectionDictionary::size()const{
-	return ThreeSectionDictionary::size()+predicates->getLength();
+	return BaseFourSectionDictionary::size()+predicates->getLength();
 }
 
 
 unsigned int TriplesFourSectionDictionary::stringToId(const std::string &key, const TripleComponentRole position)const
 {
 	if (position!=PREDICATE)
-		return ThreeSectionDictionary::stringToId(key, position);
+		return BaseFourSectionDictionary::stringToId(key, position);
 	else
 	{
 		unsigned int ret;
@@ -104,18 +104,18 @@ unsigned int TriplesFourSectionDictionary::getMaxPredicateID()const
 
 
 csd::CSD *TriplesFourSectionDictionary::getDictionarySection(unsigned int id, TripleComponentRole position) const{
-	return (position==PREDICATE) ? predicates : ThreeSectionDictionary::getDictionarySection(id, position);
+	return (position==PREDICATE) ? predicates : BaseFourSectionDictionary::getDictionarySection(id, position);
 }
 
 unsigned int TriplesFourSectionDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) const{
-	return (position==NOT_SHARED_PREDICATE) ? id : ThreeSectionDictionary::getGlobalId(mapping, id, position);
+	return (position==NOT_SHARED_PREDICATE) ? id : BaseFourSectionDictionary::getGlobalId(mapping, id, position);
 }
 unsigned int TriplesFourSectionDictionary::getGlobalId(unsigned int id, DictionarySection position)const
 {return getGlobalId(mapping, id, position);}
 
 
 unsigned int TriplesFourSectionDictionary::getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position) const{
-	return (position==PREDICATE) ? id : ThreeSectionDictionary::getLocalId(mapping, id, position);
+	return (position==PREDICATE) ? id : BaseFourSectionDictionary::getLocalId(mapping, id, position);
 }
 unsigned int TriplesFourSectionDictionary::getLocalId(unsigned int id, TripleComponentRole position)const
 {return getLocalId(mapping,id,position);}
@@ -126,7 +126,7 @@ void TriplesFourSectionDictionary::getSuggestions(const char *base, hdt::TripleC
 	if(role==PREDICATE) 
 		predicates->fillSuggestions(base, out, maxResults);
 	else
-		ThreeSectionDictionary::getSuggestions(base, role, out, maxResults);	
+		BaseFourSectionDictionary::getSuggestions(base, role, out, maxResults);	
 }
 
 
