@@ -103,6 +103,7 @@ void BasicHDT::createComponents() {
 	}
 	catch (std::exception& e){
 	}
+	
 
 	if(dictType==HDTVocabulary::DICTIONARY_TYPE_FOUR) {
 		dictionary = new FourSectionDictionary(spec);
@@ -115,7 +116,8 @@ void BasicHDT::createComponents() {
 		throw std::runtime_error("This version has been compiled without support for this dictionary");
 #endif
 	} else {
-		dictionary = new FourSectionDictionary(spec);
+		//dictionary = new FourSectionDictionary(spec);
+		dictionary = new ReificationDictionary(spec);
 	}
 
 	// TRIPLES
@@ -228,7 +230,7 @@ void BasicHDT::loadDictionary(const char* fileName, const char* baseUri, RDFNota
 		DictionaryLoader dictLoader(dict, &iListener);
 
 		RDFParserCallback *parser = RDFParserCallback::getParserCallback(notation);
-        parser->doParse(fileName, baseUri, notation, true, &dictLoader);
+        	parser->doParse(fileName, baseUri, notation, true, &dictLoader);
 		delete parser;
 
 		iListener.setRange(80, 90);

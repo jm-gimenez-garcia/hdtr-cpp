@@ -41,21 +41,10 @@
 
 namespace hdt {
 
-FourSectionDictionary::FourSectionDictionary() : blocksize(16)
-{
-	subjects = new csd::CSD_PFC();
-	predicates = new csd::CSD_PFC();
-	objects = new csd::CSD_PFC();
-	shared = new csd::CSD_PFC();
-}
+FourSectionDictionary::FourSectionDictionary() : blocksize(16){}
 
 FourSectionDictionary::FourSectionDictionary(HDTSpecification & spec) : blocksize(16)
 {
-	subjects = new csd::CSD_PFC();
-	predicates = new csd::CSD_PFC();
-	objects = new csd::CSD_PFC();
-	shared = new csd::CSD_PFC();
-
 	string blockSizeStr = "";
 	try{
 		spec.get("dict.block.size");
@@ -68,10 +57,6 @@ FourSectionDictionary::FourSectionDictionary(HDTSpecification & spec) : blocksiz
 
 FourSectionDictionary::~FourSectionDictionary()
 {
-	delete subjects;
-	delete predicates;
-	delete objects;
-	delete shared;
 }
 
 csd::CSD *loadSection(IteratorUCharString *iterator, uint32_t blocksize, ProgressListener *listener) {
@@ -101,44 +86,7 @@ std::string FourSectionDictionary::idToString(const unsigned int id, const Tripl
 }
 
 unsigned int FourSectionDictionary::stringToId(const std::string &key, const TripleComponentRole position)const
-{
-	unsigned int ret;
-
-        if(key.length()==0) {
-		return 0;
-        }
-
-	switch (position) {
-	case SUBJECT:
-		ret = shared->locate((const unsigned char *)key.c_str(), key.length());
-		if( ret != 0) {
-			return getGlobalId(ret,SHARED_SUBJECT);
-		}
-		ret = subjects->locate((const unsigned char *)key.c_str(), key.length());
-		if(ret != 0) {
-			return getGlobalId(ret,NOT_SHARED_SUBJECT);
-		}
-        return 0;
-	case PREDICATE:
-		ret = predicates->locate((const unsigned char *)key.c_str(), key.length());
-		if(ret!=0) {
-			return getGlobalId(ret, NOT_SHARED_PREDICATE);
-		}
-        return 0;
-
-	case OBJECT:
-		ret = shared->locate((const unsigned char *)key.c_str(), key.length());
-		if( ret != 0) {
-			return getGlobalId(ret,SHARED_OBJECT);
-		}
-		ret = objects->locate((const unsigned char *)key.c_str(), key.length());
-		if(ret != 0) {
-			return getGlobalId(ret,NOT_SHARED_OBJECT);
-		}
-        return 0;
-	}
-	return 0;
-}
+{}
 
 
 void FourSectionDictionary::load(std::istream & input, ControlInformation & ci, ProgressListener *listener)
@@ -502,6 +450,7 @@ unsigned int FourSectionDictionary::getLocalId(unsigned int mapping, unsigned in
 			if(mapping==MAPPING2) {
 				return id-shared->getLength();
 			} else {
+				//   WHY 2+ ?
 				return 2+id-shared->getLength()-subjects->getLength();
 			}
 		}

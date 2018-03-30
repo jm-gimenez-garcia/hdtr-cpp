@@ -64,6 +64,26 @@ public:
 	}
 };
 
+class CompositeIteratorUCharString:  public IteratorUCharString {
+private:
+	std::vector<IteratorUCharString*> vecItUCharStr;
+public:
+	CompositeIteratorUCharString(const std::vector<IteratorUCharString*>& vecIt): vecItUCharStr(vecIt){}
+	bool hasNext();
+	unsigned char* next();
+};
+
+class CachedIterator : public IteratorUCharString
+{
+	private:
+		IteratorUCharString* itUCharStr;
+		unsigned char* cachedValue;
+	public:
+		CachedIterator(IteratorUCharString* it) : itUCharStr(it), cachedValue(it->next()){}
+		const unsigned char* getNext()const{return cachedValue;}
+		int compare()const;
+};
+
 class VectorIteratorUCharString : public IteratorUCharString {
 private:
 	std::vector<std::string> &vector;

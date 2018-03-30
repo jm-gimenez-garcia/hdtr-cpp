@@ -112,12 +112,40 @@ csd::CSD *GraphsFourSectionDictionary::getDictionarySection(unsigned int id, Tri
 }
 
 unsigned int GraphsFourSectionDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) const{
+	switch (position) {
+	case NOT_SHARED_SUBJECT:
+		return graphs->getLength()+shared->getLength()+id;
+	case NOT_SHARED_OBJECT:
+		return (mapping==MAPPING2) ? graphs->getLength()+shared->getLength()+id : graphs->getLength()+shared->getLength()+subjects->getLength()+id;
+	case SHARED_SUBJECT:
+	case SHARED_OBJECT:
+		return graphs->getLength()+id;
+	case NOT_SHARED_GRAPH:
+		return id;
+	}
+
+	throw std::runtime_error("Item not found");
 	return (position == NOT_SHARED_GRAPH) ? id : BaseFourSectionDictionary::getGlobalId(mapping, id, position);
 }
 unsigned int GraphsFourSectionDictionary::getGlobalId(unsigned int id, DictionarySection position)const
 {return getGlobalId(mapping, id, position);}
 
 unsigned int GraphsFourSectionDictionary::getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position) const{
+	switch (position) {
+	case SUBJECT:
+		return (id<=shared->getLength()) ? id- graphs-getLength() : id - graphs-getLength() - shared->getLength();
+		break;
+	case OBJECT:
+		if(id<=shared->getLength()) 
+			return id - graphs->getLength();
+		else 
+			return (mapping==MAPPING2) ? id- graphs-getLength() - shared->getLength() : 2+id- graphs-getLength() - shared->getLength() - subjects->getLength();
+		break;
+	case GRAPH:
+		return id;
+	}
+
+	throw std::runtime_error("Item not found");
 	return (position==GRAPH) ? id : BaseFourSectionDictionary::getLocalId(mapping, id, position);
 }
 unsigned int GraphsFourSectionDictionary::getLocalId(unsigned int id, TripleComponentRole position)const

@@ -43,7 +43,8 @@ enum TripleComponentRole
 {
 	SUBJECT,	/** Subject */
 	PREDICATE,	/** Predicate */
-	OBJECT		/** Object */
+	OBJECT,		/** Object */
+	GRAPH		/** Graph */
 };
 
 enum DictionarySection
@@ -52,7 +53,8 @@ enum DictionarySection
 	NOT_SHARED_SUBJECT,
 	SHARED_OBJECT,
 	NOT_SHARED_OBJECT,
-	NOT_SHARED_PREDICATE
+	NOT_SHARED_PREDICATE,
+	NOT_SHARED_GRAPH
 };
 
 enum Mapping

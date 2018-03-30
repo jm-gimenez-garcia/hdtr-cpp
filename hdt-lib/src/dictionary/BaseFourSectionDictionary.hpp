@@ -104,9 +104,9 @@ public:
 
 protocted:
 	virtual csd::CSD *getDictionarySection(unsigned int id, TripleComponentRole position)const;
-	virtual unsigned int getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position)const;
+	virtual unsigned int getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position)const=0;
 	virtual unsigned int getGlobalId(unsigned int id, DictionarySection position)const=0;
-	virtual unsigned int getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position)const;
+	virtual unsigned int getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position)const=0;
 	virtual unsigned int getLocalId(unsigned int id, TripleComponentRole position)const=0;
 
 protected:

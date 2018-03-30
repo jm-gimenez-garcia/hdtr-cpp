@@ -31,6 +31,22 @@ namespace std { using namespace __gnu_cxx; }
 
 namespace hdt {
 
+struct DictionaryEntry {
+public:
+	unsigned int id;
+	char *str;
+
+	bool static cmpLexicographic(DictionaryEntry *c1, DictionaryEntry *c2);
+	bool static cmpID(DictionaryEntry *c1, DictionaryEntry *c2);
+};
+
+struct str_cmp {
+	bool operator()(const char* s1, const char* s2) const {
+		return strcmp(s1, s2) == 0;
+	}
+};
+
+typedef std::pair<const char*, DictionaryEntry *> DictEntryPair;
 
 #ifdef GOOGLE_HASH 
 typedef sparse_hash_map<const char *, DictionaryEntry *, hash<const char *>, str_cmp> DictEntryHash;
@@ -76,10 +92,10 @@ public:
 	virtual void insertFourthRegion(IntermediateListener& iListener, const std::string& line, unsigned int& numLine, unsigned int& numElements)=0;
 	virtual void getFourthSectionSize()const=0;
 	unsigned int insert(const std::string &str, const TripleComponentRole position);
-	virtual unsigned int getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position)const;
+	virtual unsigned int getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position)const=0;
 	unsigned int getGlobalId(unsigned int id, DictionarySection position)const;
-	virtual unsigned int getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position)const;
-	unsigned int getLocalId(unsigned int id, TripleComponentRole position)const;
+	virtual unsigned int getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position)const=0;
+	unsigned int getLocalId(unsigned int id, TripleComponentRole position)const=0;
 	unsigned int getMaxID();
 	virtual void updateID(unsigned int oldid, unsigned int newid, DictionarySection position);
 
@@ -144,7 +160,7 @@ private:
 	std::vector<DictionaryEntry *> &vector;
     size_t pos;
 public:
-	DictIterator(std::vector<DictionaryEntry *> &vector) : vector(vector), pos(0){
+	DictIterator(std::vector<DictionaryEntry *> &vec) : vector(vec), pos(0){
 
 	}
 	virtual ~DictIterator() { }

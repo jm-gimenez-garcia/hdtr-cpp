@@ -100,11 +100,33 @@ const vector<DictionaryEntry*>& GraphsPlainDictionary::getDictionaryEntryVector(
 }
 
 unsigned int GraphsPlainDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) const
-{
-	return (position==NOT_SHARED_GRAPH) ? id+1 : BasePlainDictionary::getGlobalId(mapping, id, position);
+{	
+		switch (position) {
+		case NOT_SHARED_SUBJECT:
+			return graphs.size()+shared.size()+id+1;
+		case NOT_SHARED_OBJECT:
+			if(mapping==MAPPING2) ? graphs.size()+shared.size()+id+1 : graphs.size()+shared.size()+subjects.size()+id+1;
+		case SHARED_SUBJECT:
+		case SHARED_OBJECT:
+			return graphs.size()+id+1;
+		case NOT_SHARED_GRAPH:
+			return id+1;
+	}
+	throw std::runtime_error("Item not found");
 }
 unsigned int GraphsPlainDictionary::getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position) const{
-	return (position==GRAPH) ? id-1 :  BasePlainDictionary::getLocalId(mapping, id, position);
+	switch (position) {
+		case SUBJECT:
+			return (id<=shared.size()) ? id-graphs.size()-1 : id-graphs.size()-shared.size()-1;
+		case OBJECT:
+			if(id<=shared.size())
+				return id-graphs.size()-1;
+			else
+				return (mapping==MAPPING2) ? id-graphs.size()-shared.size()-1 : id-graphs.size()-shared.size()-subjects.size()-1;
+		case GRAPH:
+			return id-1;
+	}
+	throw std::runtime_error("Item not found");
 }
 void GraphsPlainDictionary::updateID(unsigned int oldid, unsigned int newid, DictionarySection position) {
 	if (position==NOT_SHARED_GRAPH)

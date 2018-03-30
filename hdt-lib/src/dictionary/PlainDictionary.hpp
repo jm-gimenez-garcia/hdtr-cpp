@@ -61,22 +61,6 @@ namespace std { using namespace __gnu_cxx; }
 
 namespace hdt {
 
-struct DictionaryEntry {
-public:
-	unsigned int id;
-	char *str;
-
-	bool static cmpLexicographic(DictionaryEntry *c1, DictionaryEntry *c2);
-	bool static cmpID(DictionaryEntry *c1, DictionaryEntry *c2);
-};
-
-struct str_cmp {
-	bool operator()(const char* s1, const char* s2) const {
-		return strcmp(s1, s2) == 0;
-	}
-};
-
-typedef std::pair<const char*, DictionaryEntry *> DictEntryPair;
 
 #ifdef GOOGLE_HASH 
 typedef sparse_hash_map<const char *, DictionaryEntry *, hash<const char *>, str_cmp> DictEntryHash;

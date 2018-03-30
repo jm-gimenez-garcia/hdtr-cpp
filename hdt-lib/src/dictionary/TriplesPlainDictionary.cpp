@@ -103,10 +103,38 @@ const vector<DictionaryEntry*>& TriplesPlainDictionary::getDictionaryEntryVector
 {return (position==PREDICATE) ? predicates : BasePlainDictionary::getDictionaryEntryVector(id, position);}
 
 unsigned int TriplesPlainDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) const
-{return (position==NOT_SHARED_PREDICATE) ? id+1 : BasePlainDictionary::getGlobalId(mapping, id, position);}
-unsigned int TriplesPlainDictionary::getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position) const
-{return (position==PREDICATE) ? id-1 :  BasePlainDictionary::getLocalId(mapping, id, position);}
+{
 
+	switch (position) {
+		case NOT_SHARED_SUBJECT:
+			return shared.size()+id+1;
+		case NOT_SHARED_OBJECT:
+			if(mapping==MAPPING2) ? shared.size()+id+1 : shared.size()+subjects.size()+id+1;
+		case SHARED_SUBJECT:
+		case SHARED_OBJECT:
+			return id+1;
+		case NOT_SHARED_PREDICATE:
+			return id+1;
+	}
+	throw std::runtime_error("Item not found");
+}
+unsigned int TriplesPlainDictionary::getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position) const
+return (position==NOT_SHARED_PREDICATE) ? id+1 : BasePlainDictionary::getGlobalId(mapping, id, position);
+{
+
+	switch (position) {
+		case SUBJECT:
+			return (id<=shared.size()) ? id-1 : id-shared.size()-1;
+		case OBJECT:
+			if(id<=shared.size())
+				return id-1;
+			else
+				return (mapping==MAPPING2) ? id-shared.size()-1 : id-shared.size()-subjects.size()-1;
+		case PREDICATE:
+			return id-1;
+	}
+	throw std::runtime_error("Item not found");
+}
 void TriplesPlainDictionary::updateID(unsigned int oldid, unsigned int newid, DictionarySection position) 
 {
 	if (position==NOT_SHARED_PREDICATE)

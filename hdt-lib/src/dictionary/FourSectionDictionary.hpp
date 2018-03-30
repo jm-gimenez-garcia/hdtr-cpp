@@ -41,11 +41,7 @@
 namespace hdt {
 
 class FourSectionDictionary : public Dictionary {
-private:
-	csd::CSD *subjects;
-	csd::CSD *predicates;
-	csd::CSD *objects;
-	csd::CSD *shared;
+protected:
 
 	unsigned int mapping;
 	uint64_t sizeStrings;
@@ -66,15 +62,7 @@ public:
 
     uint64_t size();
 
-	unsigned int getNsubjects();
-	unsigned int getNpredicates();
-	unsigned int getNobjects();
-	unsigned int getNshared();
-
 	unsigned int getMaxID();
-	unsigned int getMaxSubjectID();
-	unsigned int getMaxPredicateID();
-	unsigned int getMaxObjectID();
 
 	void populateHeader(Header &header, string rootNode);
 	void save(std::ostream &output, ControlInformation &ci, ProgressListener *listener = NULL);
@@ -84,22 +72,18 @@ public:
 
     void import(Dictionary *other, ProgressListener *listener=NULL);
 
-    IteratorUCharString *getSubjects();
-    IteratorUCharString *getPredicates();
-    IteratorUCharString *getObjects();
-    IteratorUCharString *getShared();
 
 	string getType();
 	unsigned int getMapping();
 
     void getSuggestions(const char *base, TripleComponentRole role, std::vector<string> &out, int maxResults);
 
-private:
-	csd::CSD *getDictionarySection(unsigned int id, TripleComponentRole position)const;
-	unsigned int getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position)const;
-	unsigned int getGlobalId(unsigned int id, DictionarySection position)const;
-	unsigned int getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position)const;
-	unsigned int getLocalId(unsigned int id, TripleComponentRole position)const;
+protected:
+	virtual csd::CSD *getDictionarySection(unsigned int id, TripleComponentRole position)const = 0;
+	virtual unsigned int getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position)const=0;
+	virtual unsigned int getGlobalId(unsigned int id, DictionarySection position)const=0;
+	virtual unsigned int getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position)const=0;
+	virtual unsigned int getLocalId(unsigned int id, TripleComponentRole position)const=0;
 };
 
 }
