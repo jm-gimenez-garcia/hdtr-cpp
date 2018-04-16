@@ -1,3 +1,6 @@
+#include <QFileDialog>
+#include <QMessageBox>
+
 #include "hdtspecform.hpp"
 #include "ui_hdtspecform.h"
 
@@ -33,12 +36,6 @@ void HDTSpecForm::on_triplesTypeCombo_currentIndexChanged(int index)
     case 2:
         // PlainTriples
         ui->streamXcombo->setEnabled(true);
-        ui->streamYcombo->setEnabled(true);
-        ui->streamZcombo->setEnabled(true);
-        break;
-    case 3:
-        // CompactTriples
-        ui->streamXcombo->setEnabled(false);
         ui->streamYcombo->setEnabled(true);
         ui->streamZcombo->setEnabled(true);
         break;
@@ -142,10 +139,6 @@ void HDTSpecForm::fillHDTSpecification(hdt::HDTSpecification &hdt)
     case 2:
         // PlainTriples
         hdt.set("triples.type", hdt::HDTVocabulary::TRIPLES_TYPE_PLAIN);
-        break;
-    case 3:
-        // CompactTriples
-        hdt.set("triples.type", hdt::HDTVocabulary::TRIPLES_TYPE_COMPACT);
         break;
     }
 
