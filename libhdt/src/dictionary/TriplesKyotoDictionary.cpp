@@ -67,7 +67,10 @@ unsigned int TriplesKyotoDictionary::getGlobalId(unsigned int mapping, unsigned 
 
 unsigned int TriplesKyotoDictionary::getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position) const{
 	if(position==PREDICATE) 
-		return id-1;
+		if (id <= predicates.count())
+			return id-1;
+		else
+			throw std::runtime_error("This globalID does not correspond to a PREDICATE");
 	else
 		return BaseKyotoDictionary::getLocalId(mapping,id, position);
 }

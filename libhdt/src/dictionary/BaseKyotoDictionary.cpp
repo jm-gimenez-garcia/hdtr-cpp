@@ -197,17 +197,45 @@ unsigned int BaseKyotoDictionary::getGlobalId(unsigned int mapping, unsigned int
 }
 
 unsigned int BaseKyotoDictionary::getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position) const{
+
+	const unsigned int sh_length = shared.count();
+	const unsigned int sub_length = subjects.count();
+	const unsigned int obj_length = objects.count();
+
 	switch (position) {
 		case SUBJECT:
-			return (id<=shared.count()) ? id-1 : id-shared.count()-1; 
-		case OBJECT:
-			if(id<=shared.count())
+			if(id<=sh_length)
 				return id-1;
-			else 
-				return (mapping==MAPPING2) ? id-shared.count()-1 : id-shared.count()-subjects.count()-1; 
-		}
+			else if(id <= sh_length+sub_length)
+				return id-sh_length-1;
+			else
+				throw std::runtime_error("This globalID does not correspond to a SUBJECT");
+			break;
+		case OBJECT:
+			if(id <= sh_length) 
+				return id-1;
+			else if (mapping==MAPPING1) 
+			{	
+				if ( (id <= sh_length + sub_length + obj_length) && (id > sh_length + sub_length) )
+					return id - sh_length - sub_length-1;
+				else
+					throw std::runtime_error("This globalID does not correspond to a SUBJECT");
 
-		throw std::runtime_error("Item not found");
+			}
+			else if (mapping==MAPPING2)
+			{
+				if (id <= sh_length + sub_length)
+					return id - sh_length-1 ;
+				else
+					throw std::runtime_error("This globalID does not correspond to a SUBJECT");
+			}
+			else
+				throw std::runtime_error("Uknown mapping");
+			break;
+	}
+	throw std::runtime_error("Item not found");
+
+
 }
 
 

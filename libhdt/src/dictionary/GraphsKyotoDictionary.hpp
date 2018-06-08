@@ -10,7 +10,7 @@ public:
 
 public:
 	GraphsKyotoDictionary(){};
-	~GraphsKyotoDictionary();
+	virtual ~GraphsKyotoDictionary();
 
     IteratorUCharString *getGraphs()const;
 	size_t getNumberOfElements();

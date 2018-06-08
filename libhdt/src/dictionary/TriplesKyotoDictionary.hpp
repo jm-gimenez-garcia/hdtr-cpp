@@ -10,7 +10,7 @@ public:
 
 public:
 	TriplesKyotoDictionary(){};
-	~TriplesKyotoDictionary();
+	virtual ~TriplesKyotoDictionary();
 
     IteratorUCharString *getPredicates()const;
 	size_t getNumberOfElements()const;

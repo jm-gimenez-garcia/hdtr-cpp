@@ -49,7 +49,7 @@ void GraphsPlainDictionary::saveFourthSection(std::ostream &output, ProgressList
 void GraphsPlainDictionary::insertFourthRegion(IntermediateListener& iListener, const std::string& line, unsigned int& numLine, unsigned int& numElements)
 {
 	NOTIFYCOND(&iListener, "Dictionary loading graphs.", numLine, numElements);
-	insert(line, NOT_SHARED_GRAPH);	
+	insert(line, UNUSED_GRAPH);	
 }
 
 void GraphsPlainDictionary::insertFourthElement(const std::string & str, const TripleComponentRole& pos)
@@ -75,7 +75,7 @@ void GraphsPlainDictionary::insertFourthElement(const std::string & str, const T
 }
 void GraphsPlainDictionary::insert(const string& str, const DictionarySection& pos) {
 
-	if(pos!=NOT_SHARED_GRAPH)
+	if(pos!=UNUSED_GRAPH)
 		BasePlainDictionary::insert(str, pos);
 	else
 	{
@@ -91,7 +91,7 @@ void GraphsPlainDictionary::insert(const string& str, const DictionarySection& p
 
 void GraphsPlainDictionary::updateIDs() {
 	for (unsigned int i = 0; i < predicates.size(); i++) 
-		graphs[i]->id = getGlobalId(i, NOT_SHARED_GRAPH);
+		graphs[i]->id = getGlobalId(i, UNUSED_GRAPH);
 	BasePlainDictionary::updateIDs();
 }
 
@@ -101,35 +101,57 @@ const vector<DictionaryEntry*>& GraphsPlainDictionary::getDictionaryEntryVector(
 
 unsigned int GraphsPlainDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) const
 {	
-		switch (position) {
-		case NOT_SHARED_SUBJECT:
-			return graphs.size()+shared.size()+id+1;
-		case NOT_SHARED_OBJECT:
-			if(mapping==MAPPING2) ? graphs.size()+shared.size()+id+1 : graphs.size()+shared.size()+subjects.size()+id+1;
-		case SHARED_SUBJECT:
-		case SHARED_OBJECT:
-			return graphs.size()+id+1;
-		case NOT_SHARED_GRAPH:
-			return id+1;
+	if(position==UNUSED_GRAPH)
+	{
+		if(mapping==MAPPING1)
+			return shared.size()+subjects.size()+objects.size()+id+1;
+		else if(mapping==MAPPING2)
+		{
+			unsigned int max_s_o = (subjects.size()>objects.size()) ? subjects.size() : objects.size();
+			return shared.size()+max_s_o+id+1;
+		}
+		else
+			throw std::runtime_error("Unknown mapping");
 	}
-	throw std::runtime_error("Item not found");
+	else
+		return BasePlainDictionary::getGlobalId(mapping, id, position);
 }
 unsigned int GraphsPlainDictionary::getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position) const{
-	switch (position) {
-		case SUBJECT:
-			return (id<=shared.size()) ? id-graphs.size()-1 : id-graphs.size()-shared.size()-1;
-		case OBJECT:
-			if(id<=shared.size())
-				return id-graphs.size()-1;
-			else
-				return (mapping==MAPPING2) ? id-graphs.size()-shared.size()-1 : id-graphs.size()-shared.size()-subjects.size()-1;
-		case GRAPH:
-			return id-1;
+
+	const unsigned int sh_length = shared.size();
+	const unsigned int sub_length = subjects.size();
+	const unsigned int obj_length = objects.size();
+	const unsigned int gr_length = graphs.size();
+	unsigned int last_obj_sub_glob_id;
+	unsigned int last_gr_glob_id;
+
+	if(mapping==MAPPING1)
+	{
+		last_obj_sub_glob_id = sh_length + sub_length+obj_length;
+		last_gr_glob_id  = last_obj_sub_glob_id + gr_length;
 	}
-	throw std::runtime_error("Item not found");
+	else if (mapping==MAPPING2)
+	{
+		const unsigned int max_sub_obj_length = (obj_length>sub_length) ? obj_length : sub_length;
+		last_obj_sub_glob_id = sh_length + max_sub_obj_length ;
+		last_gr_glob_id = last_obj_sub_glob_id + gr_length;
+	}
+	else
+		throw std::runtime_error("Unknown mapping");
+
+	if(position==GRAPH)
+		if(id>last_obj_sub_glob_id && id<=last_gr_glob_id)
+			return id-last_obj_sub_glob_id;
+		else
+			throw std::runtime_error("This globalID does not correspond to an unused graph");
+	else
+		return BaseFourSectionDictionary::getLocalId(mapping, id, position);
+
+
+
 }
 void GraphsPlainDictionary::updateID(unsigned int oldid, unsigned int newid, DictionarySection position) {
-	if (position==NOT_SHARED_GRAPH)
+	if (position==UNUSED_GRAPH)
 		graphs[oldid]->id = newid;
 	else
 		BasePlainDictionary::updateID(oldid, newid, position);

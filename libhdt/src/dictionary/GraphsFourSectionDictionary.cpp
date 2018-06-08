@@ -39,7 +39,7 @@ unsigned int GraphsFourSectionDictionary::stringToId(const std::string &key, con
 			return 0;
 		ret = graphs->locate((const unsigned char *)key.c_str(), key.length());
 		if(ret!=0) 
-			return getGlobalId(ret, NOT_SHARED_GRAPH);
+			return getGlobalId(ret, UNUSED_GRAPH);
         	return 0;
 	}
 }
@@ -113,7 +113,7 @@ csd::CSD *GraphsFourSectionDictionary::getDictionarySection(unsigned int id, Tri
 
 unsigned int GraphsFourSectionDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) const{
 
-	if(position==NOT_SHARED_GRAPH)
+	if(position==UNUSED_GRAPH)
 	{
 		if(mapping==MAPPING1)
 			return id+shared->getLength()+subjects->getLength()+objects->getLength();
@@ -131,18 +131,34 @@ unsigned int GraphsFourSectionDictionary::getGlobalId(unsigned int mapping, unsi
 }
 
 unsigned int GraphsFourSectionDictionary::getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position) const{
-	if(position==GRAPH)
+
+
+	const unsigned int sh_length = shared->getLength();
+	const unsigned int sub_length = subjects->getLength();
+	const unsigned int obj_length = objects->getLength();
+	const unsigned int gr_length = graphs->getLength();
+	unsigned int last_obj_sub_glob_id;
+	unsigned int last_gr_glob_id;
+
+	if(mapping==MAPPING1)
 	{
-		if(mapping==MAPPING1)
-			return id-shared->getLength()-subjects->getLength()-objects->getLength();
-		else if (mapping==MAPPING2)
-		{
-			unsigned int max_s_o = (subjects->getLength() > objects->getLength()) ? subjects->getLength() : objects->getLength();
-			return id-shared->getLength()-max_s_o;
-		}
-		else
-			throw std::runtime_error("Unknown mapping");
+		last_obj_sub_glob_id = sh_length + sub_length+obj_length;
+		last_gr_glob_id  = last_obj_sub_glob_id + gr_length;
 	}
+	else if (mapping==MAPPING2)
+	{
+		const unsigned int max_sub_obj_length = (obj_length>sub_length) ? obj_length : sub_length;
+		last_obj_sub_glob_id = sh_length + max_sub_obj_length ;
+		last_gr_glob_id = last_obj_sub_glob_id + gr_length;
+	}
+	else
+		throw std::runtime_error("Unknown mapping");
+
+	if(position==GRAPH)
+		if(id>last_obj_sub_glob_id && id<=last_gr_glob_id)
+			return id-last_obj_sub_glob_id;
+		else
+			throw std::runtime_error("This globalID does not correspond to an unused graph");
 	else
 		return BaseFourSectionDictionary::getLocalId(mapping, id, position);
 }

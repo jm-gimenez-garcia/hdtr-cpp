@@ -411,18 +411,41 @@ unsigned int BaseFourSectionDictionary::getGlobalId(unsigned int mapping, unsign
 
 unsigned int BaseFourSectionDictionary::getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position) const{
 
-	switch (position) {
-	case SUBJECT:
-		return (id<=shared->getLength()) ? id : id - shared->getLength();
-		break;
-	case OBJECT:
-		if(id<=shared->getLength()) 
-			return id;
-		else 
-			return (mapping==MAPPING2) ? id-shared->getLength() : 2+id-shared->getLength()-subjects->getLength();
-		break;
-	}
+	const unsigned int sh_length = shared->getLength();
+	const unsigned int sub_length = subjects->getLength();
+	const unsigned int obj_length = objects->getLength();
 
+	switch (position) {
+		case SUBJECT:
+			if(id<=sh_length)
+				return id;
+			else if(id <= sh_length+sub_length)
+				return id-sh_length;
+			else
+				throw std::runtime_error("This globalID does not correspond to a SUBJECT");
+			break;
+		case OBJECT:
+			if(id <= sh_length) 
+				return id;
+			else if (mapping==MAPPING1) 
+			{	
+				if ( (id <= sh_length + sub_length + obj_length) && (id > sh_length + sub_length) )
+					return id - sh_length - sub_length;
+				else
+					throw std::runtime_error("This globalID does not correspond to a SUBJECT");
+
+			}
+			else if (mapping==MAPPING2)
+			{
+				if (id <= sh_length + sub_length)
+					return id - sh_length ;
+				else
+					throw std::runtime_error("This globalID does not correspond to a SUBJECT");
+			}
+			else
+				throw std::runtime_error("Uknown mapping");
+			break;
+	}
 	throw std::runtime_error("Item not found");
 
 }

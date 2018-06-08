@@ -28,7 +28,7 @@ unsigned int GraphsKyotoDictionary::stringToId(const std::string &key, const Tri
 		unsigned int ret;
 		if(key.length()==0 || key.at(0) == '?') 
 			return 0;
-		return graphs.get((const char *)key.c_str(),(size_t)key.length(), (char *) &ret, sizeof(ret)) ? getGlobalId(ret, NOT_SHARED_GRAPH) : 0;
+		return graphs.get((const char *)key.c_str(),(size_t)key.length(), (char *) &ret, sizeof(ret)) ? getGlobalId(ret, UNUSED_GRAPH) : 0;
 	}
 }
 
@@ -57,7 +57,7 @@ unsigned int GraphsKyotoDictionary::insert(const std::string & str, const Triple
 }
 
 unsigned int GraphsKyotoDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) const{
-	if(position == NOT_SHARED_GRAPH)
+	if(position == UNUSED_GRAPH)
 	{
 		if(mapping==MAPPING1)
 			return shared.count()+subjects.count()+objects.count()+id+1;
@@ -76,20 +76,37 @@ unsigned int GraphsKyotoDictionary::getGlobalId(unsigned int mapping, unsigned i
 
 
 unsigned int GraphsKyotoDictionary::getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position) const{
-	if(position==GRAPH)
+
+
+	const unsigned int sh_length = shared.count();
+	const unsigned int sub_length = subjects.count();
+	const unsigned int obj_length = objects.count();
+	const unsigned int gr_length = graphs.count();
+	unsigned int last_obj_sub_glob_id;
+	unsigned int last_gr_glob_id;
+
+
+	if(mapping==MAPPING1)
 	{
-		if(mapping==MAPPING1)
-			return id-shared.count()-subjects.count()-objects.count()-1;
-		else if(mapping==MAPPING2)
-		{
-			unsigned int max_s_o = (subjects.count()>objects.count()) ? subjects.count() : objects.count();
-			return id-shared.count()-max_s_o-1;
-		}
-		else
-			throw std::runtime_error("Unknown mapping");
+		last_obj_sub_glob_id = sh_length + sub_length+obj_length;
+		last_gr_glob_id  = last_obj_sub_glob_id + gr_length;
+	}
+	else if (mapping==MAPPING2)
+	{
+		const unsigned int max_sub_obj_length = (obj_length>sub_length) ? obj_length : sub_length;
+		last_obj_sub_glob_id = sh_length + max_sub_obj_length ;
+		last_gr_glob_id = last_obj_sub_glob_id + gr_length;
 	}
 	else
-		return BaseKyotoDictionary::getLocalId(mapping,id, position);
+		throw std::runtime_error("Unknown mapping");
+
+	if(position==GRAPH)
+		if(id>last_obj_sub_glob_id && id<=last_gr_glob_id)
+			return id-last_obj_sub_glob_id-1;
+		else
+			throw std::runtime_error("This globalID does not correspond to an unused graph");
+	else
+		return BaseFourSectionDictionary::getLocalId(mapping, id, position);
 
 }
 

@@ -503,7 +503,18 @@ const vector<DictionaryEntry*> &BasePlainDictionary::getDictionaryEntryVector(un
 	throw std::runtime_error("Item not found");
 }
 
-//unsigned int BasePlainDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) const{
+unsigned int BasePlainDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) const{
+	switch (position) {
+		case NOT_SHARED_SUBJECT:
+			return shared.size()+id+1;
+		case NOT_SHARED_OBJECT:
+			if(mapping==MAPPING2) ? shared.size()+id+1 : shared.size()+subjects.size()+id+1;
+		case SHARED_SUBJECT:
+		case SHARED_OBJECT:
+			return id+1;
+	}
+	throw std::runtime_error("Item not found");
+
 }
 
 
@@ -511,7 +522,48 @@ unsigned int BasePlainDictionary::getGlobalId(unsigned int id, DictionarySection
 	return getGlobalId(mapping, id, position);
 }
 
-//unsigned int BasePlainDictionary::getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position) const{}
+unsigned int BasePlainDictionary::getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position) const{
+
+	const unsigned int sh_length = shared.size();
+	const unsigned int sub_length = subjects.size();
+	const unsigned int obj_length = objects.size();
+
+	switch (position) {
+		case SUBJECT:
+			if(id<=sh_length)
+				return id-1;
+			else if(id <= sh_length+sub_length)
+				return id-sh_length-1;
+			else
+				throw std::runtime_error("This globalID does not correspond to a SUBJECT");
+			break;
+		case OBJECT:
+			if(id <= sh_length) 
+				return id-1;
+			else if (mapping==MAPPING1) 
+			{	
+				if ( (id <= sh_length + sub_length + obj_length) && (id > sh_length + sub_length) )
+					return id - sh_length - sub_length-1;
+				else
+					throw std::runtime_error("This globalID does not correspond to a SUBJECT");
+
+			}
+			else if (mapping==MAPPING2)
+			{
+				if (id <= sh_length + sub_length)
+					return id - sh_length -1 ;
+				else
+					throw std::runtime_error("This globalID does not correspond to a SUBJECT");
+			}
+			else
+				throw std::runtime_error("Uknown mapping");
+			break;
+	}
+	throw std::runtime_error("Item not found");
+
+
+
+}
 
 unsigned int BasePlainDictionary::getLocalId(unsigned int id, TripleComponentRole position) const{
 	return getLocalId(mapping,id,position);

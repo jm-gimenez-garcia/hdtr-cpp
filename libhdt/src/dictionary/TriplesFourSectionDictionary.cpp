@@ -119,7 +119,10 @@ unsigned int TriplesFourSectionDictionary::getGlobalId(unsigned int mapping, uns
 unsigned int TriplesFourSectionDictionary::getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position) const{
 
 	if(position==PREDICATE)
-		return id;
+		if (id <= predicates->getLength())
+			return id;
+		else
+			throw std::runtime_error("This globalID does not correspond to a PREDICATE");
 	else
 		return BaseFourSectionDictionary::getLocalId(mapping, id, position);
 

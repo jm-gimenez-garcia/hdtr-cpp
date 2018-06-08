@@ -14,7 +14,7 @@ private:
 
 public:
 	GraphsPlainDictionary(){}
-	~GraphsPlainDictionary(){}
+	virtual ~GraphsPlainDictionary(){}
 	unsigned int stringToId(const std::string &str, const TripleComponentRole position)const;
 	void saveFourthSection(std::ostream &output, ProgressListener *listener, unsigned int& counter, const char marker);
 	void insertFourthRegion(IntermediateListener& iListener, const std::string& line, unsigned int& numLine, unsigned int& numElements);
