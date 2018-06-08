@@ -109,45 +109,21 @@ csd::CSD *TriplesFourSectionDictionary::getDictionarySection(unsigned int id, Tr
 
 unsigned int TriplesFourSectionDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) const{
 
-	switch (position) {
-	case NOT_SHARED_SUBJECT:
-		return shared->getLength()+id;
-	case NOT_SHARED_OBJECT:
-		return (mapping==MAPPING2) ? shared->getLength()+id : shared->getLength()+subjects->getLength()+id;
-	case SHARED_SUBJECT:
-	case SHARED_OBJECT:
+	if(position==NOT_SHARED_PREDICATE)
 		return id;
-	case NOT_SHARED_PREDICATE:
-		return id;
-	}
-
-	throw std::runtime_error("Item not found");
+	else
+		return BaseFourSectionDictionary::getGlobalId(mapping, id, position);
 }
-unsigned int TriplesFourSectionDictionary::getGlobalId(unsigned int id, DictionarySection position)const
-{return getGlobalId(mapping, id, position);}
 
 
 unsigned int TriplesFourSectionDictionary::getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position) const{
 
-	switch (position) {
-	case SUBJECT:
-		return (id<=shared->getLength()) ? id : id - shared->getLength();
-		break;
-	case OBJECT:
-		if(id<=shared->getLength()) 
-			return id;
-		else 
-			return (mapping==MAPPING2) ? id-shared->getLength() : 2+id-shared->getLength()-subjects->getLength();
-		break;
-	case PREDICATE:
+	if(position==PREDICATE)
 		return id;
-	}
-
-	throw std::runtime_error("Item not found");
+	else
+		return BaseFourSectionDictionary::getLocalId(mapping, id, position);
 
 }
-unsigned int TriplesFourSectionDictionary::getLocalId(unsigned int id, TripleComponentRole position)const
-{return getLocalId(mapping,id,position);}
 
 
 void TriplesFourSectionDictionary::getSuggestions(const char *base, hdt::TripleComponentRole role, std::vector<std::string> &out, int maxResults)

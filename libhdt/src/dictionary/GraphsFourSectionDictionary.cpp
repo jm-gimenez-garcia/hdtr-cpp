@@ -112,44 +112,40 @@ csd::CSD *GraphsFourSectionDictionary::getDictionarySection(unsigned int id, Tri
 }
 
 unsigned int GraphsFourSectionDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) const{
-	switch (position) {
-	case NOT_SHARED_SUBJECT:
-		return graphs->getLength()+shared->getLength()+id;
-	case NOT_SHARED_OBJECT:
-		return (mapping==MAPPING2) ? graphs->getLength()+shared->getLength()+id : graphs->getLength()+shared->getLength()+subjects->getLength()+id;
-	case SHARED_SUBJECT:
-	case SHARED_OBJECT:
-		return graphs->getLength()+id;
-	case NOT_SHARED_GRAPH:
-		return id;
-	}
 
-	throw std::runtime_error("Item not found");
-	return (position == NOT_SHARED_GRAPH) ? id : BaseFourSectionDictionary::getGlobalId(mapping, id, position);
+	if(position==NOT_SHARED_GRAPH)
+	{
+		if(mapping==MAPPING1)
+			return id+shared->getLength()+subjects->getLength()+objects->getLength();
+		else if (mapping==MAPPING2)
+		{
+			unsigned int max_s_o = (subjects->getLength() > objects->getLength()) ? subjects->getLength() : objects->getLength();
+			return id+shared->getLength()+max_s_o;
+		}
+		else
+			throw std::runtime_error("Unknown mapping");
+		return shared->getLength()+max_s_o+id;
+	}
+	else
+		return BaseFourSectionDictionary::getGlobalId(mapping, id, position);
 }
-unsigned int GraphsFourSectionDictionary::getGlobalId(unsigned int id, DictionarySection position)const
-{return getGlobalId(mapping, id, position);}
 
 unsigned int GraphsFourSectionDictionary::getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position) const{
-	switch (position) {
-	case SUBJECT:
-		return (id<=shared->getLength()) ? id- graphs-getLength() : id - graphs-getLength() - shared->getLength();
-		break;
-	case OBJECT:
-		if(id<=shared->getLength()) 
-			return id - graphs->getLength();
-		else 
-			return (mapping==MAPPING2) ? id- graphs-getLength() - shared->getLength() : 2+id- graphs-getLength() - shared->getLength() - subjects->getLength();
-		break;
-	case GRAPH:
-		return id;
+	if(position==GRAPH)
+	{
+		if(mapping==MAPPING1)
+			return id-shared->getLength()-subjects->getLength()-objects->getLength();
+		else if (mapping==MAPPING2)
+		{
+			unsigned int max_s_o = (subjects->getLength() > objects->getLength()) ? subjects->getLength() : objects->getLength();
+			return id-shared->getLength()-max_s_o;
+		}
+		else
+			throw std::runtime_error("Unknown mapping");
 	}
-
-	throw std::runtime_error("Item not found");
-	return (position==GRAPH) ? id : BaseFourSectionDictionary::getLocalId(mapping, id, position);
+	else
+		return BaseFourSectionDictionary::getLocalId(mapping, id, position);
 }
-unsigned int GraphsFourSectionDictionary::getLocalId(unsigned int id, TripleComponentRole position)const
-{return getLocalId(mapping,id,position);}
 
 void GraphsFourSectionDictionary::getSuggestions(const char *base, hdt::TripleComponentRole role, std::vector<std::string> &out, int maxResults)
 {

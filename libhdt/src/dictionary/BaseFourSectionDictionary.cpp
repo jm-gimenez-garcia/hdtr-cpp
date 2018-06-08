@@ -224,7 +224,7 @@ void BaseFourSectionDictionary::loadObjects(unsigned char *ptr, unsigned char *p
 
 
 
-void TriplesFourSectionDictionary::import(Dictionary *other, ProgressListener *listener) 
+void BaseFourSectionDictionary::import(Dictionary *other, ProgressListener *listener) 
 {
 	try 
 	{
@@ -286,7 +286,7 @@ IteratorUCharString *BaseFourSectionDictionary::getShared()const {
 
 
 
-void TriplesFourSectionDictionary::save(std::ostream& output, ControlInformation & controlInformation, ProgressListener *listener){
+void BaseFourSectionDictionary::save(std::ostream& output, ControlInformation & controlInformation, ProgressListener *listener){
 
 	IntermediateListener iListener(listener);
 
@@ -393,10 +393,41 @@ csd::CSD *BaseFourSectionDictionary::getDictionarySection(unsigned int id, Tripl
 	throw std::runtime_error("Item not found");
 }
 
-//unsigned int BaseFourSectionDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) const{}
+unsigned int BaseFourSectionDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) const{
 
-//unsigned int BaseFourSectionDictionary::getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position) const{
+	switch (position) {
+		case NOT_SHARED_SUBJECT:
+			return shared->getLength()+id;
+		case NOT_SHARED_OBJECT:
+			return (mapping==MAPPING2) ? shared->getLength()+id : shared->getLength()+subjects->getLength()+id;
+		case SHARED_SUBJECT:
+		case SHARED_OBJECT:
+			return id;
+	}
+
+	throw std::runtime_error("Item not found");
 }
+
+
+unsigned int BaseFourSectionDictionary::getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position) const{
+
+	switch (position) {
+	case SUBJECT:
+		return (id<=shared->getLength()) ? id : id - shared->getLength();
+		break;
+	case OBJECT:
+		if(id<=shared->getLength()) 
+			return id;
+		else 
+			return (mapping==MAPPING2) ? id-shared->getLength() : 2+id-shared->getLength()-subjects->getLength();
+		break;
+	}
+
+	throw std::runtime_error("Item not found");
+
+}
+
+
 
 void BaseFourSectionDictionary::getSuggestions(const char *base, hdt::TripleComponentRole role, std::vector<std::string> &out, int maxResults)
 {

@@ -67,9 +67,7 @@ public:
 private:
 	csd::CSD* getDictionarySection(unsigned int id, TripleComponentRole position) const;
 	unsigned int getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position)const;
-	unsigned int getGlobalId(unsigned int id, DictionarySection position)const;
 	unsigned int getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position)const;
-	unsigned int getLocalId(unsigned int id, TripleComponentRole position)const;
 
 protected:
 	void clear();
