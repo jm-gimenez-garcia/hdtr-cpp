@@ -106,7 +106,7 @@ unsigned int GraphsKyotoDictionary::getLocalId(unsigned int mapping, unsigned in
 		else
 			throw std::runtime_error("This globalID does not correspond to an unused graph");
 	else
-		return BaseFourSectionDictionary::getLocalId(mapping, id, position);
+		return BaseKyotoDictionary::getLocalId(mapping, id, position);
 
 }
 

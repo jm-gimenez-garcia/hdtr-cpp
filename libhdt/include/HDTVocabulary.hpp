@@ -75,10 +75,12 @@ namespace HDTVocabulary {
 	const std::string DICTIONARY_TYPE = DUBLIN_CORE+"format>";
 	const std::string DICTIONARY_NUMSUBJECTS = HDT_DICTIONARY_BASE+"numSubjects>";
 	const std::string DICTIONARY_NUMPREDICATES = HDT_DICTIONARY_BASE+"numPredicates>";
+	const std::string DICTIONARY_NUMGRAPHS = HDT_DICTIONARY_BASE+"numGraphs>";
 	const std::string DICTIONARY_NUMOBJECTS = HDT_DICTIONARY_BASE+"numObjects>";
 	const std::string DICTIONARY_NUMSHARED = HDT_DICTIONARY_BASE+"numSharedSubjectObject>";
 	const std::string DICTIONARY_MAXSUBJECTID = HDT_DICTIONARY_BASE+"maxSubjectID>";
 	const std::string DICTIONARY_MAXPREDICATEID = HDT_DICTIONARY_BASE+"maxPredicateID>";
+	const std::string DICTIONARY_MAXGRAPHID = HDT_DICTIONARY_BASE+"maxGraphID>";
 	const std::string DICTIONARY_MAXOBJECTTID = HDT_DICTIONARY_BASE+"maxObjectID>";
 	const std::string DICTIONARY_MAPPING = HDT_DICTIONARY_BASE+"mapping>";
 	const std::string DICTIONARY_SIZE_STRINGS = HDT_DICTIONARY_BASE+"sizeStrings>";

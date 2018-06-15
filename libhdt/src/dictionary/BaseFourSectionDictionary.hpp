@@ -65,9 +65,9 @@ public:
 
 	void load(std::istream & input, ControlInformation & ci, ProgressListener *listener=NULL);
 	void loadControlInfo(std::istream & input, ControlInformation & ci);
-	void loadShared(std::istream & input, IntermediateListener& listener);
-	void loadSubjects(std::istream & input, IntermediateListener& listener);
-	virtual void loadFourthSection(std::istream & input, IntermediateListener& listener)=0;
+	void loadShared(std::istream & input, IntermediateListener& iListener);
+	void loadSubjects(std::istream & input, IntermediateListener& iListener);
+	virtual void loadFourthSection(std::istream & input, IntermediateListener& iListener)=0;
 	void loadObjects(std::istream & input, IntermediateListener& listener);
 
 	size_t load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener=NULL);
@@ -78,17 +78,21 @@ public:
 	void loadObjects(unsigned char *ptr, unsigned char *ptrMax, size_t& count, IntermediateListener& iListener);
 
 	void import(Dictionary *other, ProgressListener *listener);
-	virtual void importFourthSection(Dictionary *other, IntermediateListener& iListener=NULL)=0;
+	void importSubjects(Dictionary *other, ProgressListener *listener, IntermediateListener& iListener);
+	virtual void importFourthSection(Dictionary *other, IntermediateListener& iListener)=0;
+	void importObjects(Dictionary *other, ProgressListener *listener, IntermediateListener& iListener);
+	void importShared(Dictionary *other, ProgressListener *listener, IntermediateListener& iListener); 
+
 	IteratorUCharString* getSubjects()const;
 	IteratorUCharString* getObjects()const;
 	IteratorUCharString* getShared()const;
 
 	void save(std::ostream& output, ControlInformation& controlInformation, ProgressListener *listener);
 	void saveControlInfo(std::ostream& output, ControlInformation& controlInformation);
-	void saveShared(std::ostream & output, ProgressListener *listener);
-	void saveSubjects(std::ostream & output, ProgressListener *listener);
+	void saveShared(std::ostream & output, IntermediateListener& iListener);
+	void saveSubjects(std::ostream & output, IntermediateListener& iListener);
 	virtual void saveFourthSection(std::ostream & output, IntermediateListener& iListener)=0;
-	void saveObjects(std::ostream & output, ProgressListener *listener);
+	void saveObjects(std::ostream & output, IntermediateListener& iListener);
 
 	void populateHeader(Header & header, string rootNode);
 	unsigned int getNsubjects()const;

@@ -430,7 +430,7 @@ unsigned int BaseFourSectionDictionary::getLocalId(unsigned int mapping, unsigne
 			else if (mapping==MAPPING1) 
 			{	
 				if ( (id <= sh_length + sub_length + obj_length) && (id > sh_length + sub_length) )
-					return id - sh_length - sub_length;
+					return 2 + id - sh_length - sub_length;
 				else
 					throw std::runtime_error("This globalID does not correspond to a SUBJECT");
 
