@@ -1,5 +1,16 @@
+#include "BaseFourSectionDictionary.hpp"
+#include "TriplesLiteralDictionary.hpp"
+
+#if HAVE_CDS
+
+#include "HDTVocabulary.hpp"
+#include "Iterator.hpp"
+#include "../libdcs/CSD_PFC.h"
+#include "../libdcs/CSD_Cache.h"
+#include "../libdcs/CSD_Cache2.h"
 
 
+namespace hdt {
 
 TriplesLiteralDictionary::TriplesLiteralDictionary(){
 	create();
@@ -33,7 +44,15 @@ void TriplesLiteralDictionary::create_all()
 	create();
 }
 
-unsigned int TriplesLiteralDictionary::stringToId(const std::string &key, const TripleComponentRole position)const {
+unsigned int TriplesLiteralDictionary::getNpredicates()const
+{return predicates->getLength();}
+
+unsigned int TriplesLiteralDictionary::getMaxPredicateID()const
+{return predicates->getLength();}
+
+
+
+unsigned int TriplesLiteralDictionary::stringToId(const std::string &key, const TripleComponentRole position) {
 
 	if (key.length() == 0) 
 		return 0;
@@ -45,7 +64,7 @@ unsigned int TriplesLiteralDictionary::stringToId(const std::string &key, const 
 		unsigned int ret;
 		ret = predicates->locate((const unsigned char *) key.c_str(), key.length());
 		if (ret != 0) 
-			return getGlobalId(ret, NOT_SHARED_PREDICATE);
+			return BaseLiteralDictionary::getGlobalId(ret, NOT_SHARED_PREDICATE);
 	}
     return 0;
 }
@@ -80,27 +99,42 @@ void TriplesLiteralDictionary::loadFourthSection(unsigned char *ptr, unsigned ch
     predicates = new csd::CSD_Cache(predicates);
 }
 
-void TriplesLiteralDictionary::importFourthSection(Dictionary *other, IntermediateListener& iListener)
+void TriplesLiteralDictionary::importFourthSection(Dictionary *other, ProgressListener *listener, IntermediateListener& iListener)
 {
+	if(TriplesLiteralDictionary* other_tld = dynamic_cast<TriplesLiteralDictionary*>(other))
+	{
 		//NOTIFY(listener, "DictionaryPFC loading predicates", 25, 30);
-		IteratorUCharString *itPred = other->getPredicates();
+		IteratorUCharString *itPred = other_tld->getPredicates();
 		delete predicates;
 		iListener.setRange(20, 21);
 		predicates = loadSectionPFC(itPred, blocksize, &iListener);
 		subjects = new csd::CSD_Cache2(subjects);
 		delete itPred;
+	}
+	else
+		throw std::runtime_error("Downcast error from Dictionary to TriplesLiteralDictionary.");
 }
-void TriplesLiteralDictionary::saveFourthSection(std::ostream & output, IntermediateListener& iListener);
+void TriplesLiteralDictionary::saveFourthSection(std::ostream & output, IntermediateListener& iListener)
 {
 	iListener.setRange(45, 60);
 	iListener.notifyProgress(0, "Dictionary save predicates.");
 	predicates->save(output);
 }
 
-IteratorUCharString *TriplesLiteralDictionary::getPredicates() {
-	throw std::logic_error("Not implemented");
+IteratorUCharString *TriplesLiteralDictionary::getPredicates()
+{throw std::logic_error("Not implemented");}
+/*IteratorUCharString *TriplesLiteralDictionary::getGraphs() {
+	throw std::runtime_error("No graph section in this kind of dictionary");
+	return NULL;
 }
-
+unsigned int TriplesLiteralDictionary::getNgraphs()const{
+	throw std::runtime_error("No graph section in this kind of dictionary");
+	return 0;
+}
+unsigned int TriplesLiteralDictionary::getMaxGraphID()const{
+	throw std::runtime_error("No graph section in this kind of dictionary");
+	return 0;
+}*/
 
 
 void TriplesLiteralDictionary::populateHeaderNumFourthSection(Header & header, string rootNode)
@@ -110,14 +144,14 @@ void TriplesLiteralDictionary::populateHeaderNumFourthSection(Header & header, s
 void TriplesLiteralDictionary::populateHeaderMaxFourthSectionId(Header & header, string rootNode)
 {header.insert(rootNode, HDTVocabulary::DICTIONARY_MAXPREDICATEID, getMaxPredicateID());}
 
-uint64_t TriplesLiteralDictionary::size()
+uint64_t TriplesLiteralDictionary::size()const
 {return BaseLiteralDictionary::size() + predicates->getSize();}
 
-unsigned int TriplesLiteralDictionary::getMaxID()
+unsigned int TriplesLiteralDictionary::getMaxID()const
 {return BaseLiteralDictionary::getMaxID();}
 
 
-size_t TriplesLiteralDictionary::getNumberOfElements() {
+size_t TriplesLiteralDictionary::getNumberOfElements()const {
 	return BaseLiteralDictionary::getNumberOfElements() + predicates->getLength();
 }
 
@@ -131,10 +165,10 @@ csd::CSD *TriplesLiteralDictionary::getDictionarySection(unsigned int id, Triple
 
 
 unsigned int TriplesLiteralDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) const{
-	if(position==PREDICATE)
+	if(position==NOT_SHARED_PREDICATE)
 		return id;
 	else
-		return LiteralDictionary::getGlobalId(mapping, id, position);
+		return BaseLiteralDictionary::getGlobalId(mapping, id, position);
 }
 
 
@@ -146,7 +180,7 @@ unsigned int TriplesLiteralDictionary::getLocalId(unsigned int mapping, unsigned
 		else
 			throw std::runtime_error("This globalID does not correspond to a PREDICATE");
 	else
-		return LiteralDictionary::getLocalId(mapping, id, position);
+		return BaseLiteralDictionary::getLocalId(mapping, id, position);
 }
 
 void TriplesLiteralDictionary::getSuggestions(const char *base, TripleComponentRole role, std::vector<string> &out, int maxResults)
@@ -157,6 +191,5 @@ void TriplesLiteralDictionary::getSuggestions(const char *base, TripleComponentR
 		BaseLiteralDictionary::getSuggestions(base, role, out, maxResults);
 }
 
-
-
-
+}
+#endif

@@ -1,3 +1,16 @@
+#include "BaseFourSectionDictionary.hpp"
+#include "Iterator.hpp"
+#include <istream>
+#include <ostream>
+#include <string>
+//#include "../libdcs/CSD.h"
+#include "../libdcs/CSD_PFC.h"
+#include "ControlInformation.hpp"
+#include "HDTListener.hpp"
+#include "Header.hpp"
+#include "HDTVocabulary.hpp"
+#include <algorithm>
+
 namespace hdt {
 
 BaseFourSectionDictionary::BaseFourSectionDictionary(): blocksize(16), subjects(new csd::CSD_PFC()), objects(new csd::CSD_PFC()), shared(new csd::CSD_PFC()) {}
@@ -64,7 +77,7 @@ std::string BaseFourSectionDictionary::idToString(const unsigned int id, const T
 	return string();
 }
 
-unsigned int BaseFourSectionDictionary::stringToId(const std::string &key, const TripleComponentRole position)const
+unsigned int BaseFourSectionDictionary::stringToId(const std::string &key, const TripleComponentRole position)
 {
 	unsigned int ret;
 
@@ -98,7 +111,7 @@ unsigned int BaseFourSectionDictionary::stringToId(const std::string &key, const
 
 
 
-void GraphsFourSectionDictionary::load(std::istream & input, ControlInformation & ci, ProgressListener *listener/*=NULL*/)
+void BaseFourSectionDictionary::load(std::istream & input, ControlInformation & ci, ProgressListener *listener/*=NULL*/)
 {
 	IntermediateListener iListener(listener);
 
@@ -158,7 +171,7 @@ void BaseFourSectionDictionary::loadObjects(std::istream & input, IntermediateLi
 }
 
 
-size_t GraphsFourSectionDictionary::load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener/*=NULL*/)
+size_t BaseFourSectionDictionary::load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener/*=NULL*/)
 {
     size_t count=0;
     IntermediateListener iListener(listener);
@@ -274,13 +287,13 @@ void BaseFourSectionDictionary::importShared(Dictionary *other, ProgressListener
 	delete itShared;
 }
 
-IteratorUCharString *BaseFourSectionDictionary::getSubjects()const {
+IteratorUCharString *BaseFourSectionDictionary::getSubjects() {
 	return subjects->listAll();
 }
-IteratorUCharString *BaseFourSectionDictionary::getObjects()const {
+IteratorUCharString *BaseFourSectionDictionary::getObjects() {
 	return objects->listAll();
 }
-IteratorUCharString *BaseFourSectionDictionary::getShared()const {
+IteratorUCharString *BaseFourSectionDictionary::getShared() {
 	return shared->listAll();
 }
 
@@ -375,10 +388,10 @@ uint64_t BaseFourSectionDictionary::size()const{
 	return shared->getSize()+subjects->getSize()+objects->getSize();
 }
 
-string FourSectionDictionary::getType()const
+string BaseFourSectionDictionary::getType()const
 {return HDTVocabulary::DICTIONARY_TYPE_FOUR;}
 
-unsigned int FourSectionDictionary::getMapping()const
+unsigned int BaseFourSectionDictionary::getMapping()const
 {return mapping;}
 
 
@@ -394,7 +407,6 @@ csd::CSD *BaseFourSectionDictionary::getDictionarySection(unsigned int id, Tripl
 }
 
 unsigned int BaseFourSectionDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) const{
-
 	switch (position) {
 		case NOT_SHARED_SUBJECT:
 			return shared->getLength()+id;
@@ -403,9 +415,10 @@ unsigned int BaseFourSectionDictionary::getGlobalId(unsigned int mapping, unsign
 		case SHARED_SUBJECT:
 		case SHARED_OBJECT:
 			return id;
+		default:
+			throw std::runtime_error("Item not found");
+			return 0;
 	}
-
-	throw std::runtime_error("Item not found");
 }
 
 
@@ -445,10 +458,12 @@ unsigned int BaseFourSectionDictionary::getLocalId(unsigned int mapping, unsigne
 			else
 				throw std::runtime_error("Uknown mapping");
 			break;
+		default:
+			throw std::runtime_error("Item not found");
+			return 0;
 	}
-	throw std::runtime_error("Item not found");
-
 }
+
 
 
 
@@ -464,7 +479,7 @@ void BaseFourSectionDictionary::getSuggestions(const char *base, hdt::TripleComp
 	}
 
 	// Merge results from shared and subjects/objects keeping order
-	merge(v1.begin(),v1.end(), v2.begin(), v2.end(), std::back_inserter(out));
+	std::merge(v1.begin(),v1.end(), v2.begin(), v2.end(), std::back_inserter(out));
 
 	// Remove possible extra items
 	if(out.size()>maxResults) {

@@ -1,3 +1,8 @@
+#ifdef HAVE_KYOTO
+
+#include "TriplesKyotoDictionary.hpp"
+
+using namespace kyotocabinet;
 
 namespace hdt {
 
@@ -8,12 +13,21 @@ TriplesKyotoDictionary::~TriplesKyotoDictionary() {
 
 #if 0
 	if(ppath.length()>0)
-		unlink(ppath.c_str());
+	{
+		//unlink(ppath.c_str());
+		std::remove(ppath.c_str());
+	}
 #endif
 }
 
-IteratorUCharString *TriplesKyotoDictionary::getPredicates()const
+IteratorUCharString *TriplesKyotoDictionary::getPredicates()
 {return new KyotoDictIterator(&predicates);}
+
+/*IteratorUCharString *TriplesKyotoDictionary::getGraphs()
+{
+	throw std::runtime_error("No graph section in this kind of dictionary");
+	return NULL;
+}*/
 
 size_t TriplesKyotoDictionary::getNumberOfElements()const
 {return BaseKyotoDictionary::getNumberOfElements()+predicates.count();}
@@ -21,13 +35,16 @@ size_t TriplesKyotoDictionary::getNumberOfElements()const
 unsigned int TriplesKyotoDictionary::stringToId(const std::string &key, const TripleComponentRole position)const
 {
 	if(position != PREDICATE)
-		return 	BaseKyotoDictionary::stringToId(key, TripleComponentRole);
+		return 	BaseKyotoDictionary::stringToId(key, position);
 	else
 	{
 		unsigned int ret;
 		if(key.length()==0 || key.at(0) == '?') 
 			return 0;
-		return predicates.get((const char *)key.c_str(),(size_t)key.length(), (char *) &ret, sizeof(ret)) ? getGlobalId(ret, NOT_SHARED_PREDICATE) : 0;
+		if(predicates.get((const char *)key.c_str(),(size_t)key.length(), (char *) &ret, sizeof(ret)))
+			return BaseKyotoDictionary::getGlobalId(ret, NOT_SHARED_PREDICATE);
+		else
+			return 0;
 	}
 }
 
@@ -37,7 +54,8 @@ void TriplesKyotoDictionary::startProcessing(ProgressListener *listener)
 	BaseKyotoDictionary::startProcessing(listener);
 	// TODO: Add some random suffix to the filenames
 #if 1
-	unlink("predicates.kct");
+	//unlink("predicates.kct");
+	std::remove("predicates.kct");
 #endif
 
 	if (!predicates.open("predicates.kct", ProtoTreeDB::OWRITER | ProtoTreeDB::OCREATE))
@@ -47,6 +65,8 @@ void TriplesKyotoDictionary::startProcessing(ProgressListener *listener)
 
 unsigned int TriplesKyotoDictionary::insert(const std::string & str, const TripleComponentRole pos)
 {
+	if(str=="") return 0;
+	unsigned int value=0;
 	if(pos!=PREDICATE)
 		return BaseKyotoDictionary::insert(str,pos);
 	else
@@ -65,7 +85,7 @@ unsigned int TriplesKyotoDictionary::getGlobalId(unsigned int mapping, unsigned 
 }
 
 
-unsigned int TriplesKyotoDictionary::getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position) const{
+unsigned int TriplesKyotoDictionary::getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position)const {
 	if(position==PREDICATE) 
 		if (id <= predicates.count())
 			return id-1;
@@ -78,8 +98,18 @@ unsigned int TriplesKyotoDictionary::getLocalId(unsigned int mapping, unsigned i
 unsigned int TriplesKyotoDictionary::getNpredicates()const
 {return predicates.count();}
 
-unsigned int TriplesKyotoDictionary::getMaxPredicateID()const 
+/*unsigned int TriplesKyotoDictionary::getNgraphs()const{
+	throw std::runtime_error("No graph section in this kind of dictionary");
+	return 0;
+}*/
+
+unsigned int TriplesKyotoDictionary::getMaxPredicateID() const
 {return predicates.count();}
+
+/*unsigned int TriplesKyotoDictionary::getMaxGraphID()const {
+	throw std::runtime_error("No graph section in this kind of dictionary");
+	return 0;
+}*/
 
 void TriplesKyotoDictionary::dumpSizes(std::ostream &out){
 	BaseKyotoDictionary::dumpSizes(out);
@@ -88,24 +118,5 @@ void TriplesKyotoDictionary::dumpSizes(std::ostream &out){
 }
 
 
-
-
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-}
+#endif

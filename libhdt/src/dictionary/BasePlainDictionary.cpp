@@ -29,12 +29,15 @@
  *
  */
 
-#include <sstream>
-#include <stdexcept>
 #include "BasePlainDictionary.hpp"
 #include "../util/Histogram.h"
 
-#include <HDTVocabulary.hpp>
+#include "ControlInformation.hpp"
+#include "HDTListener.hpp"
+#include "Header.hpp"
+#include "HDTVocabulary.hpp"
+#include <algorithm>
+
 
 namespace hdt {
 
@@ -100,7 +103,7 @@ std::string BasePlainDictionary::idToString(const unsigned int id, const TripleC
 	return string();
 }
 
-unsigned int BasePlainDictionary::stringToId(const std::string &key, const TripleComponentRole position)const
+unsigned int BasePlainDictionary::stringToId(const std::string &key, const TripleComponentRole position)
 {
 	DictEntryIt ret;
 
@@ -139,13 +142,13 @@ void BasePlainDictionary::stopProcessing(ProgressListener *listener)
 	//dumpSizes(cout);
 }
 
-void BasePlainDictionary::saveControlInfo(std::ostream &output, ControlInformation &controlInformation)
+void BasePlainDictionary::saveControlInfo(std::ostream &output, ControlInformation &controlInfo)
 {
-	controlInformation.setFormat(HDTVocabulary::DICTIONARY_TYPE_PLAIN);
-	controlInformation.setUint("mapping", this->mapping);
-	controlInformation.setUint("sizeStrings", this->sizeStrings);
-	controlInformation.setUint("numEntries", this->getNumberOfElements());
-	controlInformation.save(output);
+	controlInfo.setFormat(HDTVocabulary::DICTIONARY_TYPE_PLAIN);
+	controlInfo.setUint("mapping", mapping);
+	controlInfo.setUint("sizeStrings", sizeStrings);
+	controlInfo.setUint("numEntries", getNumberOfElements());
+	controlInfo.save(output);
 }
 
 void BasePlainDictionary::saveShared(std::ostream &output, ProgressListener *listener, unsigned int& counter, const char marker)
@@ -231,8 +234,8 @@ void BasePlainDictionary::load(std::istream & input, ControlInformation &ci, Pro
 			} else if (region == 3) { //not shared Objects
 				NOTIFYCOND(&iListener, "Dictionary loading objects.", numLine, numElements);
 				insert(line, NOT_SHARED_OBJECT);
-			} else if (region == 4) { //predicates or graphs
-				insertFourthRegion(iListener, line, region);
+			} else if (region == 4) { //predicates or graphs, numElements)
+				insertFourthRegion(iListener, line, numLine, numElements);
 			}
 		} else {
 			region++;
@@ -256,9 +259,6 @@ void BasePlainDictionary::import(Dictionary *other, ProgressListener *listener) 
 
 IteratorUCharString *BasePlainDictionary::getSubjects() {
 	return new DictIterator(this->subjects);
-}
-IteratorUCharString *BasePlainDictionary::getPredicates() {
-	return new DictIterator(this->predicates);
 }
 IteratorUCharString *BasePlainDictionary::getObjects(){
 	return new DictIterator(this->objects);
@@ -508,12 +508,14 @@ unsigned int BasePlainDictionary::getGlobalId(unsigned int mapping, unsigned int
 		case NOT_SHARED_SUBJECT:
 			return shared.size()+id+1;
 		case NOT_SHARED_OBJECT:
-			if(mapping==MAPPING2) ? shared.size()+id+1 : shared.size()+subjects.size()+id+1;
+			return (mapping==MAPPING2) ? shared.size()+id+1 : shared.size()+subjects.size()+id+1;
 		case SHARED_SUBJECT:
 		case SHARED_OBJECT:
 			return id+1;
+		default:
+			throw std::runtime_error("Item not found");
+			return 0;
 	}
-	throw std::runtime_error("Item not found");
 
 }
 
@@ -558,8 +560,10 @@ unsigned int BasePlainDictionary::getLocalId(unsigned int mapping, unsigned int 
 			else
 				throw std::runtime_error("Uknown mapping");
 			break;
+		default:
+			throw std::runtime_error("Item not found");
+			return 0;
 	}
-	throw std::runtime_error("Item not found");
 
 
 
@@ -574,7 +578,7 @@ unsigned int BasePlainDictionary::getLocalId(unsigned int id, TripleComponentRol
 /** Get Max Id
  * @return The expected result
  */
-unsigned int BasePlainDictionary::getMaxID() {
+unsigned int BasePlainDictionary::getMaxID()const {
 	unsigned int s = subjects.size();
 	unsigned int o = objects.size();
 	unsigned int nshared = shared.size();
@@ -583,18 +587,15 @@ unsigned int BasePlainDictionary::getMaxID() {
 	return (mapping ==MAPPING2) ? nshared+max : nshared+s+o;
 }
 
-unsigned int BasePlainDictionary::getMaxSubjectID() {
+unsigned int BasePlainDictionary::getMaxSubjectID()const {
 	unsigned int nshared = shared.size();
 	unsigned int s = subjects.size();
 
 	return nshared+s;
 }
 
-unsigned int BasePlainDictionary::getMaxPredicateID() {
-	return predicates.size();
-}
 
-unsigned int BasePlainDictionary::getMaxObjectID() {
+unsigned int BasePlainDictionary::getMaxObjectID()const {
 	unsigned int nshared = shared.size();
 	unsigned int s = subjects.size();
 	unsigned int o = objects.size();
@@ -606,22 +607,14 @@ unsigned int BasePlainDictionary::getMaxObjectID() {
 	}
 }
 
-unsigned int BasePlainDictionary::getNsubjects() {
-	return shared.size()+subjects.size();
-}
+unsigned int BasePlainDictionary::getNsubjects()const 
+{return shared.size()+subjects.size();}
 
-unsigned int BasePlainDictionary::getNpredicates() {
-	return predicates.size();
-}
+unsigned int BasePlainDictionary::getNobjects()const 
+{return shared.size()+objects.size();}
 
-unsigned int BasePlainDictionary::getNobjects() {
-	return shared.size()+objects.size();
-}
-
-unsigned int BasePlainDictionary::getNshared() {
-	return shared.size();
-}
-
+unsigned int BasePlainDictionary::getNshared()const 
+{return shared.size();}
 
 
 void BasePlainDictionary::updateID(unsigned int oldid, unsigned int newid, DictionarySection position) {
@@ -636,6 +629,8 @@ void BasePlainDictionary::updateID(unsigned int oldid, unsigned int newid, Dicti
 		case NOT_SHARED_OBJECT:
 			objects[oldid]->id = newid;
 			break;
+		default:
+			break;
 	}
 }
 
@@ -643,21 +638,21 @@ void BasePlainDictionary::populateHeader(Header &header, string rootNode)
 {
 	header.insert(rootNode, HDTVocabulary::DICTIONARY_TYPE, HDTVocabulary::DICTIONARY_TYPE_PLAIN);
 	header.insert(rootNode, HDTVocabulary::DICTIONARY_NUMSUBJECTS, getNsubjects());
-	header.insert(rootNode, HDTVocabulary::DICTIONARY_NUMPREDICATES, getNpredicates());
+	populateHeaderFourthElementNum(header, rootNode);
 	header.insert(rootNode, HDTVocabulary::DICTIONARY_NUMOBJECTS, getNobjects());
 	header.insert(rootNode, HDTVocabulary::DICTIONARY_NUMSHARED, getNshared());
 	header.insert(rootNode, HDTVocabulary::DICTIONARY_MAXSUBJECTID, getMaxSubjectID());
-	header.insert(rootNode, HDTVocabulary::DICTIONARY_MAXPREDICATEID, getMaxPredicateID());
+	populateHeaderFourthElementMaxId(header, rootNode);
 	header.insert(rootNode, HDTVocabulary::DICTIONARY_MAXOBJECTTID, getMaxObjectID());
 	header.insert(rootNode, HDTVocabulary::DICTIONARY_MAPPING, getMapping());
 	header.insert(rootNode, HDTVocabulary::DICTIONARY_SIZE_STRINGS, size());
 }
 
-string BasePlainDictionary::getType() {
+string BasePlainDictionary::getType()const {
 	return HDTVocabulary::DICTIONARY_TYPE_PLAIN;
 }
 
-unsigned int BasePlainDictionary::getMapping() {
+unsigned int BasePlainDictionary::getMapping()const {
 	return mapping;
 }
 

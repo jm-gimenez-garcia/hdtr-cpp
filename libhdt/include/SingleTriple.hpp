@@ -476,7 +476,7 @@ public:
 	 * Read a TripleString from a stream, where each component is represented using an empty space.
 	 * @param line
 	 */
-	void read(const std::string line){
+	void read(std::string line){
 		size_t pos_a = 0, pos_b;
 		//trim the line
 		line.erase(line.find_last_not_of(" \t\n\r\f\v") + 1);

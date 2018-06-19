@@ -1,4 +1,8 @@
+#ifdef HAVE_KYOTO
 
+#include "GraphsKyotoDictionary.hpp"
+
+using namespace kyotocabinet;
 
 namespace hdt {
 
@@ -9,12 +13,20 @@ GraphsKyotoDictionary::~GraphsKyotoDictionary() {
 
 #if 0
 	if(gpath.length()>0)
-		unlink(gpath.c_str());
+	{
+		//unlink(gpath.c_str());
+		std::remove(gpath.c_str());
+	}
 #endif
 }
 
-IteratorUCharString *GraphsKyotoDictionary::getGraphs()const
-{return new KyotoDictIterator(&graphs);0}
+/*IteratorUCharString *GraphsKyotoDictionary::getPredicates()
+{
+	throw std::runtime_error("No predicate section in this kind of dictionary");
+	return NULL;
+}*/
+IteratorUCharString *GraphsKyotoDictionary::getGraphs()
+{return new KyotoDictIterator(&graphs);}
 
 size_t GraphsKyotoDictionary::getNumberOfElements()const
 {return BaseKyotoDictionary::getNumberOfElements()+graphs.count();}
@@ -22,13 +34,16 @@ size_t GraphsKyotoDictionary::getNumberOfElements()const
 unsigned int GraphsKyotoDictionary::stringToId(const std::string &key, const TripleComponentRole position)const
 {
 	if(position != GRAPH)
-		return 	BaseKyotoDictionary::stringToId(key, TripleComponentRole);
+		return 	BaseKyotoDictionary::stringToId(key, position);
 	else
 	{
 		unsigned int ret;
 		if(key.length()==0 || key.at(0) == '?') 
 			return 0;
-		return graphs.get((const char *)key.c_str(),(size_t)key.length(), (char *) &ret, sizeof(ret)) ? getGlobalId(ret, UNUSED_GRAPH) : 0;
+		if(graphs.get((const char *)key.c_str(),(size_t)key.length(), (char *) &ret, sizeof(ret)))
+			return BaseKyotoDictionary::getGlobalId(ret, UNUSED_GRAPH);
+		else
+			return 0;
 	}
 }
 
@@ -38,7 +53,8 @@ void GraphsKyotoDictionary::startProcessing(ProgressListener *listener)
 	BaseKyotoDictionary::startProcessing(listener);
 	// TODO: Add some random suffix to the filenames
 #if 1
-	unlink("graphs.kct");
+	//unlink("graphs.kct");
+	std::remove("graphs.kct");
 #endif
 
 	if (!graphs.open("graphs.kct", ProtoTreeDB::OWRITER | ProtoTreeDB::OCREATE))
@@ -47,6 +63,8 @@ void GraphsKyotoDictionary::startProcessing(ProgressListener *listener)
 
 unsigned int GraphsKyotoDictionary::insert(const std::string & str, const TripleComponentRole pos)
 {
+	if(str=="") return 0;
+	unsigned int value=0;
 	if(pos!=GRAPH)
 		return BaseKyotoDictionary::insert(str,pos);
 	else
@@ -56,7 +74,7 @@ unsigned int GraphsKyotoDictionary::insert(const std::string & str, const Triple
 	}
 }
 
-unsigned int GraphsKyotoDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) const{
+unsigned int GraphsKyotoDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position)const {
 	if(position == UNUSED_GRAPH)
 	{
 		if(mapping==MAPPING1)
@@ -75,7 +93,7 @@ unsigned int GraphsKyotoDictionary::getGlobalId(unsigned int mapping, unsigned i
 }
 
 
-unsigned int GraphsKyotoDictionary::getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position) const{
+unsigned int GraphsKyotoDictionary::getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position)const {
 
 
 	const unsigned int sh_length = shared.count();
@@ -110,10 +128,20 @@ unsigned int GraphsKyotoDictionary::getLocalId(unsigned int mapping, unsigned in
 
 }
 
-unsigned int getNgraphs()const
+/*unsigned int GraphsKyotoDictionary::getNpredicates()const{
+	throw std::runtime_error("No predicate section in this kind of dictionary");
+	return 0;
+}*/
+
+unsigned int GraphsKyotoDictionary::getNgraphs()const
 {return graphs.count();}
 
-unsigned int GraphsKyotoDictionary::getMaxGraphID()const 
+/*unsigned int GraphsKyotoDictionary::getMaxPredicateID()const {
+	throw std::runtime_error("No predicate section in this kind of dictionary");
+	return 0;
+}*/
+
+unsigned int GraphsKyotoDictionary::getMaxGraphID() const
 {return graphs.count();}
 
 
@@ -125,30 +153,6 @@ void GraphsKyotoDictionary::dumpSizes(std::ostream &out){
 }
 
 
-
-
-
-	
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-}
+#endif

@@ -2,19 +2,14 @@
 #define __GRAPHS_LITERAL_DICTIONARY_HPP__
 
 
-
-
-#include <Iterator.hpp>
-#include <Dictionary.hpp>
-#include <HDTSpecification.hpp>
-
-#include "../libdcs/CSD.h"
+#include "BaseLiteralDictionary.hpp"
+#include "GraphsDictionary.hpp"
 
 namespace hdt {
 
-class GraphsLiteralDictionary : public BaseLiteralDictionary {
+class GraphsLiteralDictionary : public BaseLiteralDictionary, public GraphsDictionary {
 private:
-	csd::CSD *graphss;
+	csd::CSD *graphs;
 
 
 public:
@@ -27,22 +22,27 @@ public:
 		void clear();
 		void create();
 
-	unsigned int stringToId(const std::string &str, const TripleComponentRole position)const;
+	unsigned int stringToId(const std::string &str, const TripleComponentRole position);
 	void loadFourthSection(std::istream & input, IntermediateListener& iListener);
 	void loadFourthSection(unsigned char *ptr, unsigned char *ptrMax, size_t& count, IntermediateListener& iListener);
-	void loadFourthSection(unsigned char *ptr, unsigned char *ptrMax, size_t& count, IntermediateListener& iListener);
 
-	void importFourthSection(Dictionary *other, IntermediateListener& iListener);
+	void importFourthSection(Dictionary *other, ProgressListener *listener, IntermediateListener& iListener);
 	void saveFourthSection(std::ostream & output, IntermediateListener& iListener);
 	void populateHeaderNumFourthSection(Header & header, string rootNode);
 	void populateHeaderMaxFourthSectionId(Header & header, string rootNode);
 
-	size_t getNumberOfElements();
-	unsigned int getMaxID();
-    uint64_t size();
+	size_t getNumberOfElements()const;
+	unsigned int getMaxID()const;
+    uint64_t size()const;
+
+    //IteratorUCharString *getPredicates();
     IteratorUCharString *getGraphs();
-	unsigned int getNgraphs(){return graphs->getLength();}
-	unsigned int getMaxGraphID(){return graphs->getLength();}
+
+	//unsigned int getNpredicates()const;
+	unsigned int getNgraphs()const;
+
+	//unsigned int getMaxPredicateID()const;
+	unsigned int getMaxGraphID()const;
 
 
 	csd::CSD* getDictionarySection(unsigned int id, TripleComponentRole position) const;

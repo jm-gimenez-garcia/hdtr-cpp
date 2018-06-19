@@ -1,3 +1,13 @@
+#include <istream>
+#include <ostream>
+#include <string>
+#include "BaseFourSectionDictionary.hpp"
+#include "TriplesFourSectionDictionary.hpp"
+#include "Iterator.hpp"
+#include "../libdcs/CSD_PFC.h"
+#include "../libdcs/CSD_Cache2.h"
+#include "HDTListener.hpp"
+
 namespace hdt {
 
 
@@ -29,17 +39,17 @@ uint64_t TriplesFourSectionDictionary::size()const{
 }
 
 
-unsigned int TriplesFourSectionDictionary::stringToId(const std::string &key, const TripleComponentRole position)const
+unsigned int TriplesFourSectionDictionary::stringToId(const std::string &key, const TripleComponentRole position)
 {
 	if (position!=PREDICATE)
 		return BaseFourSectionDictionary::stringToId(key, position);
 	else
 	{
 		unsigned int ret;
-        	if(key.length()==0)
+        if(key.length()==0)
 			return 0;
 		ret = predicates->locate((const unsigned char *)key.c_str(), key.length());
-		if(ret==0) ? 0 :  getGlobalId(ret, NOT_SHARED_PREDICATE);
+		return (ret==0) ? 0 :  BaseFourSectionDictionary::getGlobalId(ret, NOT_SHARED_PREDICATE);
 	}
 }
 
@@ -73,20 +83,28 @@ void TriplesFourSectionDictionary::loadFourthSection(unsigned char *ptr, unsigne
 
 void TriplesFourSectionDictionary::importFourthSection(Dictionary *other, ProgressListener *listener, IntermediateListener& iListener) 
 {
-	NOTIFY(listener, "DictionaryPFC loading predicates", 25, 30);
-	iListener.setRange(20, 21);
-	IteratorUCharString *itPred = other->getPredicates();
-	delete predicates;
-	predicates = loadSection(itPred, blocksize, &iListener);
-	delete itPred;
+	if(TriplesFourSectionDictionary* other_tfsd = dynamic_cast<TriplesFourSectionDictionary*>(other))
+	{
+		NOTIFY(listener, "DictionaryPFC loading predicates", 25, 30);
+		iListener.setRange(20, 21);
+		IteratorUCharString *itPred = other_tfsd->getPredicates();
+		delete predicates;
+		predicates = loadSection(itPred, blocksize, &iListener);
+		delete itPred;
+	}
+	else
+		throw std::runtime_error("Downcast error from Dictionary to TriplesFourSectionDictionary.");
 }
 
 
 
+IteratorUCharString *TriplesFourSectionDictionary::getPredicates()
+{return predicates->listAll();}
 
-IteratorUCharString *TriplesFourSectionDictionary::getPredicates()const {
-	return predicates->listAll();
-}
+/*IteratorUCharString *TriplesFourSectionDictionary::getGraphs(){
+	throw std::runtime_error("No graph section in this kind of dictionary");
+	return NULL;
+}*/
 
 void TriplesFourSectionDictionary::saveFourthSection(std::ostream& output, IntermediateListener& iListener){
 
@@ -97,9 +115,20 @@ void TriplesFourSectionDictionary::saveFourthSection(std::ostream& output, Inter
 
 unsigned int TriplesFourSectionDictionary::getNpredicates()const
 {return predicates->getLength();}
+
+/*unsigned int TriplesFourSectionDictionary::getNgraphs()const{
+	
+	throw std::runtime_error("No graph section in this kind of dictionary");
+	return 0;
+}*/
+
 unsigned int TriplesFourSectionDictionary::getMaxPredicateID()const
 {return predicates->getLength();}
 
+/*unsigned int TriplesFourSectionDictionary::getMaxGraphID()const{
+	throw std::runtime_error("No graph section in this kind of dictionary");
+	return 0;
+}*/
 
 
 

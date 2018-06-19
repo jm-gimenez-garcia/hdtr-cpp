@@ -23,10 +23,18 @@ include_HEADERS = \
 lib_LTLIBRARIES = libhdt.la
 libhdt_la_SOURCES = \
 src/bitsequence/BitSequence375.cpp \
-src/dictionary/FourSectionDictionary.cpp \
-src/dictionary/KyotoDictionary.cpp \
-src/dictionary/LiteralDictionary.cpp \
-src/dictionary/PlainDictionary.cpp \
+src/dictionary/BaseFourSectionDictionary.cpp \
+src/dictionary/TriplesFourSectionDictionary.cpp \
+src/dictionary/GraphsFourSectionDictionary.cpp \
+src/dictionary/BaseKyotoDictionary.cpp \
+src/dictionary/TriplesKyotoDictionary.cpp \
+src/dictionary/GraphsKyotoDictionary.cpp \
+src/dictionary/BaseLiteralDictionary.cpp \
+src/dictionary/TriplesLiteralDictionary.cpp \
+src/dictionary/GraphsLiteralDictionary.cpp \
+src/dictionary/BasePlainDictionary.cpp \
+src/dictionary/TriplesPlainDictionary.cpp \
+src/dictionary/GraphsPlainDictionary.cpp \
 src/hdt/BasicHDT.cpp \
 src/hdt/BasicModifiableHDT.cpp \
 src/hdt/ControlInformation.cpp \

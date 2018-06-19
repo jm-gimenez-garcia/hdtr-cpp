@@ -2,15 +2,18 @@
 #define BASE_PLAIN_DICTIONARY_H_
 
 
-#include <Iterator.hpp>
+//#include <Iterator.hpp>
 #include <HDTSpecification.hpp>
 #include <Dictionary.hpp>
+#include "Iterator.hpp"
+#include <vector>
+#include <utility>
 
-#include <string.h>
+#include <cstring>
 #include <string>
-#include <algorithm>
-#include <fstream>
-#include <iostream>
+//#include <algorithm>
+//#include <fstream>
+//#include <iostream>
 
 #include <ext/hash_map>
 
@@ -30,6 +33,11 @@ namespace std { using namespace __gnu_cxx; }
 
 
 namespace hdt {
+
+class ControlInformation;
+class ProgressListener;
+class IntermediateListener;
+class Header;
 
 struct DictionaryEntry {
 public:
@@ -58,7 +66,7 @@ typedef DictEntryHash::const_iterator DictEntryIt;
 
 
 class BasePlainDictionary : public ModifiableDictionary {
-private:
+protected:
 	std::vector<DictionaryEntry*> shared;
 	std::vector<DictionaryEntry*> subjects;
 	std::vector<DictionaryEntry*> objects;
@@ -77,7 +85,7 @@ public:
 	virtual ~BasePlainDictionary();
 
 	std::string idToString(const unsigned int id, const TripleComponentRole position)const;
-	virtual unsigned int stringToId(const std::string &str, const TripleComponentRole position)const;
+	virtual unsigned int stringToId(const std::string &str, const TripleComponentRole position);
 	virtual void startProcessing(ProgressListener *listener = NULL);
 	void stopProcessing(ProgressListener *listener = NULL);
 
@@ -92,16 +100,18 @@ public:
 	virtual void insertFourthRegion(IntermediateListener& iListener, const std::string& line, unsigned int& numLine, unsigned int& numElements)=0;
 	virtual void getFourthSectionSize()const=0;
 	unsigned int insert(const std::string &str, const TripleComponentRole position);
-	virtual unsigned int getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position)const=0;
+	virtual unsigned int getGlobalId(unsigned int mapping_type, unsigned int id, DictionarySection position)const;
 	unsigned int getGlobalId(unsigned int id, DictionarySection position)const;
-	virtual unsigned int getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position)const=0;
-	unsigned int getLocalId(unsigned int id, TripleComponentRole position)const=0;
-	unsigned int getMaxID();
+	virtual unsigned int getLocalId(unsigned int mapping_type, unsigned int id, TripleComponentRole position)const;
+	unsigned int getLocalId(unsigned int id, TripleComponentRole position)const;
+	unsigned int getMaxID()const;
 	virtual void updateID(unsigned int oldid, unsigned int newid, DictionarySection position);
 
+protected:
+	virtual unsigned int insertFourthElement(const std::string & str, const TripleComponentRole& pos)=0;
 
 
-private:
+protected:
 	virtual void insert(const std::string& entry, const DictionarySection& pos);
 	void split(ProgressListener *listener = NULL);
 	void lexicographicSort(ProgressListener *listener = NULL);
@@ -109,7 +119,7 @@ private:
 	void idSort();
 	virtual void idSortFourthElement()=0; 
 	virtual void updateIDs() ;
-	void convertMapping(unsigned int mapping);
+	void convertMapping(unsigned int mapping_type);
 	virtual const std::vector<DictionaryEntry*> &getDictionaryEntryVector(unsigned int id, TripleComponentRole position)const;
 
 
@@ -119,16 +129,22 @@ public:
 
 	virtual size_t getNumberOfElements()const;
 
-	uint64_t size();
+	uint64_t size()const;
 
-	unsigned int getNsubjects();
-	unsigned int getNobjects();
-	unsigned int getNshared();
+	unsigned int getNsubjects()const;
+	unsigned int getNobjects()const;
+	unsigned int getNshared()const;
+	//virtual unsigned int getNpredicates()const=0;
+	//virtual unsigned int getNgraphs()const=0;
 
-	unsigned int getMaxSubjectID();
-	unsigned int getMaxObjectID();
+	unsigned int getMaxSubjectID()const;
+	unsigned int getMaxObjectID()const;
+	//virtual unsigned int getMaxPredicateID()const=0;
+	//virtual unsigned int getMaxGraphID()const=0;
 
 	void populateHeader(Header &header, string rootNode);
+	virtual void populateHeaderFourthElementNum(Header &header, string rootNode)=0;
+	virtual void populateHeaderFourthElementMaxId(Header &header, string rootNode)=0;
 
 	size_t load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener=NULL);
 
@@ -137,12 +153,14 @@ public:
     IteratorUCharString *getSubjects();
     IteratorUCharString *getObjects();
     IteratorUCharString *getShared();
+    //virtual IteratorUCharString *getPredicates()=0;
+    //virtual IteratorUCharString *getGraphs()=0;
 
 // ModifiableDictionary
 
 
-	string getType();
-	unsigned int getMapping();
+	string getType()const;
+	unsigned int getMapping()const;
 
 	void getSuggestions(const char *base, TripleComponentRole role, std::vector<string> &out, int maxResults);
 

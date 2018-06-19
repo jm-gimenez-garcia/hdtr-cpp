@@ -4,16 +4,34 @@
 
 
 
-#include <Iterator.hpp>
+//#include <Iterator.hpp>
 #include <Dictionary.hpp>
 #include <HDTSpecification.hpp>
+#include <HDTEnums.hpp>
 
-#include "../libdcs/CSD.h"
+//#include "../libdcs/CSD.h"
+
+
+namespace std{
+	typedef basic_istream<char> istream;
+	typedef basic_ostream<char> ostream;
+	typedef basic_string<char> string;
+};
+
+namespace csd{
+	class CSD;
+};
 
 namespace hdt {
+class ControlInformation;
+class ProgressListener;
+class IntermediateListener;
+class IteratorUCharString;
+class Header;
 
-class BaseLiteralDictionary : public Dictionary {
-private:
+
+class BaseLiteralDictionary : virtual public Dictionary {
+protected:
 	csd::CSD *subjects;
 	csd::CSD *objectsNotLiterals;
 	csd::CSD *objectsLiterals;
@@ -39,7 +57,7 @@ public:
 	virtual ~BaseLiteralDictionary();
 
 	std::string idToString(const unsigned int id, const TripleComponentRole position)const;
-	virtual unsigned int stringToId(const std::string &str, const TripleComponentRole position)const;
+	virtual unsigned int stringToId(const std::string &str, const TripleComponentRole position);
 
 	/** Returns the number of IDs that contain s[1,..len] as a substring. It also
 	 * return in occs the IDs. Otherwise return 0.
@@ -50,20 +68,25 @@ public:
 	uint32_t substringToId(unsigned char *s, uint32_t len, uint32_t **occs);
     uint32_t substringToId(unsigned char *s, uint32_t len, uint32_t offset, uint32_t limit, bool deduplicate, uint32_t **occs, uint32_t* num_occ);
 
-    virtual size_t getNumberOfElements();
+    virtual size_t getNumberOfElements()const;
 
-    virtual uint64_t size();
+    virtual uint64_t size()const;
 
-	unsigned int getNsubjects();
-	unsigned int getNobjects();
-	unsigned int getNshared();
+	unsigned int getNsubjects()const;
+	unsigned int getNobjects()const;
+	unsigned int getNshared()const;
+	//virtual unsigned int getNpredicates()const=0;
+	//virtual unsigned int getNgraphs()const=0;
 
-	unsigned int getNobjectsNotLiterals();
-	unsigned int getNobjectsLiterals();
+	unsigned int getNobjectsNotLiterals()const;
+	unsigned int getNobjectsLiterals()const;
 
-	virtual unsigned int getMaxID();
-	unsigned int getMaxSubjectID();
-	unsigned int getMaxObjectID();
+	virtual unsigned int getMaxID()const;
+
+	unsigned int getMaxSubjectID()const;
+	unsigned int getMaxObjectID()const;
+	//virtual unsigned int getMaxPredicateID()const=0;
+	//virtual unsigned int getMaxGraphID()const=0;
 
 	void populateHeader(Header &header, string rootNode);
 	virtual void populateHeaderNumFourthSection(Header & header, string rootNode)=0;
@@ -94,7 +117,7 @@ public:
 
     void import(Dictionary *other, ProgressListener *listener=NULL);
 	void importSubjects(Dictionary *other, ProgressListener *listener, IntermediateListener& iListener);
-	virtual void importFourthSection(Dictionary *other, IntermediateListener& iListener)=0;
+	virtual void importFourthSection(Dictionary *other, ProgressListener *listener, IntermediateListener& iListener)=0;
 	void importObjects(Dictionary *other, ProgressListener *listener, IntermediateListener& iListener);
 	void importShared(Dictionary *other, ProgressListener *listener, IntermediateListener& iListener); 
 
@@ -103,14 +126,16 @@ public:
     IteratorUCharString *getSubjects();
     IteratorUCharString *getObjects();
     IteratorUCharString *getShared();
+    //virtual IteratorUCharString *getPredicates()=0;
+    //virtual IteratorUCharString *getGraphs()=0;
 
 	unsigned int insert(const std::string &str, const TripleComponentRole position);
 
 	void startProcessing(ProgressListener *listener = NULL);
 	void stopProcessing(ProgressListener *listener = NULL);
 
-	string getType();
-	unsigned int getMapping();
+	string getType()const;
+	unsigned int getMapping()const;
 
 	virtual void getSuggestions(const char *base, TripleComponentRole role, std::vector<string> &out, int maxResults);
 
@@ -118,7 +143,7 @@ public:
     hdt::IteratorUInt *getIDSuggestions(const char *prefix, TripleComponentRole role);
 
 
-private:
+protected:
 	virtual csd::CSD *getDictionarySection(unsigned int id, TripleComponentRole position)const;
 	virtual unsigned int getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position)const;
 	unsigned int getGlobalId(unsigned int id, DictionarySection position)const;
@@ -127,6 +152,9 @@ private:
 
 
 };
+
+csd::CSD *loadSectionPFC(IteratorUCharString *iterator, uint32_t blocksize, ProgressListener *listener);
+csd::CSD *loadSectionFMIndex(IteratorUCharString *iterator, bool sparse_bitsequence, int bparam, size_t bwt_sample, bool use_sample, hdt::ProgressListener *listener);
 
 }
 

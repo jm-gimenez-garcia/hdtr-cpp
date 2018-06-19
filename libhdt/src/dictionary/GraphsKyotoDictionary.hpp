@@ -2,19 +2,31 @@
 #define __GRAPHS_KYOTO_DICTIONARY_H__
 
 
+#ifdef HAVE_KYOTO
+
+
+#include "BaseKyotoDictionary.hpp"
+#include "GraphsDictionary.hpp"
+
 namespace hdt {
 
-class GraphsKyotoDictionary: public BaseKyotoDictionary {
+class GraphsKyotoDictionary: public BaseKyotoDictionary, public GraphsDictionary {
 public:
-	TreeDB graphs;
+	//very unsafe due to non-const kyotocabinet::TreeDB::count() and kyotocabinet::TreeDB::get() methods
+	mutable kyotocabinet::TreeDB graphs;
 
 public:
 	GraphsKyotoDictionary(){};
 	virtual ~GraphsKyotoDictionary();
 
-    IteratorUCharString *getGraphs()const;
-	size_t getNumberOfElements();
+    //IteratorUCharString *getPredicates();
+    IteratorUCharString *getGraphs();
+	size_t getNumberOfElements()const;
+	
+	//unsigned int getNpredicates()const;
 	unsigned int getNgraphs()const;
+	
+	//unsigned int getMaxPredicateID()const;
 	unsigned int getMaxGraphID()const;
 
 	unsigned int stringToId(const std::string &key, const TripleComponentRole position)const;
@@ -22,33 +34,16 @@ public:
 	void startProcessing(ProgressListener *listener);
 	unsigned int insert(const std::string & str, const TripleComponentRole pos);
 
-	unsigned int getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) const;
-	vunsigned int getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position) const
+	unsigned int getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position)const ;
+	unsigned int getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position) const;
 
 	void dumpSizes(std::ostream &out);
-
-
-
-
-
-
-
 
 
 
 };
 
 }
-
-
-
-
-
-
-
-
-
-
-
+#endif
 
 #endif

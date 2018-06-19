@@ -1,4 +1,6 @@
 
+#include "TriplesPlainDictionary.hpp"
+#include "HDTVocabulary.hpp"
 namespace hdt {
 
 
@@ -9,7 +11,7 @@ TriplesPlainDictionary::~TriplesPlainDictionary() {
 	}
 }
 
-unsigned int TriplesPlainDictionary::stringToId(const std::string &key, const TripleComponentRole position)const
+unsigned int TriplesPlainDictionary::stringToId(const std::string &key, const TripleComponentRole position)
 {	
 
 	if(position!=PREDICATE)
@@ -24,8 +26,8 @@ unsigned int TriplesPlainDictionary::stringToId(const std::string &key, const Tr
 	}
 }
 
-void TriplesPlainDictionary::getNumberOfElements()const
-{return BasePlainDictionary::getNumberOfElements + predicates.size();}
+size_t TriplesPlainDictionary::getNumberOfElements()const
+{return BasePlainDictionary::getNumberOfElements() + predicates.size();}
 
 void TriplesPlainDictionary::startProcessing(ProgressListener *listener)
 {
@@ -33,6 +35,13 @@ void TriplesPlainDictionary::startProcessing(ProgressListener *listener)
 	BasePlainDictionary::startProcessing(listener);
 }
 
+
+void TriplesPlainDictionary::populateHeaderFourthElementNum(Header &header, string rootNode){
+	header.insert(rootNode, HDTVocabulary::DICTIONARY_NUMPREDICATES, getNpredicates());
+}
+void TriplesPlainDictionary::populateHeaderFourthElementMaxId(Header &header, string rootNode){
+	header.insert(rootNode, HDTVocabulary::DICTIONARY_MAXPREDICATEID, getMaxPredicateID());
+}
 
 void TriplesPlainDictionary::saveFourthSection(std::ostream &output, ProgressListener *listener, unsigned int& counter, const char marker)
 {
@@ -53,7 +62,7 @@ void TriplesPlainDictionary::insertFourthRegion(IntermediateListener& iListener,
 
 
 
-void TriplesPlainDictionary::insertFourthElement(const std::string & str, const TripleComponentRole& pos)
+unsigned int TriplesPlainDictionary::insertFourthElement(const std::string & str, const TripleComponentRole& pos)
 {
 	if(pos==PREDICATE) {
 		DictEntryIt it = hashPredicate.find(str.c_str());
@@ -73,6 +82,7 @@ void TriplesPlainDictionary::insertFourthElement(const std::string & str, const 
 			return entry->id;
 		}
 	}
+	return 0;
 }
 
 
@@ -92,26 +102,50 @@ void TriplesPlainDictionary::insert(const string& str, const DictionarySection& 
 	}
 }
 
+IteratorUCharString *TriplesPlainDictionary::getPredicates() {
+	return new DictIterator(predicates);
+}
+/*IteratorUCharString *TriplesPlainDictionary::getGraphs() {
+	throw std::runtime_error("No graph section in this kind of dictionary");
+	return NULL;
+}*/
+
+unsigned int TriplesPlainDictionary::getMaxPredicateID()const {
+	return predicates.size();
+}
+/*unsigned int TriplesPlainDictionary::getMaxGraphID()const {
+	throw std::runtime_error("No graph section in this kind of dictionary");
+	return 0;
+}*/
+
+unsigned int TriplesPlainDictionary::getNpredicates()const 
+{return predicates.size();}
+/*unsigned int TriplesPlainDictionary::getNgraphs()const{
+	throw std::runtime_error("No graph section in this kind of dictionary");
+	return 0;
+}*/
+
+
+
 void TriplesPlainDictionary::updateIDs() 
 {
 	for (unsigned int i = 0; i < predicates.size(); i++) 
-		predicates[i]->id = getGlobalId(i, NOT_SHARED_PREDICATE);
+		predicates[i]->id = getGlobalId(mapping, i, NOT_SHARED_PREDICATE);
 	BasePlainDictionary::updateIDs();
 }
 
 const vector<DictionaryEntry*>& TriplesPlainDictionary::getDictionaryEntryVector(unsigned int id, TripleComponentRole position) const
 {return (position==PREDICATE) ? predicates : BasePlainDictionary::getDictionaryEntryVector(id, position);}
 
-unsigned int TriplesPlainDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) const
+unsigned int TriplesPlainDictionary::getGlobalId(unsigned int mapping_type, unsigned int id, DictionarySection position) const
 {
 
 	if(position==NOT_SHARED_PREDICATE)
 		return id+1;
 	else
-		return BasePlainDictionary::getGlobalId(mapping, id, position);
+		return BasePlainDictionary::getGlobalId(mapping_type, id, position);
 }
-unsigned int TriplesPlainDictionary::getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position) const
-return (position==NOT_SHARED_PREDICATE) ? id+1 : BasePlainDictionary::getGlobalId(mapping, id, position);
+unsigned int TriplesPlainDictionary::getLocalId(unsigned int mapping_type, unsigned int id, TripleComponentRole position) const
 {
 
 	if(position==PREDICATE) 
@@ -120,7 +154,7 @@ return (position==NOT_SHARED_PREDICATE) ? id+1 : BasePlainDictionary::getGlobalI
 		else
 			throw std::runtime_error("This globalID does not correspond to a PREDICATE");
 	else
-		return BasePlainDictionary::getGlobalId(mapping, id, position);
+		return BasePlainDictionary::getLocalId(mapping_type, id, position);
 }
 
 void TriplesPlainDictionary::updateID(unsigned int oldid, unsigned int newid, DictionarySection position) 

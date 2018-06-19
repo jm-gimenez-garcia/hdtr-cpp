@@ -1,4 +1,6 @@
 
+#include "GraphsPlainDictionary.hpp"
+#include "HDTVocabulary.hpp"
 
 namespace hdt {
 
@@ -9,7 +11,7 @@ GraphsPlainDictionary::~GraphsPlainDictionary() {
 	}
 }
 
-unsigned int GraphsPlainDictionary::stringToId(const std::string &key, const TripleComponentRole position)const
+unsigned int GraphsPlainDictionary::stringToId(const std::string &key, const TripleComponentRole position)
 {	
 
 	if(position!=GRAPH)
@@ -19,13 +21,13 @@ unsigned int GraphsPlainDictionary::stringToId(const std::string &key, const Tri
 		DictEntryIt ret;
 		if(key.length()==0)
 			return 0;
-		ret = hashPredicate.find(key.c_str());
+		ret = hashGraph.find(key.c_str());
    		return ret==hashGraph.end() ? 0 : ret->second->id;
 	}
 }
 
-void GraphsPlainDictionary::getNumberOfElements()const
-{return BasePlainDictionary::getNumberOfElements + graphs.size();}
+size_t GraphsPlainDictionary::getNumberOfElements()const
+{return BasePlainDictionary::getNumberOfElements() + graphs.size();}
 
 
 
@@ -35,6 +37,14 @@ void GraphsPlainDictionary::startProcessing(ProgressListener *listener)
 	BasePlainDictionary::startProcessing(listener);
 }
 
+void GraphsPlainDictionary::populateHeaderFourthElementNum(Header &header, string rootNode){
+	header.insert(rootNode, HDTVocabulary::DICTIONARY_NUMGRAPHS, getNgraphs());
+}
+
+void GraphsPlainDictionary::populateHeaderFourthElementMaxId(Header &header, string rootNode){
+	header.insert(rootNode, HDTVocabulary::DICTIONARY_MAXGRAPHID, getMaxGraphID());
+}
+
 void GraphsPlainDictionary::saveFourthSection(std::ostream &output, ProgressListener *listener, unsigned int& counter, const char marker)
 {
 	//graphs
@@ -42,7 +52,7 @@ void GraphsPlainDictionary::saveFourthSection(std::ostream &output, ProgressList
 		output << graphs[i]->str;
 		output.put(marker); //character  to split file
 		counter++;
-		NOTIFYCOND(listener, "GraphsPlainDictionary saving predicates", counter, getNumberOfElements());
+		NOTIFYCOND(listener, "GraphsPlainDictionary saving graphs", counter, getNumberOfElements());
 	}
 }
 
@@ -52,7 +62,7 @@ void GraphsPlainDictionary::insertFourthRegion(IntermediateListener& iListener, 
 	insert(line, UNUSED_GRAPH);	
 }
 
-void GraphsPlainDictionary::insertFourthElement(const std::string & str, const TripleComponentRole& pos)
+unsigned int GraphsPlainDictionary::insertFourthElement(const std::string & str, const TripleComponentRole& pos)
 {
 	if(pos==GRAPH) {
 		DictEntryIt it = hashGraph.find(str.c_str());
@@ -72,6 +82,7 @@ void GraphsPlainDictionary::insertFourthElement(const std::string & str, const T
 			return entry->id;
 		}
 	}
+	return 0;
 }
 void GraphsPlainDictionary::insert(const string& str, const DictionarySection& pos) {
 
@@ -89,9 +100,35 @@ void GraphsPlainDictionary::insert(const string& str, const DictionarySection& p
 	}
 }
 
+
+/*IteratorUCharString *GraphsPlainDictionary::getPredicates() {
+	throw std::runtime_error("No predicate section in this kind of dictionary");
+	return NULL;
+}*/
+IteratorUCharString *GraphsPlainDictionary::getGraphs() {
+	return new DictIterator(graphs);
+}
+
+/*unsigned int GraphsPlainDictionary::getMaxPredicateID()const {
+	throw std::runtime_error("No graph predicate in this kind of dictionary");
+	return 0;
+}*/
+unsigned int GraphsPlainDictionary::getMaxGraphID()const {
+	return graphs.size();
+}
+
+/*unsigned int GraphsPlainDictionary::getNpredicates()const {
+	throw std::runtime_error("No predicate section in this kind of dictionary");
+	return 0;
+}*/
+unsigned int GraphsPlainDictionary::getNgraphs()const
+{return graphs.size();}
+
+
+
 void GraphsPlainDictionary::updateIDs() {
-	for (unsigned int i = 0; i < predicates.size(); i++) 
-		graphs[i]->id = getGlobalId(i, UNUSED_GRAPH);
+	for (unsigned int i = 0; i < graphs.size(); i++) 
+		graphs[i]->id = getGlobalId(mapping, i, UNUSED_GRAPH);
 	BasePlainDictionary::updateIDs();
 }
 
@@ -99,13 +136,13 @@ const vector<DictionaryEntry*>& GraphsPlainDictionary::getDictionaryEntryVector(
 	return (position==GRAPH) ? graphs : BasePlainDictionary::getDictionaryEntryVector(id, position);
 }
 
-unsigned int GraphsPlainDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) const
+unsigned int GraphsPlainDictionary::getGlobalId(unsigned int mapping_type, unsigned int id, DictionarySection position) const
 {	
 	if(position==UNUSED_GRAPH)
 	{
-		if(mapping==MAPPING1)
+		if(mapping_type==MAPPING1)
 			return shared.size()+subjects.size()+objects.size()+id+1;
-		else if(mapping==MAPPING2)
+		else if(mapping_type==MAPPING2)
 		{
 			unsigned int max_s_o = (subjects.size()>objects.size()) ? subjects.size() : objects.size();
 			return shared.size()+max_s_o+id+1;
@@ -114,9 +151,9 @@ unsigned int GraphsPlainDictionary::getGlobalId(unsigned int mapping, unsigned i
 			throw std::runtime_error("Unknown mapping");
 	}
 	else
-		return BasePlainDictionary::getGlobalId(mapping, id, position);
+		return BasePlainDictionary::getGlobalId(mapping_type, id, position);
 }
-unsigned int GraphsPlainDictionary::getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position) const{
+unsigned int GraphsPlainDictionary::getLocalId(unsigned int mapping_type, unsigned int id, TripleComponentRole position) const{
 
 	const unsigned int sh_length = shared.size();
 	const unsigned int sub_length = subjects.size();
@@ -125,12 +162,12 @@ unsigned int GraphsPlainDictionary::getLocalId(unsigned int mapping, unsigned in
 	unsigned int last_obj_sub_glob_id;
 	unsigned int last_gr_glob_id;
 
-	if(mapping==MAPPING1)
+	if(mapping_type==MAPPING1)
 	{
 		last_obj_sub_glob_id = sh_length + sub_length+obj_length;
 		last_gr_glob_id  = last_obj_sub_glob_id + gr_length;
 	}
-	else if (mapping==MAPPING2)
+	else if (mapping_type==MAPPING2)
 	{
 		const unsigned int max_sub_obj_length = (obj_length>sub_length) ? obj_length : sub_length;
 		last_obj_sub_glob_id = sh_length + max_sub_obj_length ;
@@ -145,7 +182,7 @@ unsigned int GraphsPlainDictionary::getLocalId(unsigned int mapping, unsigned in
 		else
 			throw std::runtime_error("This globalID does not correspond to an unused graph");
 	else
-		return BasePlainDictionary::getLocalId(mapping, id, position);
+		return BasePlainDictionary::getLocalId(mapping_type, id, position);
 
 
 

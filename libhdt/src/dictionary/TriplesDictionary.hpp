@@ -32,24 +32,16 @@
 #ifndef HDT_TRIPLES_DICTIONARY_HPP_
 #define HDT_TRIPLES_DICTIONARY_HPP_
 
-#include "HDTListener.hpp"
-#include "SingleTriple.hpp"
-#include "Iterator.hpp"
-#include "HDTEnums.hpp"
-#include "Header.hpp"
-#include "ControlInformation.hpp"
-#include "Triples.hpp"
-
-#include <string>
-#include <iostream>
+#include "Dictionary.hpp"
 
 namespace hdt {
+class IteratorUCharString;
 
 /**
  * Interface representing the Dictionary part of the HDT representation.
  * Provides a means to convert Strings to ID and the other way around.
  */
-class TriplesDictionary : public virtual Dictionary
+class TriplesDictionary : virtual public Dictionary
 {
 public:
     virtual ~TriplesDictionary(){ }

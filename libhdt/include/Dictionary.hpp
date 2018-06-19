@@ -137,16 +137,22 @@ public:
     virtual size_t load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener=NULL)=0;
 
 
-    virtual unsigned int getNsubjects()=0;
-    virtual unsigned int getNobjects()=0;
-    virtual unsigned int getNshared()=0;
+    virtual unsigned int getNsubjects()const=0;
+    virtual unsigned int getNobjects()const=0;
+    virtual unsigned int getNshared()const=0;
+    //virtual unsigned int getNpredicates()const=0;
+    //virtual unsigned int getNgraphs()const=0;
 
-    virtual unsigned int getMaxSubjectID()=0;
-    virtual unsigned int getMaxObjectID()=0;
+    virtual unsigned int getMaxSubjectID()const=0;
+    virtual unsigned int getMaxObjectID()const=0;
+    //virtual unsigned int getMaxPredicateID()const=0;
+    //virtual unsigned int getMaxGraphID()const=0;
 
     virtual IteratorUCharString *getSubjects()=0;
     virtual IteratorUCharString *getObjects()=0;
     virtual IteratorUCharString *getShared()=0;
+    //virtual IteratorUCharString *getPredicates()=0;
+    //virtual IteratorUCharString *getGraphs()=0;
 
 
     virtual string getType()=0;
@@ -158,7 +164,7 @@ public:
     virtual hdt::IteratorUInt *getIDSuggestions(const char *prefix, TripleComponentRole role)=0;
 };
 
-class ModifiableDictionary : public virtual Dictionary {
+class ModifiableDictionary : virtual public Dictionary {
 public:
 	virtual ~ModifiableDictionary(){ }
 

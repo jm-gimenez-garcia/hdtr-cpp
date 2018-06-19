@@ -33,23 +33,32 @@
 #define _BASE_KYOTO_DICTIONARY_H_
 
 #include <HDTSpecification.hpp>
-#include <Dictionary.hpp>
+#include <Dictionary.hpp> //for ModifiableDictionary
 #include <Iterator.hpp>
+#include "HDTEnums.hpp"
 
-#include <string.h>
-#include <string>
-#include <algorithm>
-#include <fstream>
-#include <iostream>
+//#include <string.h>
+//#include <string>
+//#include <algorithm>
+//#include <fstream>
+//#include <iostream>
 
 #ifdef HAVE_KYOTO
 
 #include <kcpolydb.h>
 
-using namespace kyotocabinet;
+//using namespace kyotocabinet;
+
+namespace std{
+	typedef basic_istream<char> istream;
+	typedef basic_ostream<char> ostream;
+	typedef basic_string<char> string;
+};
 
 namespace hdt {
-
+class ControlInformation;
+class ProgressListener;
+class Header;
 
 class BaseKyotoDictionary : public ModifiableDictionary {
 // Private attributes
@@ -60,7 +69,12 @@ public:
 
 	//ControlInformation controlInformation;
 	HDTSpecification spec;
-	TreeDB subjects, objects, shared;
+
+	//very unsafe due to non-const kyotocabinet::TreeDB::count() and kyotocabinet::TreeDB::get() methods
+	mutable kyotocabinet::TreeDB subjects;
+	mutable kyotocabinet::TreeDB objects;
+	mutable kyotocabinet::TreeDB shared;
+
 
 // Public Interface
 public:
@@ -71,6 +85,8 @@ public:
     IteratorUCharString *getSubjects();
     IteratorUCharString *getObjects();
     IteratorUCharString *getShared();
+    //virtual IteratorUCharString *getPredicates()=0;
+    //virtual IteratorUCharString *getGraphs()=0;
 	virtual size_t getNumberOfElements()const;
 
 	std::string idToString(const unsigned int id, const TripleComponentRole position)const;
@@ -86,27 +102,31 @@ public:
 	size_t load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener=NULL);
     void import(Dictionary *other, ProgressListener *listener=NULL);
 
-	virtual unsigned int getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) const;
-	unsigned int getGlobalId(unsigned int id, DictionarySection position) const{return getGlobalId(mapping, id, position);}
+	virtual unsigned int getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position)const ;
+	unsigned int getGlobalId(unsigned int id, DictionarySection position)const {return getGlobalId(mapping, id, position);}
 
-	virtual unsigned int getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position) const;
-	unsigned int getLocalId(unsigned int id, TripleComponentRole position) const{return getLocalId(mapping,id,position);}
+	virtual unsigned int getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position)const ;
+	unsigned int getLocalId(unsigned int id, TripleComponentRole position)const {return getLocalId(mapping,id,position);}
 
 	unsigned int getMaxID()const;
 
-    uint64_t size();
+    uint64_t size()const;
 
-	unsigned int getNsubjects();
-	unsigned int getNobjects();
-	unsigned int getNshared();
+	unsigned int getNsubjects()const;
+	unsigned int getNobjects()const;
+	unsigned int getNshared()const;
+	//virtual unsigned int getNpredicates()const=0;
+	//virtual unsigned int getNgraphs()const=0;
 
-	unsigned int getMaxSubjectID();
-	unsigned int getMaxObjectID();
+	unsigned int getMaxSubjectID()const;
+	unsigned int getMaxObjectID()const;
+	//virtual unsigned int getMaxPredicateID()const=0;
+	//virtual unsigned int getMaxGraphID()const=0;
 
 	void populateHeader(Header &header, string rootNode);
 
-	string getType();
-	unsigned int getMapping();
+	string getType()const;
+	unsigned int getMapping()const;
 
     void getSuggestions(const char *base, TripleComponentRole role, std::vector<string> &out, int maxResults);
 
@@ -116,13 +136,9 @@ public:
 
 // Private methods
 private:
-    void updateIDs(DB *db);
+    void updateIDs(kyotocabinet::DB *db);
 
 public:
-	unsigned int getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position)const=0;
-	unsigned int getGlobalId(unsigned int id, DictionarySection position)const;
-	unsigned int getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position)const;
-	unsigned int getLocalId(unsigned int id, TripleComponentRole position)const;
 
 	virtual void dumpSizes(std::ostream &out);
 
@@ -131,12 +147,12 @@ public:
 
 class KyotoDictIterator : public IteratorUCharString {
 private:
-	DB *db;
-	DB::Cursor *cur;
+	kyotocabinet::DB *db;
+	kyotocabinet::DB::Cursor *cur;
 	string key;
 	size_t count;
 public:
-	KyotoDictIterator(DB *db) : db(db), cur(db->cursor()), count(0) {
+	KyotoDictIterator(kyotocabinet::DB *db) : db(db), cur(db->cursor()), count(0) {
 		cur->jump();
 	}
 

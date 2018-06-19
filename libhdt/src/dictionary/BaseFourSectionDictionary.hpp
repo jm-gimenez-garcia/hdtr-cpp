@@ -32,15 +32,30 @@
 #ifndef HDT_BFS_DICTIONARY_HPP_
 #define HDT_BFS_DICTIONARY_HPP_
 
-#include <Iterator.hpp>
-#include <HDTSpecification.hpp>
-#include <Dictionary.hpp>
+//#include <Iterator.hpp>
+#include "HDTSpecification.hpp"
+#include "Dictionary.hpp"
+//#include "../libdcs/CSD.h"
+#include "HDTEnums.hpp"
 
-#include "../libdcs/CSD.h"
+namespace std{
+	typedef basic_istream<char> istream;
+	typedef basic_ostream<char> ostream;
+	typedef basic_string<char> string;
+};
+namespace csd{
+	class CSD;
+};
 
 namespace hdt {
 
-class BaseFourSectionDictionary : public virtual Dictionary {
+class ControlInformation;
+class ProgressListener;
+class IntermediateListener;
+class IteratorUCharString;
+class Header;
+
+class BaseFourSectionDictionary : virtual public Dictionary {
 protected:
 
 	unsigned int mapping;
@@ -61,7 +76,7 @@ public:
 	virtual ~BaseFourSectionDictionary();
 
 	std::string idToString(const unsigned int id, const TripleComponentRole position)const;
-	virtual unsigned int stringToId(const std::string &str, const TripleComponentRole position)const;
+	virtual unsigned int stringToId(const std::string &str, const TripleComponentRole position);
 
 	void load(std::istream & input, ControlInformation & ci, ProgressListener *listener=NULL);
 	void loadControlInfo(std::istream & input, ControlInformation & ci);
@@ -79,13 +94,15 @@ public:
 
 	void import(Dictionary *other, ProgressListener *listener);
 	void importSubjects(Dictionary *other, ProgressListener *listener, IntermediateListener& iListener);
-	virtual void importFourthSection(Dictionary *other, IntermediateListener& iListener)=0;
+	virtual void importFourthSection(Dictionary *other, ProgressListener *listener, IntermediateListener& iListener)=0;
 	void importObjects(Dictionary *other, ProgressListener *listener, IntermediateListener& iListener);
 	void importShared(Dictionary *other, ProgressListener *listener, IntermediateListener& iListener); 
 
-	IteratorUCharString* getSubjects()const;
-	IteratorUCharString* getObjects()const;
-	IteratorUCharString* getShared()const;
+	IteratorUCharString* getSubjects();
+	IteratorUCharString* getObjects();
+	IteratorUCharString* getShared();
+	//virtual IteratorUCharString* getPredicates()=0;
+	//virtual IteratorUCharString* getGraphs()=0;
 
 	void save(std::ostream& output, ControlInformation& controlInformation, ProgressListener *listener);
 	void saveControlInfo(std::ostream& output, ControlInformation& controlInformation);
@@ -98,15 +115,21 @@ public:
 	unsigned int getNsubjects()const;
 	unsigned int getNobjects()const;
 	unsigned int getNshared()const;
+	//virtual unsigned int getNpredicates()const=0;
+	//virtual unsigned int getNgraphs()const=0;
+
 	unsigned int getMaxID()const;
 	unsigned int getMaxSubjectID()const;
 	unsigned int getMaxObjectID()const;
+	//virtual unsigned int getMaxPredicateID()const=0;
+	//virtual unsigned int getMaxGraphID()const=0;
 	virtual size_t getNumberOfElements()const;
-    	virtual uint64_t size()const;
+    virtual uint64_t size()const;
 	string getType()const;
 	unsigned int getMapping()const;
+    virtual void getSuggestions(const char *base, TripleComponentRole role, std::vector<string> &out, int maxResults);
 
-protocted:
+protected:
 	virtual csd::CSD *getDictionarySection(unsigned int id, TripleComponentRole position)const;
 	virtual unsigned int getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position)const;
 	unsigned int getGlobalId(unsigned int id, DictionarySection position)const{return getGlobalId(mapping, id, position);}
@@ -118,6 +141,8 @@ protected:
 	virtual void create();
 	
 };
+
+csd::CSD *loadSection(IteratorUCharString *iterator, uint32_t blocksize, ProgressListener *listener);
 
 }
 

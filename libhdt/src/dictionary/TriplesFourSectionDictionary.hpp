@@ -32,15 +32,16 @@
 #ifndef HDT_TFS_DICTIONARY_HPP_
 #define HDT_TFS_DICTIONARY_HPP_
 
-#include <Iterator.hpp>
-#include <HDTSpecification.hpp>
-#include <Dictionary.hpp>
+#include "BaseFourSectionDictionary.hpp"
+#include "TriplesDictionary.hpp"
+//#include <Iterator.hpp>
+//#include <HDTSpecification.hpp>"
 
-#include "../libdcs/CSD.h"
+//#include "../libdcs/CSD.h"
 
 namespace hdt {
 
-class TriplesFourSectionDictionary : public BaseFourSectionDictionary {
+class TriplesFourSectionDictionary : public BaseFourSectionDictionary, public TriplesDictionary {
 private:
 	csd::CSD *predicates;
 
@@ -49,29 +50,39 @@ public:
 	TriplesFourSectionDictionary(HDTSpecification &spec);
 	~TriplesFourSectionDictionary();
 
-	unsigned int stringToId(const std::string &str, const TripleComponentRole position)const;
+	unsigned int stringToId(const std::string &str, const TripleComponentRole position);
 
 	void loadFourthSection(std::istream & input, IntermediateListener& iListener);
 	void loadFourthSection(unsigned char *ptr, unsigned char *ptrMax, size_t& count, IntermediateListener& iListener);
 
-	void importFourthSection(Dictionary *other, IntermediateListener& iListener);
-	IteratorUCharString* getPredicates()const;
+	void importFourthSection(Dictionary *other, ProgressListener *listener, IntermediateListener& iListener);
+
+	IteratorUCharString* getPredicates();
+	//IteratorUCharString* getGraphs();
+
 	void saveFourthSection(std::ostream & output, IntermediateListener& iListener);
 	unsigned int getNpredicates()const;
+	//unsigned int getNgraphs()const;
+
 	unsigned int getMaxPredicateID()const;
+	//unsigned int getMaxGraphID()const;
+
 	uint64_t size()const;
 	size_t getNumberOfElements()const;
+	void getSuggestions(const char *base, hdt::TripleComponentRole role, std::vector<std::string> &out, int maxResults);
 
 private:
 	csd::CSD* getDictionarySection(unsigned int id, TripleComponentRole position) const;
 	unsigned int getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position)const;
 	unsigned int getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position)const;
 
-};
+	
 
 protected:
 	void clear();
 	void create();
+};
+
 
 }
 

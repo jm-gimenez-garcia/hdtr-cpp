@@ -32,15 +32,13 @@
 #ifndef HDT_GFS_DICTIONARY_HPP_
 #define HDT_GFS_DICTIONARY_HPP_
 
-#include <Iterator.hpp>
-#include <HDTSpecification.hpp>
-#include <Dictionary.hpp>
+#include "BaseFourSectionDictionary.hpp"
+#include "GraphsDictionary.hpp"
 
-#include "../libdcs/CSD.h"
 
 namespace hdt {
 
-class GraphsFourSectionDictionary : public BaseFourSectionDictionary {
+class GraphsFourSectionDictionary : public BaseFourSectionDictionary, public GraphsDictionary {
 private:
 	csd::CSD *graphs;
 
@@ -49,22 +47,29 @@ public:
 	GraphsFourSectionDictionary(HDTSpecification &spec);
 	~GraphsFourSectionDictionary();
 
-	unsigned int stringToId(const std::string &str, const TripleComponentRole position)const;
+	unsigned int stringToId(const std::string &str, const TripleComponentRole position);
 
 	void loadFourthSection(std::istream & input, IntermediateListener& iListener);
 	void loadFourthSection(unsigned char *ptr, unsigned char *ptrMax, size_t& count, IntermediateListener& iListener);	
 
 	void importFourthSection(Dictionary *other, ProgressListener *listener, IntermediateListener& iListener);
 
-	IteratorUCharString* getGraphs()const;
+	//IteratorUCharString* getPredicates();
+	IteratorUCharString* getGraphs();
+
 	void saveFourthSection(std::ostream& output, IntermediateListener& iListener);
 
+	//unsigned int getNpredicates()const;
 	unsigned int getNgraphs()const;
+
+	//unsigned int getMaxPredicateID()const;
 	unsigned int getMaxGraphID()const;
+	
 	uint64_t size()const;
 	size_t getNumberOfElements()const;
+	void getSuggestions(const char *base, hdt::TripleComponentRole role, std::vector<std::string> &out, int maxResults);
 
-private:
+protected:
 	csd::CSD* getDictionarySection(unsigned int id, TripleComponentRole position) const;
 	unsigned int getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position)const;
 	unsigned int getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position)const;
@@ -72,6 +77,6 @@ private:
 protected:
 	void clear();
 	void create();
+};
 }
-
 #endif /* HDT_GFS_DICTIONARY_HPP_ */

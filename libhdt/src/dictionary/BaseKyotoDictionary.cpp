@@ -34,13 +34,16 @@
 #ifndef WIN32
 #include <unistd.h>
 #endif
-#include <stdexcept>
-#include "BaseKyotoDictionary.hpp"
 
+#include "BaseKyotoDictionary.hpp"
+#include "HDTListener.hpp"
+#include "Header.hpp"
 #include <HDTVocabulary.hpp>
-#include <HDTEnums.hpp>
+#include "ControlInformation.hpp"
 
 #ifdef HAVE_KYOTO
+
+using namespace kyotocabinet;
 
 namespace hdt {
 
@@ -102,14 +105,11 @@ unsigned int BaseKyotoDictionary::stringToId(const std::string &key, const Tripl
 
 	switch (position) {
 		case SUBJECT:
+
 			if(shared.get((const char *)key.c_str(),(size_t)key.length(), (char *) &ret, sizeof(ret))) 
 				return getGlobalId(ret,SHARED_SUBJECT);
 			if(subjects.get((const char *)key.c_str(),(size_t)key.length(), (char *) &ret, sizeof(ret))) 
 				return getGlobalId(ret,NOT_SHARED_SUBJECT);
-			return 0;
-		case PREDICATE:
-			if(predicates.get((const char *)key.c_str(),(size_t)key.length(), (char *) &ret, sizeof(ret))) 
-				return getGlobalId(ret, NOT_SHARED_PREDICATE);
 			return 0;
 		case OBJECT:
 			if(shared.get((const char *)key.c_str(),(size_t)key.length(), (char *) &ret, sizeof(ret))) 
@@ -117,19 +117,23 @@ unsigned int BaseKyotoDictionary::stringToId(const std::string &key, const Tripl
 			if(objects.get((const char *)key.c_str(),(size_t)key.length(), (char *) &ret, sizeof(ret))) 
 				return getGlobalId(ret,NOT_SHARED_OBJECT);
 			return 0;
+		default:
+			return 0;
 	}
-
-	// NOT REACHED
 	return 0;
+
 }
 
 void BaseKyotoDictionary::startProcessing(ProgressListener *listener)
 {
 	// TODO: Add some random suffix to the filenames
 #if 1
-	unlink("subjects.kct");
-	unlink("shared.kct");
-	unlink("objects.kct");
+	//unlink("subjects.kct");
+	//unlink("shared.kct");
+	//unlink("objects.kct");
+	std::remove("subjects.kct");
+	std::remove("shared.kct");
+	std::remove("objects.kct");
 #endif
 
 	subjects.tune_options(TreeDB::TLINEAR /*| TreeDB::TCCOMPESS*/);
@@ -176,7 +180,7 @@ void BaseKyotoDictionary::updateIDs(DB *db) {
 }
 
 
-unsigned int BaseKyotoDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) const{
+unsigned int BaseKyotoDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position)const {
 	switch (position) {
 		case NOT_SHARED_SUBJECT:
 			return shared.count()+id+1;
@@ -186,17 +190,17 @@ unsigned int BaseKyotoDictionary::getGlobalId(unsigned int mapping, unsigned int
 				return shared.count()+id+1;
 			else 
 				return shared.count()+subjects.count()+id+1;
-			
 
 		case SHARED_SUBJECT:
 		case SHARED_OBJECT:
 			return id+1;
+		default:
+			throw std::runtime_error("Item not found");
 		}
 
-		throw std::runtime_error("Item not found");
 }
 
-unsigned int BaseKyotoDictionary::getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position) const{
+unsigned int BaseKyotoDictionary::getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position)const {
 
 	const unsigned int sh_length = shared.count();
 	const unsigned int sub_length = subjects.count();
@@ -232,10 +236,10 @@ unsigned int BaseKyotoDictionary::getLocalId(unsigned int mapping, unsigned int 
 			else
 				throw std::runtime_error("Uknown mapping");
 			break;
+		default:
+			throw std::runtime_error("Item not found");
 	}
-	throw std::runtime_error("Item not found");
-
-
+	
 }
 
 
@@ -378,7 +382,7 @@ IteratorUCharString *BaseKyotoDictionary::getShared()
 size_t BaseKyotoDictionary::getNumberOfElements()const
 {return subjects.count()+objects.count()+shared.count();}
 
-uint64_t BaseKyotoDictionary::size()
+uint64_t BaseKyotoDictionary::size()const
 {return sizeStrings;}
 
 
@@ -386,7 +390,6 @@ unsigned int BaseKyotoDictionary::insert(const std::string & str, const TripleCo
 {
 
 	if(str=="") return 0;
-
 	unsigned int value=0;
 
 	if(pos==SUBJECT) {
@@ -398,7 +401,7 @@ unsigned int BaseKyotoDictionary::insert(const std::string & str, const TripleCo
 }
 
 
-unsigned int BaseKyotoDictionary::getMaxID() {
+unsigned int BaseKyotoDictionary::getMaxID()const {
 	unsigned int s = subjects.count();
 	unsigned int o = objects.count();
 	unsigned int sh = shared.count();
@@ -407,14 +410,14 @@ unsigned int BaseKyotoDictionary::getMaxID() {
 	return (mapping==MAPPING2) ? sh+max : sh+s+o;
 }
 
-unsigned int BaseKyotoDictionary::getMaxSubjectID() {
+unsigned int BaseKyotoDictionary::getMaxSubjectID()const {
 	unsigned int sh = shared.count();
 	unsigned int s = subjects.count();
 
 	return sh+s;
 }
 
-unsigned int BaseKyotoDictionary::getMaxObjectID() {
+unsigned int BaseKyotoDictionary::getMaxObjectID()const {
 	unsigned int sh = shared.count();
 	unsigned int s = subjects.count();
 	unsigned int o = objects.count();
@@ -422,14 +425,14 @@ unsigned int BaseKyotoDictionary::getMaxObjectID() {
 	return (mapping==MAPPING2) ? sh+o : sh+s+o; 
 }
 
-unsigned int BaseKyotoDictionary::getNsubjects() 
+unsigned int BaseKyotoDictionary::getNsubjects() const
 {return shared.count()+subjects.count();}
 
 
-unsigned int BaseKyotoDictionary::getNobjects() 
+unsigned int BaseKyotoDictionary::getNobjects() const
 {return shared.count()+objects.count();}
 
-unsigned int BaseKyotoDictionary::getNshared() 
+unsigned int BaseKyotoDictionary::getNshared() const
 {return shared.count();}
 
 void BaseKyotoDictionary::populateHeader(Header &header, string rootNode)
@@ -448,11 +451,11 @@ void BaseKyotoDictionary::dumpSizes(ostream &out) {
 }
 
 
-string BaseKyotoDictionary::getType() {
+string BaseKyotoDictionary::getType()const {
 	return HDTVocabulary::DICTIONARY_TYPE_PLAIN;
 }
 
-unsigned int BaseKyotoDictionary::getMapping() {
+unsigned int BaseKyotoDictionary::getMapping()const {
 	return mapping;
 }
 
