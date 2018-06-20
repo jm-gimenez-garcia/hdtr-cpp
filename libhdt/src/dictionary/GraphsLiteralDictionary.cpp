@@ -86,10 +86,10 @@ void GraphsLiteralDictionary::loadFourthSection(unsigned char *ptr, unsigned cha
 
 void GraphsLiteralDictionary::importFourthSection(Dictionary *other, ProgressListener *listener, IntermediateListener& iListener)
 {
-	if(GraphsLiteralDictionary* other_gld = dynamic_cast<GraphsLiteralDictionary*>(other))
+	if(GraphsDictionary* other_gd = dynamic_cast<GraphsDictionary*>(other))
 	{
 		//NOTIFY(listener, "DictionaryPFC loading graphs", 25, 30);
-		IteratorUCharString *itPred = other_gld->getGraphs();
+		IteratorUCharString *itPred = other_gd->getGraphs();
 		delete graphs;
 		iListener.setRange(20, 21);
 		graphs = loadSectionPFC(itPred, blocksize, &iListener);
@@ -97,7 +97,7 @@ void GraphsLiteralDictionary::importFourthSection(Dictionary *other, ProgressLis
 		delete itPred;
 	}
 	else
-		throw std::runtime_error("Downcast error from Dictionary to GraphsLiteralDictionary.");
+		throw std::runtime_error("Downcast error from Dictionary to GraphsDictionary.");
 }
 
 void GraphsLiteralDictionary::saveFourthSection(std::ostream & output, IntermediateListener& iListener)

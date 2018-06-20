@@ -88,16 +88,16 @@ void GraphsFourSectionDictionary::loadFourthSection(unsigned char *ptr, unsigned
 
 void GraphsFourSectionDictionary::importFourthSection(Dictionary *other, ProgressListener *listener, IntermediateListener& iListener) 
 {
-	if(GraphsFourSectionDictionary* other_gfsd = dynamic_cast<GraphsFourSectionDictionary*>(other))
+	if(GraphsDictionary* other_gd = dynamic_cast<GraphsDictionary*>(other))
 	{
 		NOTIFY(listener, "DictionaryPFC loading graphs", 25, 30);
 		iListener.setRange(20, 21);
-		IteratorUCharString *itGr = other_gfsd->getGraphs();
+		IteratorUCharString *itGr = other_gd->getGraphs();
 		delete graphs;
 		graphs = loadSection(itGr, blocksize, &iListener);
 	}
 	else
-		throw std::runtime_error("Downcast error from Dictionary to GraphsFourSectionDictionary.");
+		throw std::runtime_error("Downcast error from Dictionary to GraphsDictionary.");
 }
 
 /*IteratorUCharString* GraphsFourSectionDictionary::getPredicates() {

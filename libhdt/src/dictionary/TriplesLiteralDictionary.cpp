@@ -101,10 +101,10 @@ void TriplesLiteralDictionary::loadFourthSection(unsigned char *ptr, unsigned ch
 
 void TriplesLiteralDictionary::importFourthSection(Dictionary *other, ProgressListener *listener, IntermediateListener& iListener)
 {
-	if(TriplesLiteralDictionary* other_tld = dynamic_cast<TriplesLiteralDictionary*>(other))
+	if(TriplesDictionary* other_td = dynamic_cast<TriplesDictionary*>(other))
 	{
 		//NOTIFY(listener, "DictionaryPFC loading predicates", 25, 30);
-		IteratorUCharString *itPred = other_tld->getPredicates();
+		IteratorUCharString *itPred = other_td->getPredicates();
 		delete predicates;
 		iListener.setRange(20, 21);
 		predicates = loadSectionPFC(itPred, blocksize, &iListener);
@@ -112,7 +112,7 @@ void TriplesLiteralDictionary::importFourthSection(Dictionary *other, ProgressLi
 		delete itPred;
 	}
 	else
-		throw std::runtime_error("Downcast error from Dictionary to TriplesLiteralDictionary.");
+		throw std::runtime_error("Downcast error from Dictionary to TriplesDictionary.");
 }
 void TriplesLiteralDictionary::saveFourthSection(std::ostream & output, IntermediateListener& iListener)
 {
