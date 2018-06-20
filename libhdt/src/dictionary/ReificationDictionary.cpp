@@ -1,16 +1,20 @@
+#include "ReificationDictionary.hpp"
+#include "TriplesFourSectionDictionary.hpp"
+#include "GraphsFourSectionDictionary.hpp"
+#include "HDTSpecification.hpp"
 
 namespace hdt{
 
-ReificationDictionary::ReificationDictionary(HDTSpecification &specification) : triplesDict(new TriplesFourSectionDictionary(spec)), GraphsDictionary(new GraphsFourSectionDictionary(spec)),maxTriplesDictID(0){}
+ReificationDictionary::ReificationDictionary(HDTSpecification &spec) : triplesDict(new TriplesFourSectionDictionary(spec)), graphsDict(new GraphsFourSectionDictionary(spec)),maxTriplesDictID(0){}
 
 
 size_t ReificationDictionary::getNumberOfElements()const
 {return triplesDict->getNumberOfElements() + graphsDict->getNumberOfElements();}
 
- uint64_t ReificationDictionary::size()
+ uint64_t ReificationDictionary::size()const
 {return triplesDict->size() + graphsDict->size();}
 
-unsigned int getMaxID()
+unsigned int ReificationDictionary::getMaxID()const
 {return triplesDict->getMaxID() + graphsDict->getMaxID();}
 
 unsigned int ReificationDictionary::getNshared()const
@@ -28,7 +32,7 @@ unsigned int ReificationDictionary::getNpredicates()const
 unsigned int ReificationDictionary::getNgraphs()const
 {return graphsDict->getNgraphs();}
 
-IteratorUCharString* ReificationDictionary::getSubjects()const {
+IteratorUCharString* ReificationDictionary::getSubjects() {
 	std::vector<IteratorUCharString*> vectIt;
 	vectIt.push_back(triplesDict->getSubjects());
 	vectIt.push_back(graphsDict->getSubjects());
@@ -36,7 +40,7 @@ IteratorUCharString* ReificationDictionary::getSubjects()const {
 	return compositeSubjects;
 }
 
-IteratorUCharString* ReificationDictionary::getObjects()const {
+IteratorUCharString* ReificationDictionary::getObjects() {
 	std::vector<IteratorUCharString*> vectIt;
 	vectIt.push_back(triplesDict->getObjects());
 	vectIt.push_back(graphsDict->getObjects());
@@ -44,7 +48,7 @@ IteratorUCharString* ReificationDictionary::getObjects()const {
 	return compositeObjects;
 }
 
-IteratorUCharString* ReificationDictionary::getShared()const {
+IteratorUCharString* ReificationDictionary::getShared() {
 	std::vector<IteratorUCharString*> vectIt;
 	vectIt.push_back(triplesDict->getShared());
 	vectIt.push_back(graphsDict->getShared());
@@ -52,32 +56,32 @@ IteratorUCharString* ReificationDictionary::getShared()const {
 	return compositeShared;
 }
 
-IteratorUCharString* ReificationDictionary::getPredicates()const {
+IteratorUCharString* ReificationDictionary::getPredicates() {
 	return triplesDict->getPredicates();
 }
-IteratorUCharString* ReificationDictionary::getGraphs()const {
+IteratorUCharString* ReificationDictionary::getGraphs() {
 	return graphsDict->getGraphs();
 }
 
-unsigned int ReificationDictionary::getMaxSubjectID()
+unsigned int ReificationDictionary::getMaxSubjectID()const
 {return triplesDict->getMaxSubjectID() + graphsDict->getMaxSubjectID();}
 
-unsigned int ReificationDictionary::getMaxObjectID()
+unsigned int ReificationDictionary::getMaxObjectID()const
 {return triplesDict->getMaxObjectID() + graphsDict->getMaxObjectID();}
 
-unsigned int ReificationDictionary::getMaxPrediacteID()
-{return triplesDict->getMaxPrediacteID();}
+unsigned int ReificationDictionary::getMaxPredicateID()const
+{return triplesDict->getMaxPredicateID();}
 
-unsigned int ReificationDictionary::getMaxGraphID()
+unsigned int ReificationDictionary::getMaxGraphID()const
 {return graphsDict->getMaxGraphID();}
 
-string ReificationDictionary::getType()
+std::string ReificationDictionary::getType()const
 {return HDTVocabulary::DICTIONARY_TYPE_REIFICATION;}
 
 
 
 
-unsigned int ReificationDictionary::stringToId(std::string &key, TripleComponentRole position)
+unsigned int ReificationDictionary::stringToId(const std::string &key, TripleComponentRole position)const
 {
         unsigned int ret;
 
@@ -102,14 +106,14 @@ unsigned int ReificationDictionary::stringToId(std::string &key, TripleComponent
 }
 
 
-std::string ReificationDictionary::idToString(unsigned int id, TripleComponentRole position)
+std::string ReificationDictionary::idToString(const unsigned int id, const TripleComponentRole position)const
 {       
 		
         switch (position) {
         	case PREDICATE:
-        	        return ret = triplesDict->idToString(id, position);
+        	        return triplesDict->idToString(id, position);
         	case GRAPH:
-        	        return ret = graphsDict->idToString(id, position);
+        	        return graphsDict->idToString(id, position);
 		default:
 			if(id > maxTriplesDictID)
 				return graphsDict->idToString(id-maxTriplesDictID, position);
@@ -119,6 +123,35 @@ std::string ReificationDictionary::idToString(unsigned int id, TripleComponentRo
 	}
         
 }
+
+unsigned int ReificationDictionary::getMapping()const{
+	if(triplesDict->getMapping() == graphsDict->getMapping())
+		return triplesDict->getMapping();
+	else
+		throw std::logic_error("triplesDict and graphsDict have different mapping");
+	return 77;
+}
+
+void ReificationDictionary::import(Dictionary *other, ProgressListener *listener/*=NULL*/)
+{throw std::logic_error("Not implemented");}
+
+void ReificationDictionary::populateHeader(Header &header, std::string rootNode)
+{throw std::logic_error("Not implemented");}
+
+void ReificationDictionary::save(std::ostream &output, ControlInformation &ci, ProgressListener *listener/*=NULL*/)
+{throw std::logic_error("Not implemented");}
+
+void ReificationDictionary::load(std::istream &input, ControlInformation &ci, ProgressListener *listener/*=NULL*/)
+{throw std::logic_error("Not implemented");}
+
+size_t ReificationDictionary::load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener/*=NULL*/)
+{throw std::logic_error("Not implemented");}
+
+IteratorUCharString *ReificationDictionary::getSuggestions(const char *prefix, TripleComponentRole role)
+{throw std::logic_error("Not implemented");}
+
+IteratorUInt *ReificationDictionary::getIDSuggestions(const char *prefix, TripleComponentRole role)
+{throw std::logic_error("Not implemented");}
 
 
 

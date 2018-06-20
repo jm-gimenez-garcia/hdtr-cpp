@@ -47,7 +47,7 @@ public:
 	GraphsFourSectionDictionary(HDTSpecification &spec);
 	~GraphsFourSectionDictionary();
 
-	unsigned int stringToId(const std::string &str, const TripleComponentRole position);
+	unsigned int stringToId(const std::string &str, const TripleComponentRole position)const;
 
 	void loadFourthSection(std::istream & input, IntermediateListener& iListener);
 	void loadFourthSection(unsigned char *ptr, unsigned char *ptrMax, size_t& count, IntermediateListener& iListener);	
@@ -67,7 +67,9 @@ public:
 	
 	uint64_t size()const;
 	size_t getNumberOfElements()const;
-	void getSuggestions(const char *base, hdt::TripleComponentRole role, std::vector<std::string> &out, int maxResults);
+	void getSuggestions(const char *base, TripleComponentRole role, std::vector<std::string> &out, int maxResults);
+    IteratorUCharString *getSuggestions(const char *prefix, TripleComponentRole role);
+    IteratorUInt *getIDSuggestions(const char *prefix, TripleComponentRole role);
 
 protected:
 	csd::CSD* getDictionarySection(unsigned int id, TripleComponentRole position) const;

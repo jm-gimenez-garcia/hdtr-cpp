@@ -1,4 +1,4 @@
-#include "BaseFourSectionDictionary.hpp"
+#include "BaseLiteralDictionary.hpp"
 #include "TriplesLiteralDictionary.hpp"
 
 #if HAVE_CDS
@@ -8,6 +8,7 @@
 #include "../libdcs/CSD_PFC.h"
 #include "../libdcs/CSD_Cache.h"
 #include "../libdcs/CSD_Cache2.h"
+#include "Header.hpp"
 
 
 namespace hdt {
@@ -52,7 +53,7 @@ unsigned int TriplesLiteralDictionary::getMaxPredicateID()const
 
 
 
-unsigned int TriplesLiteralDictionary::stringToId(const std::string &key, const TripleComponentRole position) {
+unsigned int TriplesLiteralDictionary::stringToId(const std::string &key, const TripleComponentRole position)const {
 
 	if (key.length() == 0) 
 		return 0;

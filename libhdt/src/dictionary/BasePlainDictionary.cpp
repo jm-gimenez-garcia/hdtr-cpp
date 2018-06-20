@@ -103,7 +103,7 @@ std::string BasePlainDictionary::idToString(const unsigned int id, const TripleC
 	return string();
 }
 
-unsigned int BasePlainDictionary::stringToId(const std::string &key, const TripleComponentRole position)
+unsigned int BasePlainDictionary::stringToId(const std::string &key, const TripleComponentRole position)const
 {
 	DictEntryIt ret;
 
@@ -657,8 +657,14 @@ unsigned int BasePlainDictionary::getMapping()const {
 }
 
 void BasePlainDictionary::getSuggestions(const char *base, hdt::TripleComponentRole role, std::vector<std::string> &out, int maxResults)
-{
-    throw std::logic_error("getSuggestions not implemented");
-}
+{ throw std::logic_error("getSuggestions not implemented");}
+
+IteratorUCharString* BasePlainDictionary::getSuggestions(const char *base, hdt::TripleComponentRole role)
+{throw std::logic_error("getSuggestions not implemented");}
+
+IteratorUInt *getIDSuggestions(const char *prefix, TripleComponentRole role)
+{ throw std::logic_error("getIDSuggestions not implemented");}
+
+
 
 }

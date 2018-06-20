@@ -49,12 +49,6 @@
 
 //using namespace kyotocabinet;
 
-namespace std{
-	typedef basic_istream<char> istream;
-	typedef basic_ostream<char> ostream;
-	typedef basic_string<char> string;
-};
-
 namespace hdt {
 class ControlInformation;
 class ProgressListener;

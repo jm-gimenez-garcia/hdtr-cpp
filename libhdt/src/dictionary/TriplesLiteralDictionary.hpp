@@ -23,7 +23,7 @@ public:
 
 	
 	
-	unsigned int stringToId(const std::string &str, const TripleComponentRole position);
+	unsigned int stringToId(const std::string &str, const TripleComponentRole position)const;
 	void loadFourthSection(std::istream & input, IntermediateListener& iListener);
 	void loadFourthSection(unsigned char *ptr, unsigned char *ptrMax, size_t& count, IntermediateListener& iListener);
 

@@ -46,8 +46,8 @@ class TriplesDictionary : virtual public Dictionary
 public:
     virtual ~TriplesDictionary(){ }
 
-    virtual unsigned int getNpredicates()=0;
-    virtual unsigned int getMaxPredicateID()=0;
+    virtual unsigned int getNpredicates()const=0;
+    virtual unsigned int getMaxPredicateID()const=0;
     virtual IteratorUCharString *getPredicates()=0;
 };
 

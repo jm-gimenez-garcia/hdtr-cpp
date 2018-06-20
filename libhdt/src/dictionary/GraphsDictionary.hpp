@@ -46,8 +46,8 @@ class GraphsDictionary : virtual public Dictionary
 public:
     virtual ~GraphsDictionary(){ }
 
-    virtual unsigned int getNgraphs()=0;
-    virtual unsigned int getMaxGraphID()=0;
+    virtual unsigned int getNgraphs()const=0;
+    virtual unsigned int getMaxGraphID()const=0;
     virtual IteratorUCharString *getGraphs()=0;
 };
 

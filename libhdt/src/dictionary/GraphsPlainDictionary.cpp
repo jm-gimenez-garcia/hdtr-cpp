@@ -1,6 +1,8 @@
 
 #include "GraphsPlainDictionary.hpp"
 #include "HDTVocabulary.hpp"
+#include "HDTListener.hpp"
+#include "Header.hpp"
 
 namespace hdt {
 
@@ -11,7 +13,7 @@ GraphsPlainDictionary::~GraphsPlainDictionary() {
 	}
 }
 
-unsigned int GraphsPlainDictionary::stringToId(const std::string &key, const TripleComponentRole position)
+unsigned int GraphsPlainDictionary::stringToId(const std::string &key, const TripleComponentRole position)const
 {	
 
 	if(position!=GRAPH)

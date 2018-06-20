@@ -38,11 +38,6 @@
 //#include "../libdcs/CSD.h"
 #include "HDTEnums.hpp"
 
-namespace std{
-	typedef basic_istream<char> istream;
-	typedef basic_ostream<char> ostream;
-	typedef basic_string<char> string;
-};
 namespace csd{
 	class CSD;
 };
@@ -76,7 +71,7 @@ public:
 	virtual ~BaseFourSectionDictionary();
 
 	std::string idToString(const unsigned int id, const TripleComponentRole position)const;
-	virtual unsigned int stringToId(const std::string &str, const TripleComponentRole position);
+	virtual unsigned int stringToId(const std::string &str, const TripleComponentRole position)const;
 
 	void load(std::istream & input, ControlInformation & ci, ProgressListener *listener=NULL);
 	void loadControlInfo(std::istream & input, ControlInformation & ci);
@@ -111,7 +106,7 @@ public:
 	virtual void saveFourthSection(std::ostream & output, IntermediateListener& iListener)=0;
 	void saveObjects(std::ostream & output, IntermediateListener& iListener);
 
-	void populateHeader(Header & header, string rootNode);
+	void populateHeader(Header & header, std::string rootNode);
 	unsigned int getNsubjects()const;
 	unsigned int getNobjects()const;
 	unsigned int getNshared()const;
@@ -125,9 +120,11 @@ public:
 	//virtual unsigned int getMaxGraphID()const=0;
 	virtual size_t getNumberOfElements()const;
     virtual uint64_t size()const;
-	string getType()const;
+	std::string getType()const;
 	unsigned int getMapping()const;
-    virtual void getSuggestions(const char *base, TripleComponentRole role, std::vector<string> &out, int maxResults);
+    virtual void getSuggestions(const char *base, TripleComponentRole role, std::vector<std::string> &out, int maxResults);
+    virtual IteratorUCharString *getSuggestions(const char *prefix, TripleComponentRole role);
+    virtual IteratorUInt *getIDSuggestions(const char *prefix, TripleComponentRole role);
 
 protected:
 	virtual csd::CSD *getDictionarySection(unsigned int id, TripleComponentRole position)const;

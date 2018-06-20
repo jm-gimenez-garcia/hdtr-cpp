@@ -11,13 +11,6 @@
 
 //#include "../libdcs/CSD.h"
 
-
-namespace std{
-	typedef basic_istream<char> istream;
-	typedef basic_ostream<char> ostream;
-	typedef basic_string<char> string;
-};
-
 namespace csd{
 	class CSD;
 };
@@ -57,7 +50,7 @@ public:
 	virtual ~BaseLiteralDictionary();
 
 	std::string idToString(const unsigned int id, const TripleComponentRole position)const;
-	virtual unsigned int stringToId(const std::string &str, const TripleComponentRole position);
+	virtual unsigned int stringToId(const std::string &str, const TripleComponentRole position)const;
 
 	/** Returns the number of IDs that contain s[1,..len] as a substring. It also
 	 * return in occs the IDs. Otherwise return 0.

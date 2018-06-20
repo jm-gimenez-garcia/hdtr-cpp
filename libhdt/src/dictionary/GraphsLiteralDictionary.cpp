@@ -9,7 +9,7 @@
 #include "../libdcs/CSD_PFC.h"
 #include "../libdcs/CSD_Cache.h"
 #include "../libdcs/CSD_Cache2.h"
-
+#include "Header.hpp"
 
 namespace hdt {
 GraphsLiteralDictionary::GraphsLiteralDictionary(){
@@ -38,7 +38,7 @@ unsigned int GraphsLiteralDictionary::getNgraphs()const
 unsigned int GraphsLiteralDictionary::getMaxGraphID()const
 {return graphs->getLength();}
 
-unsigned int GraphsLiteralDictionary::stringToId(const std::string &key, const TripleComponentRole position) {
+unsigned int GraphsLiteralDictionary::stringToId(const std::string &key, const TripleComponentRole position)const {
 
 	if (key.length() == 0) 
 		return 0;

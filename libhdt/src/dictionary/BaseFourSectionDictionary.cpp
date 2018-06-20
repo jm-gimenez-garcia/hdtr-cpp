@@ -11,6 +11,8 @@
 #include "HDTVocabulary.hpp"
 #include <algorithm>
 
+using namespace std;
+
 namespace hdt {
 
 BaseFourSectionDictionary::BaseFourSectionDictionary(): blocksize(16), subjects(new csd::CSD_PFC()), objects(new csd::CSD_PFC()), shared(new csd::CSD_PFC()) {}
@@ -57,7 +59,7 @@ csd::CSD *loadSection(IteratorUCharString *iterator, uint32_t blocksize, Progres
 
 
 
-std::string BaseFourSectionDictionary::idToString(const unsigned int id, const TripleComponentRole position)const
+string BaseFourSectionDictionary::idToString(const unsigned int id, const TripleComponentRole position)const
 {
 	csd::CSD *section = getDictionarySection(id, position);
 
@@ -77,7 +79,7 @@ std::string BaseFourSectionDictionary::idToString(const unsigned int id, const T
 	return string();
 }
 
-unsigned int BaseFourSectionDictionary::stringToId(const std::string &key, const TripleComponentRole position)
+unsigned int BaseFourSectionDictionary::stringToId(const string &key, const TripleComponentRole position)const
 {
 	unsigned int ret;
 
@@ -111,7 +113,7 @@ unsigned int BaseFourSectionDictionary::stringToId(const std::string &key, const
 
 
 
-void BaseFourSectionDictionary::load(std::istream & input, ControlInformation & ci, ProgressListener *listener/*=NULL*/)
+void BaseFourSectionDictionary::load(istream & input, ControlInformation & ci, ProgressListener *listener/*=NULL*/)
 {
 	IntermediateListener iListener(listener);
 
@@ -122,18 +124,18 @@ void BaseFourSectionDictionary::load(std::istream & input, ControlInformation & 
 	loadObjects(input, iListener);
 }
 
-void BaseFourSectionDictionary::loadControlInfo(std::istream & input, ControlInformation & ci)
+void BaseFourSectionDictionary::loadControlInfo(istream & input, ControlInformation & ci)
 {
-	std::string format = ci.getFormat();
+	string format = ci.getFormat();
 	if(format!=getType()) {
-		throw std::runtime_error("Trying to read a BaseFourSectionDictionary but the data is not BaseFourSectionDictionary");
+		throw runtime_error("Trying to read a BaseFourSectionDictionary but the data is not BaseFourSectionDictionary");
 	}
 	//this->mapping = ci.getUint("mapping");
 	this->mapping = MAPPING2;
 	//this->sizeStrings = ci.getUint("sizeStrings");
 }
 
-void BaseFourSectionDictionary::loadShared(std::istream & input, IntermediateListener& iListener)
+void BaseFourSectionDictionary::loadShared(istream & input, IntermediateListener& iListener)
 {
 	iListener.setRange(0,25);
 	iListener.notifyProgress(0, "Dictionary read shared area.");
@@ -141,11 +143,11 @@ void BaseFourSectionDictionary::loadShared(std::istream & input, IntermediateLis
 	shared = csd::CSD::load(input);
 	if(shared==NULL){
 		shared = new csd::CSD_PFC();
-		throw std::runtime_error("Could not read shared.");
+		throw runtime_error("Could not read shared.");
 	}
 	//shared = new csd::CSD_Cache(shared);
 }
-void BaseFourSectionDictionary::loadSubjects(std::istream & input, IntermediateListener& iListener)
+void BaseFourSectionDictionary::loadSubjects(istream & input, IntermediateListener& iListener)
 {
 	iListener.setRange(25,50);
 	iListener.notifyProgress(0, "Dictionary read subjects.");
@@ -153,11 +155,11 @@ void BaseFourSectionDictionary::loadSubjects(std::istream & input, IntermediateL
 	subjects = csd::CSD::load(input);
 	if(subjects==NULL){
 		subjects = new csd::CSD_PFC();
-		throw std::runtime_error("Could not read subjects.");
+		throw runtime_error("Could not read subjects.");
 	}
 	//subjects = new csd::CSD_Cache(subjects);
 }
-void BaseFourSectionDictionary::loadObjects(std::istream & input, IntermediateListener& iListener)
+void BaseFourSectionDictionary::loadObjects(istream & input, IntermediateListener& iListener)
 {
 	iListener.setRange(75,100);
 	iListener.notifyProgress(0, "Dictionary read objects.");
@@ -165,7 +167,7 @@ void BaseFourSectionDictionary::loadObjects(std::istream & input, IntermediateLi
 	objects = csd::CSD::load(input);
 	if(objects==NULL){
 		objects = new csd::CSD_PFC();
-		throw std::runtime_error("Could not read objects.");
+		throw runtime_error("Could not read objects.");
 	}
 	//objects = new csd::CSD_Cache(objects);
 }
@@ -201,7 +203,7 @@ void BaseFourSectionDictionary::loadShared(unsigned char *ptr, unsigned char *pt
     shared = csd::CSD::create(ptr[count]);
     if(shared==NULL){
         shared = new csd::CSD_PFC();
-        throw std::runtime_error("Could not read shared.");
+        throw runtime_error("Could not read shared.");
     }
     count += shared->load(&ptr[count], ptrMax);
     //shared = new csd::CSD_Cache(shared);
@@ -215,7 +217,7 @@ void BaseFourSectionDictionary::loadSubjects(unsigned char *ptr, unsigned char *
     subjects = csd::CSD::create(ptr[count]);
     if(subjects==NULL){
         subjects = new csd::CSD_PFC();
-        throw std::runtime_error("Could not read subjects.");
+        throw runtime_error("Could not read subjects.");
     }
     count += subjects->load(&ptr[count], ptrMax);
     //subjects = new csd::CSD_Cache(subjects);
@@ -228,7 +230,7 @@ void BaseFourSectionDictionary::loadObjects(unsigned char *ptr, unsigned char *p
     objects = csd::CSD::create(ptr[count]);
     if(objects==NULL){
         objects = new csd::CSD_PFC();
-        throw std::runtime_error("Could not read objects.");
+        throw runtime_error("Could not read objects.");
     }
     count += objects->load(&ptr[count], ptrMax);
     //objects = new csd::CSD_Cache(objects);
@@ -250,7 +252,7 @@ void BaseFourSectionDictionary::import(Dictionary *other, ProgressListener *list
 		sizeStrings = other->size();
 		mapping = other->getMapping();
 	}
-	catch (std::exception& e) 
+	catch (exception& e) 
 	{
 		BaseFourSectionDictionary::clear();
 		clear();
@@ -299,7 +301,7 @@ IteratorUCharString *BaseFourSectionDictionary::getShared() {
 
 
 
-void BaseFourSectionDictionary::save(std::ostream& output, ControlInformation & controlInformation, ProgressListener *listener){
+void BaseFourSectionDictionary::save(ostream& output, ControlInformation & controlInformation, ProgressListener *listener){
 
 	IntermediateListener iListener(listener);
 
@@ -310,7 +312,7 @@ void BaseFourSectionDictionary::save(std::ostream& output, ControlInformation & 
 	saveObjects(output, iListener);	
 }
 
-void BaseFourSectionDictionary::saveControlInfo(std::ostream& output, ControlInformation & controlInformation)
+void BaseFourSectionDictionary::saveControlInfo(ostream& output, ControlInformation & controlInformation)
 {
 	controlInformation.setFormat(HDTVocabulary::DICTIONARY_TYPE_FOUR);
 	controlInformation.setUint("mapping", this->mapping);
@@ -318,19 +320,19 @@ void BaseFourSectionDictionary::saveControlInfo(std::ostream& output, ControlInf
 	controlInformation.save(output);
 }
 
-void BaseFourSectionDictionary::saveShared(std::ostream& output, IntermediateListener& iListener)
+void BaseFourSectionDictionary::saveShared(ostream& output, IntermediateListener& iListener)
 {
 	iListener.setRange(0,10);
 	iListener.notifyProgress(0, "Dictionary save shared area.");
 	shared->save(output);
 }
-void BaseFourSectionDictionary::saveSubjects(std::ostream& output, IntermediateListener& iListener)
+void BaseFourSectionDictionary::saveSubjects(ostream& output, IntermediateListener& iListener)
 {
 	iListener.setRange(10,45);
 	iListener.notifyProgress(0, "Dictionary save subjects.");
 	subjects->save(output);
 }
-void BaseFourSectionDictionary::saveObjects(std::ostream& output, IntermediateListener& iListener)
+void BaseFourSectionDictionary::saveObjects(ostream& output, IntermediateListener& iListener)
 {
 	iListener.setRange(60,100);
 	iListener.notifyProgress(0, "Dictionary save objects.");
@@ -403,7 +405,7 @@ csd::CSD *BaseFourSectionDictionary::getDictionarySection(unsigned int id, Tripl
 	else if (position == OBJECT)
 		return (id<=shared->getLength()) ? shared : objects;
 
-	throw std::runtime_error("Item not found");
+	throw runtime_error("Item not found");
 }
 
 unsigned int BaseFourSectionDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) const{
@@ -416,7 +418,7 @@ unsigned int BaseFourSectionDictionary::getGlobalId(unsigned int mapping, unsign
 		case SHARED_OBJECT:
 			return id;
 		default:
-			throw std::runtime_error("Item not found");
+			throw runtime_error("Item not found");
 			return 0;
 	}
 }
@@ -435,7 +437,7 @@ unsigned int BaseFourSectionDictionary::getLocalId(unsigned int mapping, unsigne
 			else if(id <= sh_length+sub_length)
 				return id-sh_length;
 			else
-				throw std::runtime_error("This globalID does not correspond to a SUBJECT");
+				throw runtime_error("This globalID does not correspond to a SUBJECT");
 			break;
 		case OBJECT:
 			if(id <= sh_length) 
@@ -445,7 +447,7 @@ unsigned int BaseFourSectionDictionary::getLocalId(unsigned int mapping, unsigne
 				if ( (id <= sh_length + sub_length + obj_length) && (id > sh_length + sub_length) )
 					return 2 + id - sh_length - sub_length;
 				else
-					throw std::runtime_error("This globalID does not correspond to a SUBJECT");
+					throw runtime_error("This globalID does not correspond to a SUBJECT");
 
 			}
 			else if (mapping==MAPPING2)
@@ -453,13 +455,13 @@ unsigned int BaseFourSectionDictionary::getLocalId(unsigned int mapping, unsigne
 				if (id <= sh_length + sub_length)
 					return id - sh_length ;
 				else
-					throw std::runtime_error("This globalID does not correspond to a SUBJECT");
+					throw runtime_error("This globalID does not correspond to a SUBJECT");
 			}
 			else
-				throw std::runtime_error("Uknown mapping");
+				throw runtime_error("Uknown mapping");
 			break;
 		default:
-			throw std::runtime_error("Item not found");
+			throw runtime_error("Item not found");
 			return 0;
 	}
 }
@@ -467,7 +469,7 @@ unsigned int BaseFourSectionDictionary::getLocalId(unsigned int mapping, unsigne
 
 
 
-void BaseFourSectionDictionary::getSuggestions(const char *base, hdt::TripleComponentRole role, std::vector<std::string> &out, int maxResults)
+void BaseFourSectionDictionary::getSuggestions(const char *base, TripleComponentRole role, vector<string> &out, int maxResults)
 {
 
 	vector<string> v1,v2;
@@ -479,12 +481,50 @@ void BaseFourSectionDictionary::getSuggestions(const char *base, hdt::TripleComp
 	}
 
 	// Merge results from shared and subjects/objects keeping order
-	std::merge(v1.begin(),v1.end(), v2.begin(), v2.end(), std::back_inserter(out));
+	merge(v1.begin(),v1.end(), v2.begin(), v2.end(), back_inserter(out));
 
 	// Remove possible extra items
 	if(out.size()>maxResults) {
 		out.resize(maxResults);
 	}
+}
+
+
+IteratorUCharString* BaseFourSectionDictionary::getSuggestions(const char *prefix, TripleComponentRole role){
+
+	IteratorUCharString * sharedIt = shared->getSuggestions(prefix);
+	IteratorUCharString * subjectIt;
+	IteratorUCharString * objectIt;
+
+	// Merge results from shared and subjects/objects keeping order
+	if(role==SUBJECT) {
+		subjectIt = subjects->getSuggestions(prefix);
+		return new MergeIteratorUCharString(sharedIt,subjectIt);
+	} else if(role==OBJECT){
+		objectIt = objects->getSuggestions(prefix);
+		return new MergeIteratorUCharString(sharedIt,objectIt);
+	}
+	return NULL;
+
+}
+
+
+IteratorUInt *BaseFourSectionDictionary::getIDSuggestions(const char *prefix, TripleComponentRole role){
+
+	IteratorUInt * sharedIt = shared->getIDSuggestions(prefix);
+	IteratorUInt * subjectIt;
+	IteratorUInt * objectIt;
+
+	// Merge results from shared and subjects/objects keeping order
+	if(role==SUBJECT) {
+		subjectIt = subjects->getIDSuggestions(prefix);
+		return new SequentialIteratorUInt(sharedIt,subjectIt,shared->getLength());
+	} else if(role==OBJECT){
+		objectIt = objects->getIDSuggestions(prefix);
+		return new SequentialIteratorUInt(sharedIt,objectIt,shared->getLength());
+	}
+	return NULL;
+
 }
 
 

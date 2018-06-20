@@ -9,6 +9,7 @@
 #include "HDTListener.hpp"
 
 
+using namespace std;
 namespace hdt {
 
 GraphsFourSectionDictionary::GraphsFourSectionDictionary() : graphs(new csd::CSD_PFC()){}
@@ -39,7 +40,7 @@ size_t GraphsFourSectionDictionary::getNumberOfElements()const{
 }
 
 
-unsigned int GraphsFourSectionDictionary::stringToId(const std::string &key, const TripleComponentRole position)
+unsigned int GraphsFourSectionDictionary::stringToId(const string &key, const TripleComponentRole position)const
 {
 	if (position!=GRAPH)
 		return BaseFourSectionDictionary::stringToId(key, position);
@@ -55,7 +56,7 @@ unsigned int GraphsFourSectionDictionary::stringToId(const std::string &key, con
 	}
 }
 
-void GraphsFourSectionDictionary::loadFourthSection(std::istream & input, IntermediateListener& iListener)
+void GraphsFourSectionDictionary::loadFourthSection(istream & input, IntermediateListener& iListener)
 {
 	iListener.setRange(50,75);
 	iListener.notifyProgress(0, "Dictionary read graphs.");
@@ -63,7 +64,7 @@ void GraphsFourSectionDictionary::loadFourthSection(std::istream & input, Interm
 	graphs = csd::CSD::load(input);
 	if(graphs==NULL){
 		graphs = new csd::CSD_PFC();
-		throw std::runtime_error("Could not read graphs.");
+		throw runtime_error("Could not read graphs.");
 	}
 	graphs = new csd::CSD_Cache2(graphs);
 }
@@ -79,7 +80,7 @@ void GraphsFourSectionDictionary::loadFourthSection(unsigned char *ptr, unsigned
     graphs = csd::CSD::create(ptr[count]);
     if(graphs==NULL){
         graphs = new csd::CSD_PFC();
-        throw std::runtime_error("Could not read graphs.");
+        throw runtime_error("Could not read graphs.");
     }
     count += graphs->load(&ptr[count], ptrMax);
     graphs = new csd::CSD_Cache2(graphs);
@@ -97,11 +98,11 @@ void GraphsFourSectionDictionary::importFourthSection(Dictionary *other, Progres
 		graphs = loadSection(itGr, blocksize, &iListener);
 	}
 	else
-		throw std::runtime_error("Downcast error from Dictionary to GraphsDictionary.");
+		throw runtime_error("Downcast error from Dictionary to GraphsDictionary.");
 }
 
 /*IteratorUCharString* GraphsFourSectionDictionary::getPredicates() {
-	throw std::runtime_error("No predicate section in this kind of dictionary");
+	throw runtime_error("No predicate section in this kind of dictionary");
 	return NULL;
 }*/
 
@@ -109,7 +110,7 @@ IteratorUCharString* GraphsFourSectionDictionary::getGraphs() {
 	return graphs->listAll();
 }
 
-void GraphsFourSectionDictionary::saveFourthSection(std::ostream& output, IntermediateListener& iListener){
+void GraphsFourSectionDictionary::saveFourthSection(ostream& output, IntermediateListener& iListener){
 
 	iListener.setRange(45,60);
 	iListener.notifyProgress(0, "Dictionary save graphs.");
@@ -118,14 +119,14 @@ void GraphsFourSectionDictionary::saveFourthSection(std::ostream& output, Interm
 
 /*unsigned int GraphsFourSectionDictionary::getNpredicates()const
 {
-	throw std::runtime_error("No predicate section in this kind of dictionary");
+	throw runtime_error("No predicate section in this kind of dictionary");
 	return 0;
 }*/
 unsigned int GraphsFourSectionDictionary::getNgraphs()const
 {return graphs->getLength();}
 
 /*unsigned int GraphsFourSectionDictionary::getMaxPredicateID()const{
-	throw std::runtime_error("No predicate section in this kind of dictionary");
+	throw runtime_error("No predicate section in this kind of dictionary");
 	return 0;
 }*/
 unsigned int GraphsFourSectionDictionary::getMaxGraphID()const
@@ -153,7 +154,7 @@ unsigned int GraphsFourSectionDictionary::getGlobalId(unsigned int mapping, unsi
 			return id+shared->getLength()+max_s_o;
 		}
 		else
-			throw std::runtime_error("Unknown mapping");
+			throw runtime_error("Unknown mapping");
 		return shared->getLength()+max_s_o+id;
 	}
 	else
@@ -182,31 +183,41 @@ unsigned int GraphsFourSectionDictionary::getLocalId(unsigned int mapping, unsig
 			last_obj_sub_glob_id = sh_length + max_sub_obj_length ;
 		}
 		else
-			throw std::runtime_error("Unknown mapping");
+			throw runtime_error("Unknown mapping");
 
 
 		const unsigned int last_gr_glob_id  = last_obj_sub_glob_id + gr_length;
 		if(id>last_obj_sub_glob_id && id<=last_gr_glob_id)
 			return locid_shift + id-last_obj_sub_glob_id;
 		else
-			throw std::runtime_error("This globalID does not correspond to an unused graph");
+			throw runtime_error("This globalID does not correspond to an unused graph");
 	}
 	else
 		return BaseFourSectionDictionary::getLocalId(mapping, id, position);
 }
 
-void GraphsFourSectionDictionary::getSuggestions(const char *base, hdt::TripleComponentRole role, std::vector<std::string> &out, int maxResults)
+void GraphsFourSectionDictionary::getSuggestions(const char *base, TripleComponentRole role, vector<string> &out, int maxResults)
 {
 	if(role==GRAPH)
-	{ 
-		//graphs->fillSuggestions(base, out, maxResults);
-		return;
-	}
+		graphs->fillSuggestions(base, out, maxResults);
 	else
 		BaseFourSectionDictionary::getSuggestions(base, role, out, maxResults);	
 }
 
+hdt::IteratorUCharString* GraphsFourSectionDictionary::getSuggestions(const char *prefix, TripleComponentRole role){
+	if(role==GRAPH) 
+		return graphs->getSuggestions(prefix);
+	else
+		return BaseFourSectionDictionary::getSuggestions(prefix, role);
+}
 
+
+IteratorUInt* GraphsFourSectionDictionary::getIDSuggestions(const char *prefix, TripleComponentRole role){
+	if(role==GRAPH) 
+		return graphs->getIDSuggestions(prefix);
+
+	return BaseFourSectionDictionary::getIDSuggestions(prefix, role);
+}
 
 
 

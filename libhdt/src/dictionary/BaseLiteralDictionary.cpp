@@ -9,6 +9,7 @@
 //#include "../libdcs/CSD_HTFC.h"
 #include "../libdcs/CSD_FMIndex.h"
 #include "../libdcs/CSD_Cache.h"
+#include "Header.hpp"
 
 namespace hdt {
 
@@ -87,7 +88,7 @@ if (localid <= section->getLength()) {
 return string();
 }
 
-unsigned int BaseLiteralDictionary::stringToId(const std::string &key, const TripleComponentRole position) {
+unsigned int BaseLiteralDictionary::stringToId(const std::string &key, const TripleComponentRole position)const {
 unsigned int ret;
 
 if (key.length() == 0) {

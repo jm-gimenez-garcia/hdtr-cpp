@@ -32,18 +32,27 @@
 #ifndef HDT_DICTIONARY_HPP_
 #define HDT_DICTIONARY_HPP_
 
-#include "HDTListener.hpp"
-#include "SingleTriple.hpp"
-#include "Iterator.hpp"
+#include <vector>
 #include "HDTEnums.hpp"
-#include "Header.hpp"
-#include "ControlInformation.hpp"
-#include "Triples.hpp"
+#include "SingleTriple.hpp"
 
-#include <string>
-#include <iostream>
+
+namespace std{
+	typedef basic_istream<char> istream;
+	typedef basic_ostream<char> ostream;
+	typedef basic_string<char> string;
+};
+
 
 namespace hdt {
+
+class TripleString;
+class TripleID;
+class Header;
+class ControlInformation;
+class ProgressListener;
+class IteratorUCharString;
+class IteratorUInt;
 
 /**
  * Interface representing the Dictionary part of the HDT representation.
@@ -101,15 +110,15 @@ public:
     *
     * @return
     */
-    virtual size_t getNumberOfElements() =0;
+    virtual size_t getNumberOfElements() const=0;
 
     /**
      * Returns size in bytes of the overall structure.
      */
-    virtual uint64_t size()=0;
+    virtual uint64_t size()const=0;
 
     /* Return the maximum id assigned to the overall dictionary. */
-    virtual unsigned int getMaxID()=0;
+    virtual unsigned int getMaxID()const=0;
 
     virtual void import(Dictionary *other, ProgressListener *listener=NULL)=0;
 
@@ -117,7 +126,7 @@ public:
     * Add to the supplied header all relevant information about the current Dictionary
     * @param header
     */
-    virtual void populateHeader(Header &header, string rootNode)=0;
+    virtual void populateHeader(Header &header, std::string rootNode)=0;
 
     /**
     * Save the current dictionary to a stream, using the format from the standard.
@@ -155,13 +164,13 @@ public:
     //virtual IteratorUCharString *getGraphs()=0;
 
 
-    virtual string getType()=0;
-    virtual unsigned int getMapping()=0;
+    virtual std::string getType()const=0;
+    virtual unsigned int getMapping()const=0;
 
-    virtual void getSuggestions(const char *base, TripleComponentRole role, std::vector<string> &out, int maxResults)=0;
+    virtual void getSuggestions(const char *base, TripleComponentRole role, std::vector<std::string> &out, int maxResults)=0;
 
-    virtual hdt::IteratorUCharString *getSuggestions(const char *prefix, TripleComponentRole role)=0;
-    virtual hdt::IteratorUInt *getIDSuggestions(const char *prefix, TripleComponentRole role)=0;
+    virtual IteratorUCharString *getSuggestions(const char *prefix, TripleComponentRole role)=0;
+    virtual IteratorUInt *getIDSuggestions(const char *prefix, TripleComponentRole role)=0;
 };
 
 class ModifiableDictionary : virtual public Dictionary {

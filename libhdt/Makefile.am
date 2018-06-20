@@ -35,6 +35,7 @@ src/dictionary/GraphsLiteralDictionary.cpp \
 src/dictionary/BasePlainDictionary.cpp \
 src/dictionary/TriplesPlainDictionary.cpp \
 src/dictionary/GraphsPlainDictionary.cpp \
+src/dictionary/ReificationDictionary.cpp \
 src/hdt/BasicHDT.cpp \
 src/hdt/BasicModifiableHDT.cpp \
 src/hdt/ControlInformation.cpp \

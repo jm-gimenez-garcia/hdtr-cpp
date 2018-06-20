@@ -8,6 +8,7 @@
 #include "../libdcs/CSD_Cache2.h"
 #include "HDTListener.hpp"
 
+using namespace std;
 namespace hdt {
 
 
@@ -39,7 +40,7 @@ uint64_t TriplesFourSectionDictionary::size()const{
 }
 
 
-unsigned int TriplesFourSectionDictionary::stringToId(const std::string &key, const TripleComponentRole position)
+unsigned int TriplesFourSectionDictionary::stringToId(const string &key, const TripleComponentRole position)const
 {
 	if (position!=PREDICATE)
 		return BaseFourSectionDictionary::stringToId(key, position);
@@ -54,7 +55,7 @@ unsigned int TriplesFourSectionDictionary::stringToId(const std::string &key, co
 }
 
 
-void TriplesFourSectionDictionary::loadFourthSection(std::istream & input, IntermediateListener& iListener)
+void TriplesFourSectionDictionary::loadFourthSection(istream & input, IntermediateListener& iListener)
 {
 	iListener.setRange(50,75);
 	iListener.notifyProgress(0, "Dictionary read predicates.");
@@ -62,7 +63,7 @@ void TriplesFourSectionDictionary::loadFourthSection(std::istream & input, Inter
 	predicates = csd::CSD::load(input);
 	if(predicates==NULL){
 		predicates = new csd::CSD_PFC();
-		throw std::runtime_error("Could not read predicates.");
+		throw runtime_error("Could not read predicates.");
 	}
 	predicates = new csd::CSD_Cache2(predicates);
 }
@@ -75,7 +76,7 @@ void TriplesFourSectionDictionary::loadFourthSection(unsigned char *ptr, unsigne
     predicates = csd::CSD::create(ptr[count]);
     if(predicates==NULL){
         predicates = new csd::CSD_PFC();
-        throw std::runtime_error("Could not read predicates.");
+        throw runtime_error("Could not read predicates.");
     }
     count += predicates->load(&ptr[count], ptrMax);
     predicates = new csd::CSD_Cache2(predicates);
@@ -93,7 +94,7 @@ void TriplesFourSectionDictionary::importFourthSection(Dictionary *other, Progre
 		delete itPred;
 	}
 	else
-		throw std::runtime_error("Downcast error from Dictionary to TriplesDictionary.");
+		throw runtime_error("Downcast error from Dictionary to TriplesDictionary.");
 }
 
 
@@ -102,11 +103,11 @@ IteratorUCharString *TriplesFourSectionDictionary::getPredicates()
 {return predicates->listAll();}
 
 /*IteratorUCharString *TriplesFourSectionDictionary::getGraphs(){
-	throw std::runtime_error("No graph section in this kind of dictionary");
+	throw runtime_error("No graph section in this kind of dictionary");
 	return NULL;
 }*/
 
-void TriplesFourSectionDictionary::saveFourthSection(std::ostream& output, IntermediateListener& iListener){
+void TriplesFourSectionDictionary::saveFourthSection(ostream& output, IntermediateListener& iListener){
 
 	iListener.setRange(45,60);
 	iListener.notifyProgress(0, "Dictionary save predicates.");
@@ -118,7 +119,7 @@ unsigned int TriplesFourSectionDictionary::getNpredicates()const
 
 /*unsigned int TriplesFourSectionDictionary::getNgraphs()const{
 	
-	throw std::runtime_error("No graph section in this kind of dictionary");
+	throw runtime_error("No graph section in this kind of dictionary");
 	return 0;
 }*/
 
@@ -126,7 +127,7 @@ unsigned int TriplesFourSectionDictionary::getMaxPredicateID()const
 {return predicates->getLength();}
 
 /*unsigned int TriplesFourSectionDictionary::getMaxGraphID()const{
-	throw std::runtime_error("No graph section in this kind of dictionary");
+	throw runtime_error("No graph section in this kind of dictionary");
 	return 0;
 }*/
 
@@ -151,19 +152,33 @@ unsigned int TriplesFourSectionDictionary::getLocalId(unsigned int mapping, unsi
 		if (id <= predicates->getLength())
 			return id;
 		else
-			throw std::runtime_error("This globalID does not correspond to a PREDICATE");
+			throw runtime_error("This globalID does not correspond to a PREDICATE");
 	else
 		return BaseFourSectionDictionary::getLocalId(mapping, id, position);
 
 }
 
 
-void TriplesFourSectionDictionary::getSuggestions(const char *base, hdt::TripleComponentRole role, std::vector<std::string> &out, int maxResults)
+void TriplesFourSectionDictionary::getSuggestions(const char *base, TripleComponentRole role, vector<string> &out, int maxResults)
 {
 	if(role==PREDICATE) 
 		predicates->fillSuggestions(base, out, maxResults);
 	else
 		BaseFourSectionDictionary::getSuggestions(base, role, out, maxResults);	
+}
+
+IteratorUCharString* TriplesFourSectionDictionary::getSuggestions(const char *prefix, TripleComponentRole role){
+	if(role==PREDICATE) 
+		return predicates->getSuggestions(prefix);
+	else
+		return BaseFourSectionDictionary::getSuggestions(prefix, role);
+}
+
+IteratorUInt *TriplesFourSectionDictionary::getIDSuggestions(const char *prefix, TripleComponentRole role){
+	if(role==PREDICATE) 
+		return predicates->getIDSuggestions(prefix);
+
+	return BaseFourSectionDictionary::getIDSuggestions(prefix, role);
 }
 
 

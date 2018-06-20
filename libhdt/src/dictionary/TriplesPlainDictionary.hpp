@@ -24,7 +24,7 @@ private:
 public:
 	TriplesPlainDictionary(){}
 	virtual ~TriplesPlainDictionary();
-	unsigned int stringToId(const std::string &str, const TripleComponentRole position);
+	unsigned int stringToId(const std::string &str, const TripleComponentRole position)const;
 	void saveFourthSection(std::ostream &output, ProgressListener *listener, unsigned int& counter, const char marker);
 	void insertFourthRegion(IntermediateListener& iListener, const std::string& line, unsigned int& numLine, unsigned int& numElements);
 	size_t getNumberOfElements()const;

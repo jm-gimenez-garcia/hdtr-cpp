@@ -85,7 +85,7 @@ public:
 	virtual ~BasePlainDictionary();
 
 	std::string idToString(const unsigned int id, const TripleComponentRole position)const;
-	virtual unsigned int stringToId(const std::string &str, const TripleComponentRole position);
+	virtual unsigned int stringToId(const std::string &str, const TripleComponentRole position)const;
 	virtual void startProcessing(ProgressListener *listener = NULL);
 	void stopProcessing(ProgressListener *listener = NULL);
 
@@ -163,6 +163,8 @@ public:
 	unsigned int getMapping()const;
 
 	void getSuggestions(const char *base, TripleComponentRole role, std::vector<string> &out, int maxResults);
+	IteratorUCharString* getSuggestions(const char *base, hdt::TripleComponentRole role);
+    IteratorUInt *getIDSuggestions(const char *prefix, TripleComponentRole role);
 
 // Private methods
 

@@ -1,6 +1,9 @@
 
 #include "TriplesPlainDictionary.hpp"
 #include "HDTVocabulary.hpp"
+#include "HDTListener.hpp"
+#include "Header.hpp"
+
 namespace hdt {
 
 
@@ -11,7 +14,7 @@ TriplesPlainDictionary::~TriplesPlainDictionary() {
 	}
 }
 
-unsigned int TriplesPlainDictionary::stringToId(const std::string &key, const TripleComponentRole position)
+unsigned int TriplesPlainDictionary::stringToId(const std::string &key, const TripleComponentRole position)const
 {	
 
 	if(position!=PREDICATE)
