@@ -53,8 +53,12 @@ namespace hdt {
  */
 class QuadID : public TripleID
 {
-protected:
+private:
 	unsigned int identifier;
+	bool has_identifier;
+
+protected:
+	size_t get_sizeof(){return sizeof(QuadID);}
 
 public:
 
@@ -62,7 +66,7 @@ public:
 	 * Create empty QuadID.
 	 * @return
 	 */
-	QuadID(){}
+	QuadID(): TripleID(0, 0, 0), identifier(0),has_identifier(false){}
 
 	/**
 	 * Create a new QuadID initialized using the supplied subject, predicate, object, identifier.
@@ -74,24 +78,35 @@ public:
 	 */
 	QuadID(const unsigned int subj, const unsigned int pred, const unsigned int obj, const unsigned int ident) :
 		TripleID(subj, pred, obj),
-		identifier(ident){}
+		identifier(ident),has_identifier(true){}
 
 	QuadID(const QuadID& qId) :
 		TripleID(qId.subject, qId.predicate, qId.object),
-		identifier(qId.identifier){}
-	
+		identifier(qId.identifier),has_identifier(true){}
+
+	QuadID(const TripleID& trId):
+		TripleID(trId),
+		identifier(0),has_identifier(false) {}
+
 	QuadID(const TripleID& trId, const unsigned int ident):
 		TripleID(trId),
-		identifier(ident){}
+		identifier(ident),has_identifier(true){}
 
-	~QuadID() {
+	~QuadID() {}
+
+	inline QuadID to_QuadID() const {
+		return *this;
 	}
+
+	bool hasIdentifier()const{return has_identifier;}
 
 	/**
 	 * Get the identifier component of this QuadID.
 	 * @return
 	 */
 	unsigned int getIdentifier() const {
+		if !hasIdentifier()
+			throw std::runtime_error("This QuadID is a TripleID (no identifier)");
 		return identifier;
 	}
 
@@ -101,6 +116,7 @@ public:
 	 */
 	void setIdentifier(const unsigned int ident) {
 		identifier = ident;
+		has_identifier = true;
 	}
 
 	void setAll(const unsigned int subj, const unsigned int pred, const unsigned int obj, const unsigned int ident) {
@@ -108,6 +124,7 @@ public:
 		predicate = pred;
 		object = obj;
 		identifier = ident;
+		has_identifier = true;
 	}
 
 
@@ -119,6 +136,7 @@ public:
 		predicate = 0;
 		object = 0;
 		identifier = 0;
+		has_identifier=false;
 	}
 
 	/**
@@ -128,7 +146,10 @@ public:
 	 * @return
 	 */
 	friend std::ostream &operator<<(std::ostream &stream, const QuadID &qi) {
-		stream << qi.subject << " "<< qi.predicate <<" "<< qi.object <<" "<< qi.identifier;
+		if(qi.hasIdentifier())
+			stream << qi.subject << " "<< qi.predicate <<" "<< qi.object <<" "<< qi.identifier;
+		else
+			stream << qi.subject << " "<< qi.predicate <<" "<< qi.object <<" "<< (unsigned int)0;
 
 		return stream;
 	}
@@ -139,9 +160,14 @@ public:
 	 * @param operand The operand to compare with
 	 * @return boolean
 	 */
-	bool operator==(const QuadID &op) {
-		return (subject == op.subject) && (object == op.object) && (predicate == op.predicate) && (identifier == op.identifier)
+	bool operator==(const QuadID &op)const {
+		return (subject == op.subject) && (object == op.object) && (predicate == op.predicate) && ((has_identifier && op.has_identifier && identifier == op.identifier) || !(has_identifier||op.has_identifier))
 	}
+
+	bool operator==(const TripleID &op)const {
+		return this->operator==(op.toQuadID());
+	}
+
 
 	/**
 	 * Checks wether two QuadID instances are different.
@@ -149,9 +175,16 @@ public:
 	 * @param operand The operand to compare with
 	 * @return boolean
 	 */
-	bool operator!=(const QuadID &operand) {
+	bool operator!=(const QuadID &operand)const {
 		return !(this->operator==(operand));
 	} // !=()
+
+	bool operator!=(const TripleID &op)const {
+		return !this->operator==(op.toQuadID());
+	} // !=()
+
+
+
 
 	/**
 	 * Compares two quads and returns -1, 0 or 1, establishing an order.
@@ -159,7 +192,7 @@ public:
 	 * @param other
 	 * @return
 	 */
-	int compare(const QuadID &other) 
+	int compare(const QuadID &other)const
 	{
 		int result = subject - other.subject;
 
@@ -167,13 +200,27 @@ public:
 		{
 			result = predicate - other.predicate;
 			if(result==0) 
-				return object - other.object;
+			{
+				result = object - other.object;
+				if(result==0)
+					if !(has_identifier || other. has_identifier)
+						return 0;
+					else
+						return identifier - other.identifier;
+				else 
+					return result;
+			}
 			 else 
 				return result;
 		}
 		else 
 			return result;
 	}
+
+	int compare(const TripleID &other)const {
+		return compare(other.toQuadID());
+	}
+
 
 	/**
 	 * Check wether this subject matches the supplied pattern.
@@ -182,13 +229,17 @@ public:
 	 * @param pattern The pattern to match against
 	 * @return boolean
 	 */
-	bool match(const QuadID& q) 
-	{
-		return ((q.subject == 0 || q.subject == subject)
+	bool match(const QuadID& q)const {
+		bool q_ident_wildcard = q.identifier==0 && q.hasIdentifier();
+		return (q.subject == 0 || q.subject == subject)
 			&& (q.predicate == 0 || q.predicate == predicate)
 			&& (q.object == 0 || q.object == object)
-			&& (q.identifier == 0 || q.identifier == identifier));
+			&& ((q.hasIdentifier() && hasIdentifier() && (q.identifier==0 || q.identifier == identifier)) || !(q.hasIdentifier() || hasIdentifier()));
 	}
+	bool match(const TripleID& t)const {
+		return match(t.to_QuadID());
+	}
+
 
 	/**
 	 * Replaces the contents of a quad with the provided replacement
@@ -196,28 +247,42 @@ public:
 	 * @param replacement
 	 */
 	void replace(const QuadID& q) 
-	{setAll(q.subject, q.predicate, q.object, q.identifier);} // replace()
+	{
+		if q.hasIdentifier()
+			setAll(q.subject, q.predicate, q.object, q.identifier); // replace()
+		else
+		{
+			setAll(q.subject, q.predicate, q.object, 0); // replace()
+			has_identifier = false;	
+		}
+	}
+
+	void replace(const TripleID& q){
+		replace(q.to_QuadID());
+	}
 
         /**
          * Check wether a QuadID is empty. i.e. all of the components are zero.
          *
          * @return boolean
          */
-        bool isEmpty() const {return (subject==0 && predicate==0 && object==0);}
+        bool isEmpty() const {
+			return (TripleID::isEmpty() && ((has_identifier && identifier==0) || (!has_identifier)));
+		}
 
 	/**
 	 * Check wether a QuadID is valid. i.e. all of the components are non-zero.
 	 *
 	 * @return boolean
 	 */
-	bool isValid() const {
-        return subject != 0 && predicate != 0 && object != 0;
+	inline bool isValid() const {
+            return TripleID::isValid() && (!hasIdentifier() || (hasIdentifier() && identifier==0));
 	}
 
 	/**
 	 * Get
 	 */
-	std::string getPatternString(){
+	std::string getPatternString()const{
 		std::string tmp;
 		tmp.append(subject==0 ? "?" : "S");
 		tmp.append(predicate==0 ? "?" : "P");
@@ -235,6 +300,7 @@ class QuadString : public TripleString
 {
 private:
 	std::string identifier;
+	bool has_identifier;
 
 public:
 	/**
@@ -245,11 +311,14 @@ public:
 
 	QuadString(const QuadString& q):
 		TripleString(q.subject, q.predicate, q.object),
-		identifier(q.identifier){}
+		identifier(q.identifier), has_identifier(true){}
+
+	QuadString(const TripleString& t):
+		TripleString(t.getSubject(), t.getPredicate(), t.getObject()), has_identifier(false){}
 
 	QuadString(const TripleString& t, const std::string ident):
 		TripleString(t.getSubject(), t.getPredicate(), t.getObject()),
-		identifier(ident){}
+		identifier(ident), has_identifier(true){}
 
 
 
@@ -262,8 +331,7 @@ public:
 	 * @return
 	 */
 	QuadString(const std::string subj, const std::string pred, const std::string obj, const std::string ident) :
-		TripleString(subj,pred,obj),
-		identifier(ident){}
+		TripleString(subj,pred,obj), identifier(ident), has_identifier(true){}
 
 
 	QuadString& operator=(const QuadString& other) {
@@ -273,11 +341,17 @@ public:
 			predicate = other.predicate;
 			object = other.object;
 			identifier = other.identifier;
+			has_identifier = other.has_identifier;
 		}
 		return *this;
 	}
 
 	~QuadString() {}
+
+	// returns a copy of the object
+	QuadString to_QuadString()const{return *this;}
+
+	virtual bool hasIdentifier(){return has_identifier;}
 
 
 	void setAll(const std:: string &subj, const std:: string &pred, const std:: string &obj, const std:: string& ident) 
@@ -286,21 +360,25 @@ public:
 		predicate = pred;
 		object = obj;
 		identifier = ident;
+		has_identifier = true;
 	}
 
 	/**
 	 * Get Identifier.
 	 * @return
 	 */
-	const std::string& getIdentifier() const
-	{return identifier;}
+	const std::string& getIdentifier() const{
+		return hasIdentifier() ? identifier : 0;
+	}
 
 	/**
 	 * Set Identifier.
 	 * @param identifier
 	 */
-	void setIdentifier(std::string& ident) 
-	{identifier = ident;}
+	void setIdentifier(std::string& ident) {
+		identifier = ident;
+		has_identifier = true;
+	}
 
 	/**
 	 * Serialize QuadString to a stream.
@@ -308,38 +386,46 @@ public:
 	 * @param ts
 	 * @return
 	 */
-	friend std::ostream &operator<<(std::ostream &stream, const QuadString &ts) 
-	{
+	friend std::ostream &operator<<(std::ostream &stream, const QuadString &ts) {
 		stream << ts.subject << " "<< ts.predicate <<" "<< ts.object <<" "<< ts.identifier;
 		return stream;
 	}
 
-    bool operator==(const QuadString& q) const
-	{return ((subject==q.subject) && (object==q.object) && (predicate==q.predicate) && (identifier==q.identifier));}
+    bool operator==(const QuadString& qs) const	{
+		return (subject==qs.subject) && (object==qs.object) && (predicate==qs.predicate) && ((has_identifier && qs.has_identifier && identifier == qs.identifier) || !(has_identifier||oqs.has_identifier));
+	}
+    
+	bool operator==(const TripleString& ts) const{
+		return this->operator==(ts.to_QuadString());
+	}
 
-    bool operator!=(const QuadString &operand)  const
-	{return !(this->operator==(operand));}
+    bool operator!=(const QuadString &operand)const{
+		return !(this->operator==(operand));
+	}
 
-    inline bool match(const QuadString& q) const
-	{
+    bool operator!=(const TripleString &operand)const{
+		return !(this->operator==(operand.to_QuadID()));
+	}
+
+    inline bool match(const QuadString& q) const{
 		return ((subject==q.subject || q.subject=="")
 		  	&& (predicate==q.predicate || q.predicate=="")
 			&& (object==q.object || q.object=="")
-			&& (identifier==q.identifier || q.identifier==""));
+			&& ((q.hasIdentifier() && hasIdentifier() && (q.identifier=="" || q.identifier == identifier)) || !(q.hasIdentifier() || hasIdentifier()));
     }
 
 	/**
 	 * Clear all components to the empty String "";
 	 */
 	void clear() 
-	{subject = predicate = object = identifier = "";}
+	{subject = predicate = object = identifier = ""; has_identifier=false;}
 
 	/**
 	 * Check wether all components of the QuadString are empty.
 	 * @return
 	 */
 	bool isEmpty() const {
-		return subject == "" && predicate == "" && object == "" && identifier == "";
+		return (TripleString::isEmpty() && ((has_identifier && identifier==0) || (!has_identifier)));
 	}
 
 	/**
@@ -347,7 +433,7 @@ public:
 	 * @return
 	 */
 	bool hasEmpty() const {
-		return subject == "" || predicate == "" || object == "" || identifier == "";
+		return TripleString::hasEmpty() || (hasIdentifier && identifier == "") ;
 	}
 
 	/**

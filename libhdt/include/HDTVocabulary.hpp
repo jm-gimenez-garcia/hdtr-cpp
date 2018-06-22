@@ -44,7 +44,9 @@ namespace HDTVocabulary {
 	const std::string HDT_DICTIONARY_BASE = HDT_BASE+"dictionary";
 	const std::string HDT_DICTIONARY = HDT_DICTIONARY_BASE+">";
 	const std::string HDT_TRIPLES_BASE = HDT_BASE+"triples";
+	const std::string HDT_QUADS_BASE = HDT_BASE+"quads";
 	const std::string HDT_TRIPLES = HDT_TRIPLES_BASE+">";
+	const std::string HDT_QUADS = HDT_QUADS_BASE+">";
 	const std::string HDT_SEQ_BASE = HDT_BASE+"seq";
 	const std::string HDT_BITMAP_BASE = HDT_BASE+"bitmap";
 
@@ -58,6 +60,7 @@ namespace HDTVocabulary {
 	const std::string VOID_BASE ="<http://rdfs.org/ns/void#";
 	const std::string VOID_DATASET = VOID_BASE + "Dataset>";
 	const std::string VOID_TRIPLES = VOID_BASE + "triples>";
+	const std::string VOID_QUADS = VOID_BASE + "quads>";
 	const std::string VOID_ENTITIES = VOID_BASE +"entities>";
 	const std::string VOID_CLASSES = VOID_BASE +"classes>";
 	const std::string VOID_PROPERTIES = VOID_BASE +"properties>";
@@ -66,6 +69,7 @@ namespace HDTVocabulary {
 
 	// Header
 	const std::string HEADER_NTRIPLES = "ntriples";
+	const std::string HEADER_NQUADS = "nquads";
 	const std::string HDT_DATASET = HDT_BASE+"Dataset>";
 	const std::string HDT_FORMAT_INFORMATION = HDT_BASE+"formatInformation>";
 	const std::string HDT_STATISTICAL_INFORMATION = HDT_BASE+"statisticalInformation>";
@@ -109,6 +113,7 @@ namespace HDTVocabulary {
 
 	// Triples types
 	const std::string TRIPLES_TYPE_TRIPLESLIST = HDT_TRIPLES_BASE+"List>";
+	const std::string TRIPLES_TYPE_QUADSLIST = HDT_QUADS_BASE+"List>";
 	const std::string TRIPLES_TYPE_TRIPLESLISTDISK = HDT_TRIPLES_BASE+"ListDisk>";
 	const std::string TRIPLES_TYPE_PLAIN = HDT_TRIPLES_BASE+"Plain>";
 	const std::string TRIPLES_TYPE_BITMAP = HDT_TRIPLES_BASE+"Bitmap>";

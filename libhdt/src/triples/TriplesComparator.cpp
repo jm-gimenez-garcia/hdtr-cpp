@@ -37,17 +37,20 @@ TriplesComparator::TriplesComparator()
 {
 }
 
-TriplesComparator::TriplesComparator(TripleComponentOrder order)
+TriplesComparator::TriplesComparator(TripleComponentOrder compOrder)
 {
-	this->order = order;
+	order = compOrder;
 }
 
 
 TriplesComparator::~TriplesComparator()
 {
 }
+bool TriplesComparator::operator()(const TripleID &a, const TripleID &b){
+	return this->operator()(a.to_QuadID(), b.to_QuadID());
+}
 
-bool TriplesComparator::operator()(const TripleID &a, const TripleID &b)
+bool TriplesComparator::operator()(const QuadID &a, const QuadID &b)
 {
 	//TODO: Revise because STL C++ only allows true if a > b, false otherwise...
 	/*
@@ -57,7 +60,7 @@ bool TriplesComparator::operator()(const TripleID &a, const TripleID &b)
 	unsigned int x1, y1, z1, x2, y2, z2;
 
 	// Some calculations...
-	switch( this->order) {
+	switch(order) {
 		case Unknown:
 		case SPO:
 			// Subjects
@@ -128,6 +131,10 @@ bool TriplesComparator::operator()(const TripleID &a, const TripleID &b)
 		default:
 			throw std::runtime_error("Invalid TripleComponentOrder");
 	}
+	// Graphs
+
+	unsigned int g1 = a.getIdentifier();
+	unsigned int g2 = b.getIdentifier();
 
 	// Might as well use TripleID::compare()... right?
 	// Actual comparison
@@ -140,7 +147,13 @@ bool TriplesComparator::operator()(const TripleID &a, const TripleID &b)
 			res = z1 - z2;
 			// Third component is the same
 			if ( res == 0) {
-				return false;
+				res = g1 - g2;
+				// Fourth component is the same
+				if (res == 0) {
+					return false;
+				} else {
+					return (g2 > g1);
+				}
 			} else {
 				return (z2 > z1);
 			}
@@ -153,9 +166,9 @@ bool TriplesComparator::operator()(const TripleID &a, const TripleID &b)
 
 }
 
-void TriplesComparator::setOrder(TripleComponentOrder order)
+void TriplesComparator::setOrder(TripleComponentOrder compOrder)
 {
-    this->order = order;
+    order = compOrder;
 }
 
 } // hdt{}

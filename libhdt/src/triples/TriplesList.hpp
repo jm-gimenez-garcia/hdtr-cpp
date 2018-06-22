@@ -43,8 +43,8 @@ private:
 	ControlInformation controlInformation;
 	HDTSpecification spec;
 
-	std::vector<TripleID> arrayOfTriples;
-    TripleID *ptr;
+	std::vector<QuadID> arrayOfTriples;
+    QuadID *ptr;
 	TripleComponentOrder order;
     size_t numValidTriples;
 
@@ -105,7 +105,7 @@ public:
 	 */
 	void load(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener = NULL);
 
-	size_t load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener=NULL);
+	size_t load(unsigned char *uchar_ptr, unsigned char *ptrMax, ProgressListener *listener=NULL);
 
 	void load(ModifiableTriples &input, ProgressListener *listener = NULL);
 
@@ -192,7 +192,8 @@ public:
 
 class TriplesListIterator : public IteratorTripleID {
 private:
-	TripleID pattern, returnTriple;
+	const TripleID& pattern;
+	TripleID* returnTriple;
 	TriplesList *triples;
 	uint64_t pos;
 

@@ -29,12 +29,13 @@
  *
  */
 
-#ifndef TRIPLESCOMPARATOR_HPP_
-#define TRIPLESCOMPARATOR_HPP_
+#ifndef QUADSCOMPARATOR_HPP_
+#define QUADSCOMPARATOR_HPP_
 
-#include <Triples.hpp>
+#include <HDTEnums.hpp>
 
 namespace hdt {
+class TripleID;
 
 class TriplesComparator {
 
@@ -43,10 +44,10 @@ class TriplesComparator {
 
 	public:
 		TriplesComparator();
-		TriplesComparator(TripleComponentOrder order);
+		TriplesComparator(TripleComponentOrder compOrder);
 		virtual ~TriplesComparator();
 		bool operator()(const TripleID &a, const TripleID &b);
-        void setOrder(TripleComponentOrder order);
+        void setOrder(TripleComponentOrder compOrder);
 
 }; //TriplesComparator{}
 

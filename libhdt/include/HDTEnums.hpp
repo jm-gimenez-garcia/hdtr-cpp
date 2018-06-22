@@ -103,7 +103,31 @@ enum TripleComponentOrder {
 	/**
 	 * Object, predicate, subject
 	 */
-	OPS
+	OPS,
+	/**
+	 * Subject, predicate, object
+	 */
+	SPOG,
+	/**
+	 * Subject, object, predicate, graph
+	 */
+	SOPG,
+	/**
+	 * Predicate, subject, object, graph
+	 */
+	PSOG,
+	/**
+	 * Predicate, object, subject, graph
+	 */
+	POSG,
+	/**
+	 * Object, subject, predicate, graph
+	 */
+	OSPG,
+	/**
+	 * Object, predicate, subject, graph
+	 */
+	OPSG
 };
 
 TripleComponentOrder parseOrder(const char *str);

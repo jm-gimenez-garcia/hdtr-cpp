@@ -57,6 +57,9 @@ protected:
 	unsigned int predicate;
 	unsigned int object;
 
+protected:
+	virtual size_t get_sizeof(){return sizeof(TripleID);}
+
 public:
 
 	/**
@@ -83,9 +86,14 @@ public:
 		predicate(tid.predicate),
 		object(tid.object){}
 	
+	virtual ~TripleID() {}
 
-	~TripleID() {
+
+
+	virtual inline QuadID to_QuadID() const {
+		return QuadID(*this);
 	}
+
 
 	/**
 	 * Get the Subject component of this tripleID.
@@ -94,6 +102,7 @@ public:
 	inline unsigned int getSubject() const {
 		return subject;
 	}
+
 
 	/**
 	 * Set the Subject component of this tripleID.
@@ -135,20 +144,6 @@ public:
 		this->object = object;
 	}
 
-	/**
-	 * Get the identifier component of this QuadID.
-	 * @return
-	 */
-	virtual unsigned int getIdentifier() const {
-		return 0;
-	}
-
-	/**
-	 * Set the identifier component of this QuadID.
-	 * @return
-	 */
-	virtual void setIdentifier(const unsigned int ident) {}
-	
 
 	inline void setAll(const unsigned int subject, const unsigned int predicate, const unsigned int object) {
 		this->subject = subject;
@@ -183,7 +178,7 @@ public:
 	 * @param operand The operand to compare with
 	 * @return boolean
 	 */
-	bool operator==(const TripleID &operand) {
+	virtual bool operator==(const TripleID &operand)const {
 		// Subject comparison
 		if (this->subject != operand.subject) {
 			return false;
@@ -207,7 +202,7 @@ public:
 	 * @param operand The operand to compare with
 	 * @return boolean
 	 */
-	bool operator!=(const TripleID &operand) {
+	virtual bool operator!=(const TripleID &operand)const {
 		return !(this->operator==(operand));
 	} // !=()
 
@@ -217,7 +212,7 @@ public:
 	 * @param other
 	 * @return
 	 */
-	int compare(const TripleID &other) {
+	virtual int compare(const TripleID &other)const {
 		int result = this->subject - other.subject;
 
 		if(result==0) {
@@ -239,7 +234,7 @@ public:
 	 * @param pattern The pattern to match against
 	 * @return boolean
 	 */
-	inline bool match(const TripleID &pattern) {
+	inline bool match(const TripleID &pattern)const {
 		unsigned int subject = pattern.getSubject();
 		unsigned int predicate = pattern.getPredicate();
                 unsigned int object = pattern.getObject();
@@ -260,10 +255,10 @@ public:
 	 *
 	 * @param replacement
 	 */
-	void replace(TripleID &replacement) {
-		this->subject = replacement.getSubject();
-		this->object = replacement.getObject();
-		this->predicate = replacement.getPredicate();
+	virtual void replace(const TripleID &replacement) {
+		subject = replacement.getSubject();
+		object = replacement.getObject();
+		predicate = replacement.getPredicate();
 	} // replace()
 
         /**
@@ -271,7 +266,7 @@ public:
          *
          * @return boolean
          */
-        inline bool isEmpty() const {
+        inline bool virtual isEmpty() const {
             return !(this->subject != 0 || this->predicate != 0 || this->object != 0);
         }
 
@@ -280,14 +275,14 @@ public:
 	 *
 	 * @return boolean
 	 */
-	inline bool isValid() const {
+	virtual inline bool isValid() const {
                 return this->subject != 0 && this->predicate != 0 && this->object != 0;
 	}
 
 	/**
 	 * Get
 	 */
-	std::string getPatternString(){
+	virtual std::string getPatternString()const{
 		std::string tmp;
 		tmp.append(subject==0 ? "?" : "S");
 		tmp.append(predicate==0 ? "?" : "P");
@@ -344,6 +339,9 @@ public:
 	~TripleString() {
 
 	}
+
+	virtual QuadString to_QuadString()const{return QuadString(*this);}
+
 
 	/**
 	 * Get Subject.
@@ -411,7 +409,7 @@ public:
 		return stream;
 	}
 
-        bool operator==(const TripleString &operand) {
+        bool operator==(const TripleString &operand)const {
                 // Subject comparison
                 if (this->subject != operand.subject) {
                         return false;
@@ -429,11 +427,11 @@ public:
                 return true;
         }
 
-        bool operator!=(const TripleString &operand) {
+        bool operator!=(const TripleString &operand)const {
                 return !(this->operator==(operand));
         }
 
-        inline bool match(const TripleString &pattern) {
+        inline bool match(const TripleString &pattern)const {
             string subject = pattern.getSubject();
             string predicate = pattern.getPredicate();
             string object = pattern.getObject();
@@ -452,7 +450,7 @@ public:
 	/**
 	 * Clear all components to the empty String "";
 	 */
-	void clear() {
+	virtual void clear() {
 		subject = predicate = object = "";
 	}
 
@@ -460,7 +458,7 @@ public:
 	 * Check wether all components of the TripleString are empty.
 	 * @return
 	 */
-	bool isEmpty() const {
+	virtual bool isEmpty() const {
 		return subject == "" && predicate == "" && object == "";
 	}
 
@@ -468,7 +466,7 @@ public:
 	 * Check wether any of the components of the TripleString is empty.
 	 * @return
 	 */
-	bool hasEmpty() const {
+	virtual bool hasEmpty() const {
 		return subject == "" || predicate == "" || object == "";
 	}
 
@@ -476,7 +474,7 @@ public:
 	 * Read a TripleString from a stream, where each component is represented using an empty space.
 	 * @param line
 	 */
-	void read(std::string line){
+	virtual void read(std::string line){
 		size_t pos_a = 0, pos_b;
 		//trim the line
 		line.erase(line.find_last_not_of(" \t\n\r\f\v") + 1);
