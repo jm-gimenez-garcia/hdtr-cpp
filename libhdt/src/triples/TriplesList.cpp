@@ -234,7 +234,7 @@ bool TriplesList::remove(TripleID &pattern)
 	bool removed=false;
 	for(unsigned int i=0; i< arrayOfTriples.size(); i++) {
 		TripleID *tid = &arrayOfTriples[i];
-		if (tid->match(pattern.to_QuadID())) {
+		if (tid->match(pattern.to_QuadID_pattern())) {
 			tid->clear();
 			numValidTriples--;
 			removed=true;
@@ -249,7 +249,7 @@ bool TriplesList::remove(IteratorTripleID *pattern)
 	vector<QuadID> allPat;
 
 	while(pattern->hasNext()) {
-		allPat.push_back(pattern->next()->to_QuadID());
+		allPat.push_back(pattern->next()->to_QuadID_pattern());
 	}
 
 	for(unsigned int i=0; i< arrayOfTriples.size(); i++) {

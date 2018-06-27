@@ -90,8 +90,11 @@ public:
 
 
 
-	virtual inline QuadID to_QuadID() const {
+	virtual QuadID to_QuadID() const {
 		return QuadID(*this);
+	}
+	virtual QuadID to_QuadID_pattern() const {
+		return QuadID(*this,0);
 	}
 
 
@@ -99,7 +102,7 @@ public:
 	 * Get the Subject component of this tripleID.
 	 * @return
 	 */
-	inline unsigned int getSubject() const {
+	unsigned int getSubject() const {
 		return subject;
 	}
 
@@ -108,7 +111,7 @@ public:
 	 * Set the Subject component of this tripleID.
 	 * @return
 	 */
-	inline void setSubject(const unsigned int subject) {
+	void setSubject(const unsigned int subject) {
 		this->subject = subject;
 	}
 
@@ -116,7 +119,7 @@ public:
 	 * Get the Predicate component of this tripleID.
 	 * @return
 	 */
-	inline unsigned getPredicate() const {
+	unsigned getPredicate() const {
 		return this->predicate;
 	}
 
@@ -124,7 +127,7 @@ public:
 	 * Set the Predicate component of this tripleID.
 	 * @return
 	 */
-	inline void setPredicate(const unsigned int predicate) {
+	void setPredicate(const unsigned int predicate) {
 		this->predicate = predicate;
 	}
 
@@ -132,7 +135,7 @@ public:
 	 * Get the Object component of this tripleID.
 	 * @return
 	 */
-	inline unsigned int getObject() const {
+	unsigned int getObject() const {
 		return this->object;
 	}
 
@@ -140,12 +143,12 @@ public:
 	 * Set the Object component of this tripleID.
 	 * @return
 	 */
-	inline void setObject(const unsigned int object) {
+	void setObject(const unsigned int object) {
 		this->object = object;
 	}
 
 
-	inline void setAll(const unsigned int subject, const unsigned int predicate, const unsigned int object) {
+	void setAll(const unsigned int subject, const unsigned int predicate, const unsigned int object) {
 		this->subject = subject;
 		this->predicate = predicate;
 		this->object = object;
@@ -234,7 +237,7 @@ public:
 	 * @param pattern The pattern to match against
 	 * @return boolean
 	 */
-	inline bool match(const TripleID &pattern)const {
+	bool match(const TripleID &pattern)const {
 		unsigned int subject = pattern.getSubject();
 		unsigned int predicate = pattern.getPredicate();
                 unsigned int object = pattern.getObject();
@@ -266,7 +269,7 @@ public:
          *
          * @return boolean
          */
-        inline bool virtual isEmpty() const {
+        bool virtual isEmpty() const {
             return !(this->subject != 0 || this->predicate != 0 || this->object != 0);
         }
 
@@ -275,7 +278,7 @@ public:
 	 *
 	 * @return boolean
 	 */
-	virtual inline bool isValid() const {
+	virtual bool isValid() const {
                 return this->subject != 0 && this->predicate != 0 && this->object != 0;
 	}
 
@@ -342,6 +345,9 @@ public:
 
 	virtual QuadString to_QuadString()const{return QuadString(*this);}
 
+	virtual QuadString to_QuadString_pattern()const{return QuadString(*this,0);}
+
+
 
 	/**
 	 * Get Subject.
@@ -359,7 +365,7 @@ public:
 		this->subject = subject;
 	}
 
-	inline void setAll(const std::string &subject, const std::string &predicate, const std::string &object) {
+	void setAll(const std::string &subject, const std::string &predicate, const std::string &object) {
 		this->subject = subject;
 		this->predicate = predicate;
 		this->object = object;
@@ -431,7 +437,7 @@ public:
                 return !(this->operator==(operand));
         }
 
-        inline bool match(const TripleString &pattern)const {
+        bool match(const TripleString &pattern)const {
             string subject = pattern.getSubject();
             string predicate = pattern.getPredicate();
             string object = pattern.getObject();

@@ -94,10 +94,10 @@ public:
 
 	~QuadID() {}
 
-	inline QuadID to_QuadID() const {
+	QuadID to_QuadID() const {
 		return *this;
 	}
-
+	
 	bool hasIdentifier()const{return has_identifier;}
 
 	/**
@@ -229,17 +229,12 @@ public:
 	 * @param pattern The pattern to match against
 	 * @return boolean
 	 */
-	bool match(const QuadID& q)const {
-		bool q_ident_wildcard = q.identifier==0 && q.hasIdentifier();
-		return (q.subject == 0 || q.subject == subject)
-			&& (q.predicate == 0 || q.predicate == predicate)
-			&& (q.object == 0 || q.object == object)
-			&& ((q.hasIdentifier() && hasIdentifier() && (q.identifier==0 || q.identifier == identifier)) || !(q.hasIdentifier() || hasIdentifier()));
+	bool match(const QuadID& patt)const {
+		return (patt.subject == 0 || patt.subject == subject)
+			&& (patt.predicate == 0 || patt.predicate == predicate)
+			&& (patt.object == 0 || patt.object == object)
+			&& ((patt.hasIdentifier() && hasIdentifier() && (patt.identifier==0 || patt.identifier == identifier)) || !patt.hasIdentifier());
 	}
-	bool match(const TripleID& t)const {
-		return match(t.to_QuadID());
-	}
-
 
 	/**
 	 * Replaces the contents of a quad with the provided replacement
@@ -275,7 +270,7 @@ public:
 	 *
 	 * @return boolean
 	 */
-	inline bool isValid() const {
+	bool isValid() const {
             return TripleID::isValid() && (!hasIdentifier() || (hasIdentifier() && identifier==0));
 	}
 
@@ -332,7 +327,6 @@ public:
 	 */
 	QuadString(const std::string subj, const std::string pred, const std::string obj, const std::string ident) :
 		TripleString(subj,pred,obj), identifier(ident), has_identifier(true){}
-
 
 	QuadString& operator=(const QuadString& other) {
 		if(this!=&other) 
@@ -407,11 +401,11 @@ public:
 		return !(this->operator==(operand.to_QuadID()));
 	}
 
-    inline bool match(const QuadString& q) const{
-		return ((subject==q.subject || q.subject=="")
-		  	&& (predicate==q.predicate || q.predicate=="")
-			&& (object==q.object || q.object=="")
-			&& ((q.hasIdentifier() && hasIdentifier() && (q.identifier=="" || q.identifier == identifier)) || !(q.hasIdentifier() || hasIdentifier()));
+    bool match(const QuadString& patt) const{
+		return ((subject==patt.subject || patt.subject=="")
+		  	&& (predicate==patt.predicate || patt.predicate=="")
+			&& (object==patt.object || patt.object=="")
+			&& ((patt.hasIdentifier() && hasIdentifier() && (patt.identifier=="" || patt.identifier == identifier)) || !patt.hasIdentifier()));
     }
 
 	/**
