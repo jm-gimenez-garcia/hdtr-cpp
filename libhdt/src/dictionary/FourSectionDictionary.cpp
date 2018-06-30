@@ -32,6 +32,7 @@
 #include <algorithm>
 
 #include "FourSectionDictionary.hpp"
+#include "ControlInformation.hpp"
 #include <HDTVocabulary.hpp>
 #include <stdexcept>
 #include "../libdcs/CSD_PFC.h"

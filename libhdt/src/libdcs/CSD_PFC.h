@@ -35,13 +35,15 @@
 
 using namespace std;
 
-#include <HDTListener.hpp>
+//#include <HDTListener.hpp>
 #include <Iterator.hpp>
 
 #include "CSD.h"
 #include "VByte.h"
 #include "../sequence/LogSequence2.hpp"
-
+namespace hdt{
+	class ProgressListener; 
+};
 namespace csd {
 
 class PFCIterator;

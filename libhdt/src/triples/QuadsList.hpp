@@ -1,5 +1,5 @@
 /*
- * File: TriplesList.hpp
+ * File: QuadsList.hpp
  * Last modified: $Date$
  * Revision: $Revision$
  * Last modified by: $Author$
@@ -29,8 +29,8 @@
  *
  */
 
-#ifndef TRIPLESLIST_H_
-#define TRIPLESLIST_H_
+#ifndef QUADSLIST_H_
+#define QUADSLIST_H_
 
 #include <Triples.hpp>
 #include <HDTSpecification.hpp>
@@ -38,20 +38,20 @@
 
 namespace hdt {
 
-class TriplesList : public ModifiableTriples {
+class QuadsList : public ModifiableTriples {
 private:
 	ControlInformation controlInformation;
 	HDTSpecification spec;
 
-	std::vector<TripleID> arrayOfTriples;
-    TripleID *ptr;
+	std::vector<QuadID> arrayOfTriples;
+    QuadID *ptr;
 	TripleComponentOrder order;
     size_t numValidTriples;
 
 public:
-	TriplesList();
-	TriplesList(HDTSpecification &specification);
-	virtual ~TriplesList();
+	QuadsList();
+	QuadsList(HDTSpecification &specification);
+	virtual ~QuadsList();
 
     bool isIndexed() const {
         return false;
@@ -105,7 +105,7 @@ public:
 	 */
 	void load(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener = NULL);
 
-	size_t load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener=NULL);
+	size_t load(unsigned char *uchar_ptr, unsigned char *ptrMax, ProgressListener *listener=NULL);
 
 	void load(ModifiableTriples &input, ProgressListener *listener = NULL);
 
@@ -192,12 +192,13 @@ public:
 
 class TriplesListIterator : public IteratorTripleID {
 private:
-	TripleID pattern, returnTriple;
-	TriplesList *triples;
+	const TripleID& pattern;
+	TripleID* returnTriple;
+	QuadsList *triples;
 	uint64_t pos;
 
 public:
-	TriplesListIterator(TriplesList *triples, TripleID &pattern);
+	TriplesListIterator(QuadsList *triples, TripleID &pattern);
 	bool hasNext();
 	TripleID *next();
 	bool hasPrevious();

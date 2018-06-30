@@ -35,11 +35,16 @@
 #define _COMPRESSEDSTRINGDICTIONARY_H
 
 #include <stdint.h>
-#include <Iterator.hpp>
+//#include <Iterator.hpp>
 #include <iostream>
 #include <cassert>
 #include <vector>
 using namespace std;
+
+namespace hdt{
+	class IteratorUCharString; 
+	class IteratorUInt; 
+};
 
 namespace csd
 {

@@ -22,6 +22,7 @@ include_HEADERS = \
 
 lib_LTLIBRARIES = libhdt.la
 libhdt_la_SOURCES = \
+src/triples/SingleTriple.cpp \
 src/bitsequence/BitSequence375.cpp \
 src/dictionary/BaseFourSectionDictionary.cpp \
 src/dictionary/TriplesFourSectionDictionary.cpp \

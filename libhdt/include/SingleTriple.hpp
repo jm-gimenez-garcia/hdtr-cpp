@@ -46,6 +46,8 @@ namespace hdt {
 #define IS_URI(a) ( (a).size()>0 && (a).at(0)!='<' && (a).at(0)!='_')
 #define IS_LITERAL(a) ( (a).size()>0 && (a).at(0)=='"')
 
+class QuadID;
+class QuadString;
 /**
  * Represents a single triple, where the subject, predicate, and object components are
  * represented using integer IDs after applying the dictionary conversion.
@@ -57,8 +59,6 @@ protected:
 	unsigned int predicate;
 	unsigned int object;
 
-protected:
-	virtual size_t get_sizeof(){return sizeof(TripleID);}
 
 public:
 
@@ -89,14 +89,8 @@ public:
 	virtual ~TripleID() {}
 
 
-
-	virtual QuadID to_QuadID() const {
-		return QuadID(*this);
-	}
-	virtual QuadID to_QuadID_pattern() const {
-		return QuadID(*this,0);
-	}
-
+	virtual QuadID to_QuadID() const ;
+	QuadID to_QuadID_pattern() const ;
 
 	/**
 	 * Get the Subject component of this tripleID.
@@ -343,9 +337,8 @@ public:
 
 	}
 
-	virtual QuadString to_QuadString()const{return QuadString(*this);}
-
-	virtual QuadString to_QuadString_pattern()const{return QuadString(*this,0);}
+	virtual QuadString to_QuadString()const;
+	virtual QuadString to_QuadString_pattern()const;
 
 
 

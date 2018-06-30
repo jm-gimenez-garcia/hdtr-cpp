@@ -26,7 +26,7 @@
  */
 #include <stdexcept>
 #include <stdlib.h>
-
+#include "HDTListener.hpp"
 #include "../util/crc8.h"
 #include "../util/crc32.h"
 

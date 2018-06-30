@@ -32,6 +32,7 @@
 #ifndef HDT_DICTIONARY_HPP_
 #define HDT_DICTIONARY_HPP_
 
+#include <cstdint>
 #include <vector>
 #include "HDTEnums.hpp"
 #include "SingleTriple.hpp"
