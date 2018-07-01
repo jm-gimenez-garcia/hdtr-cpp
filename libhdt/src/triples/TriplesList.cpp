@@ -55,7 +55,7 @@ TriplesList::~TriplesList()
 
 IteratorTripleID *TriplesList::search(TripleID &pattern)
 {
-	string patternString = pattern.getPatternString().substr(0,3);;
+	string patternString = pattern.getPatternString();
 	if(patternString=="???") {
 		return new TriplesListIterator(this, pattern);
 	} else {
@@ -93,7 +93,7 @@ void TriplesList::save(std::ostream &output, ControlInformation &controlInformat
 
 	for( unsigned int i = 0; i < arrayOfTriples.size(); i++ ) {
 		if ( arrayOfTriples[i].isValid() ) {
-			output.write((char *)&arrayOfTriples[i], sizeof(QuadID));
+			output.write((char *)&arrayOfTriples[i], sizeof(TripleID));
 			NOTIFYCOND(listener, "TriplesList saving", i, arrayOfTriples.size())
 		}
 	}
@@ -110,10 +110,10 @@ void TriplesList::load(std::istream &input, ControlInformation &controlInformati
 	unsigned int totalTriples = controlInformation.getUint("numTriples");
 
 	unsigned int numRead=0;
-	arrayOfTriples.reserve(totalTriples);
-	QuadID readTriple;
+	TripleID readTriple;
+
 	while(input.good() && numRead<totalTriples) {
-		input.read((char *)&readTriple, sizeof(QuadID));
+		input.read((char *)&readTriple, sizeof(TripleID));
 		arrayOfTriples.push_back(readTriple);
         ptr = &arrayOfTriples[0];
 		numRead++;
@@ -124,12 +124,12 @@ void TriplesList::load(std::istream &input, ControlInformation &controlInformati
 
 #define CHECKPTR(base, max, size) if(((base)+(size))>(max)) throw std::runtime_error("Could not read completely the HDT from the file.");
 
-size_t TriplesList::load(unsigned char *uchar_ptr, unsigned char *ptrMax, ProgressListener *listener)
+size_t TriplesList::load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener)
 {
     size_t count=0;
 
     ControlInformation controlInformation;
-    count+=controlInformation.load(&uchar_ptr[count], ptrMax);
+    count+=controlInformation.load(&ptr[count], ptrMax);
 
     std::string format = controlInformation.getFormat();
     if(format!=getType()) {
@@ -142,7 +142,7 @@ size_t TriplesList::load(unsigned char *uchar_ptr, unsigned char *ptrMax, Progre
 
     //CHECKPTR(&ptr[count],ptrMax,numValidTriples*12);
 
-    ptr = (QuadID*)&uchar_ptr[count];
+    this->ptr = (TripleID*)&ptr[count];
 
     return count;
 }
@@ -181,7 +181,7 @@ size_t TriplesList::loadIndex(unsigned char *ptr, unsigned char *ptrMax, Progres
 
 void TriplesList::populateHeader(Header &header, string rootNode)
 {
-	header.insert(rootNode, HDTVocabulary::TRIPLES_TYPE, HDTVocabulary::TRIPLES_TYPE_QUADSLIST);
+	header.insert(rootNode, HDTVocabulary::TRIPLES_TYPE, HDTVocabulary::TRIPLES_TYPE_TRIPLESLIST);
 	header.insert(rootNode, HDTVocabulary::TRIPLES_NUM_TRIPLES, getNumberOfElements() );
 	header.insert(rootNode, HDTVocabulary::TRIPLES_ORDER, getOrderStr(order) );
 }
@@ -210,8 +210,8 @@ void TriplesList::insert(TripleID &triple)
 {
 	// Add the triple
 	order = Unknown;
-	arrayOfTriples.push_back(triple.to_QuadID());
-    ptr = (QuadID*)&arrayOfTriples[0];
+	arrayOfTriples.push_back(triple);
+    ptr = (TripleID*)&arrayOfTriples[0];
 	numValidTriples++;
 }
 
@@ -223,8 +223,8 @@ void TriplesList::insert(IteratorTripleID *triples)
     numValidTriples=0;
 
 	while( triples->hasNext() ) {
-        arrayOfTriples[numValidTriples++] = triples->next()->toQuadID();
-        ptr = (QuadID*)&arrayOfTriples[0];
+        arrayOfTriples[numValidTriples++] = *triples->next();
+        ptr = (TripleID*)&arrayOfTriples[0];
 	}
 	order = Unknown;
 }
@@ -234,7 +234,7 @@ bool TriplesList::remove(TripleID &pattern)
 	bool removed=false;
 	for(unsigned int i=0; i< arrayOfTriples.size(); i++) {
 		TripleID *tid = &arrayOfTriples[i];
-		if (tid->match(pattern.to_QuadID_pattern())) {
+		if (tid->match(pattern)) {
 			tid->clear();
 			numValidTriples--;
 			removed=true;
@@ -246,10 +246,10 @@ bool TriplesList::remove(TripleID &pattern)
 bool TriplesList::remove(IteratorTripleID *pattern)
 {
 	bool removed = false;
-	vector<QuadID> allPat;
+	vector<TripleID> allPat;
 
 	while(pattern->hasNext()) {
-		allPat.push_back(pattern->next()->to_QuadID_pattern());
+		allPat.push_back(*pattern->next());
 	}
 
 	for(unsigned int i=0; i< arrayOfTriples.size(); i++) {
@@ -287,7 +287,7 @@ void TriplesList::setOrder(TripleComponentOrder order)
 
 TripleID* TriplesList::getTripleID(unsigned int i)
 {
-    return static_cast<TripleID*>(&ptr[i]);
+    return &ptr[i];
     //return &this->arrayOfTriples[i];
 }
 
@@ -350,7 +350,7 @@ void TriplesList::calculateDegree(string path, unsigned int numPredicates,unsign
 
 	size_t xcount = 1, ycount = 1, ychanged = 1;
 
-	QuadID currentTriple;
+	TripleID currentTriple;
 
 	currentTriple = arrayOfTriples[0];
 	swapComponentOrder(&currentTriple, SPO, order);
@@ -760,7 +760,7 @@ void TriplesList::calculateMinStats(string path, unsigned int numPredicates) {
 
 	size_t xcount = 1, ycount = 1, ychanged = 1;
 
-	QuadID currentTriple;
+	TripleID currentTriple;
 
 	currentTriple = arrayOfTriples[0];
 	swapComponentOrder(&currentTriple, SPO, order);
@@ -991,7 +991,7 @@ void TriplesList::calculateDegreeType(string path, unsigned int rdftypeID) {
 
 	int xcount = 1, ycount = 1, ychanged = 1;
 
-	QuadID currentTriple;
+	TripleID currentTriple;
 	bool istypedSubject = false;
 
 	currentTriple = arrayOfTriples[0];
@@ -1387,8 +1387,8 @@ void TriplesList::calculateDegrees(string path, unsigned int maxSO,unsigned int 
 
 // ITERATOR
 
-TriplesListIterator::TriplesListIterator(TriplesList *triples, TripleID & tid_patt) :
-         pattern(tid_patt), triples(triples), pos(0)
+TriplesListIterator::TriplesListIterator(TriplesList *triples, TripleID & pattern) :
+         pattern(pattern), triples(triples), pos(0)
 {
 }
 
@@ -1399,8 +1399,8 @@ bool TriplesListIterator::hasNext()
 
 TripleID *TriplesListIterator::next()
 {
-	returnTriple = triples->getTripleID(pos++);
-	return returnTriple;
+	returnTriple = *triples->getTripleID(pos++);
+	return &returnTriple;
 }
 
 bool TriplesListIterator::hasPrevious()
@@ -1410,8 +1410,8 @@ bool TriplesListIterator::hasPrevious()
 
 TripleID *TriplesListIterator::previous()
 {
-	returnTriple = triples->getTripleID(--pos);
-	return returnTriple;
+	returnTriple = *triples->getTripleID(--pos);
+	return &returnTriple;
 }
 
 void TriplesListIterator::goToStart()

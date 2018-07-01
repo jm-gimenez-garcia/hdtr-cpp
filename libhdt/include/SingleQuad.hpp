@@ -42,7 +42,6 @@
 using namespace std;
 
 namespace hdt {
-
 #define IS_VARIABLE(a) ( (a).size()>0 && (a).at(0)=='?')
 #define IS_URI(a) ( (a).size()>0 && (a).at(0)!='<' && (a).at(0)!='_')
 #define IS_LITERAL(a) ( (a).size()>0 && (a).at(0)=='"')
@@ -57,8 +56,6 @@ private:
 	unsigned int identifier;
 	bool has_identifier;
 
-protected:
-	size_t get_sizeof(){return sizeof(QuadID);}
 
 public:
 
@@ -105,7 +102,7 @@ public:
 	 * @return
 	 */
 	unsigned int getIdentifier() const {
-		if !hasIdentifier()
+		if (!hasIdentifier())
 			throw std::runtime_error("This QuadID is a TripleID (no identifier)");
 		return identifier;
 	}
@@ -161,11 +158,11 @@ public:
 	 * @return boolean
 	 */
 	bool operator==(const QuadID &op)const {
-		return (subject == op.subject) && (object == op.object) && (predicate == op.predicate) && ((has_identifier && op.has_identifier && identifier == op.identifier) || !(has_identifier||op.has_identifier))
+		return (subject == op.subject) && (object == op.object) && (predicate == op.predicate) && ((has_identifier && op.has_identifier && identifier == op.identifier) || !(has_identifier||op.has_identifier));
 	}
 
 	bool operator==(const TripleID &op)const {
-		return this->operator==(op.toQuadID());
+		return this->operator==(op.to_QuadID());
 	}
 
 
@@ -180,7 +177,7 @@ public:
 	} // !=()
 
 	bool operator!=(const TripleID &op)const {
-		return !this->operator==(op.toQuadID());
+		return !this->operator==(op.to_QuadID());
 	} // !=()
 
 
@@ -203,7 +200,7 @@ public:
 			{
 				result = object - other.object;
 				if(result==0)
-					if !(has_identifier || other. has_identifier)
+					if (!(has_identifier || other. has_identifier))
 						return 0;
 					else
 						return identifier - other.identifier;
@@ -218,7 +215,7 @@ public:
 	}
 
 	int compare(const TripleID &other)const {
-		return compare(other.toQuadID());
+		return compare(other.to_QuadID());
 	}
 
 
@@ -243,7 +240,7 @@ public:
 	 */
 	void replace(const QuadID& q) 
 	{
-		if q.hasIdentifier()
+		if (q.hasIdentifier())
 			setAll(q.subject, q.predicate, q.object, q.identifier); // replace()
 		else
 		{
@@ -345,7 +342,7 @@ public:
 	// returns a copy of the object
 	QuadString to_QuadString()const{return *this;}
 
-	virtual bool hasIdentifier(){return has_identifier;}
+	virtual bool hasIdentifier()const{return has_identifier;}
 
 
 	void setAll(const std:: string &subj, const std:: string &pred, const std:: string &obj, const std:: string& ident) 
@@ -361,7 +358,7 @@ public:
 	 * Get Identifier.
 	 * @return
 	 */
-	const std::string& getIdentifier() const{
+	std::string getIdentifier() const{
 		return hasIdentifier() ? identifier : 0;
 	}
 
@@ -386,7 +383,7 @@ public:
 	}
 
     bool operator==(const QuadString& qs) const	{
-		return (subject==qs.subject) && (object==qs.object) && (predicate==qs.predicate) && ((has_identifier && qs.has_identifier && identifier == qs.identifier) || !(has_identifier||oqs.has_identifier));
+		return (subject==qs.subject) && (object==qs.object) && (predicate==qs.predicate) && ((has_identifier && qs.has_identifier && identifier == qs.identifier) || !(has_identifier||qs.has_identifier));
 	}
     
 	bool operator==(const TripleString& ts) const{
@@ -398,7 +395,7 @@ public:
 	}
 
     bool operator!=(const TripleString &operand)const{
-		return !(this->operator==(operand.to_QuadID()));
+		return !(this->operator==(operand.to_QuadString()));
 	}
 
     bool match(const QuadString& patt) const{
@@ -419,7 +416,7 @@ public:
 	 * @return
 	 */
 	bool isEmpty() const {
-		return (TripleString::isEmpty() && ((has_identifier && identifier==0) || (!has_identifier)));
+		return (TripleString::isEmpty() && ((has_identifier && identifier=="") || (!has_identifier)));
 	}
 
 	/**
@@ -427,7 +424,7 @@ public:
 	 * @return
 	 */
 	bool hasEmpty() const {
-		return TripleString::hasEmpty() || (hasIdentifier && identifier == "") ;
+		return TripleString::hasEmpty() || (hasIdentifier() && identifier == "") ;
 	}
 
 	/**
