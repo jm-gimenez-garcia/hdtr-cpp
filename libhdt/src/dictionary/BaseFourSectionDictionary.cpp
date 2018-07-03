@@ -434,8 +434,8 @@ unsigned int BaseFourSectionDictionary::getLocalId(unsigned int mapping, unsigne
 		case SUBJECT:
 			if(id<=sh_length)
 				return id;
-			else if(id <= sh_length+sub_length)
-				return id-sh_length;
+			else if(id <= sh_length + sub_length)
+				return id - sh_length;
 			else
 				throw runtime_error("This globalID does not correspond to a SUBJECT");
 			break;
@@ -447,15 +447,15 @@ unsigned int BaseFourSectionDictionary::getLocalId(unsigned int mapping, unsigne
 				if ( (id <= sh_length + sub_length + obj_length) && (id > sh_length + sub_length) )
 					return 2 + id - sh_length - sub_length;
 				else
-					throw runtime_error("This globalID does not correspond to a SUBJECT");
+					throw runtime_error("This globalID does not correspond to an OBJECT with MAPPING1");
 
 			}
 			else if (mapping==MAPPING2)
 			{
-				if (id <= sh_length + sub_length)
+				if (id <= sh_length + obj_length)
 					return id - sh_length ;
 				else
-					throw runtime_error("This globalID does not correspond to a SUBJECT");
+					throw runtime_error("This globalID does not correspond to a OBJECT with MAPPING2");
 			}
 			else
 				throw runtime_error("Uknown mapping");

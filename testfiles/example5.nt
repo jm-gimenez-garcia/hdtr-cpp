@@ -1,2 +1,2 @@
-<C1> <link1> <C2> .
-<C2> <link1> <D2> .
+<http://example.org/C1> <http://example.org/link1> <http://example.org/C2> .
+<http://example.org/C2> <http://example.org/link1> <http://example.org/D2> .

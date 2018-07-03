@@ -164,6 +164,10 @@ public:
     //virtual IteratorUCharString *getPredicates()=0;
     //virtual IteratorUCharString *getGraphs()=0;
 
+    virtual unsigned int getGlobalId(unsigned int id, DictionarySection position)const=0;
+    virtual unsigned int getGlobalId(unsigned int mapping_type, unsigned int id, DictionarySection position)const=0;
+    virtual unsigned int getLocalId(unsigned int id, TripleComponentRole position)const=0;
+    virtual unsigned int getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position)const=0;
 
     virtual std::string getType()const=0;
     virtual unsigned int getMapping()const=0;

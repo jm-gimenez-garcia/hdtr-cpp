@@ -1,3 +1,3 @@
-<C1> <link2> <D1> <G1> .
-<C2> <link2> <D2> .
-<C3> <link2> <D3> .
+<http://example.org/C1> <http://example.org/link2> <http://example.org/D1> <http://example.org/G1> .
+<http://example.org/C2> <http://example.org/link2> <http://example.org/D2> .
+<http://example.org/C3> <http://example.org/link2> <http://example.org/D3> .

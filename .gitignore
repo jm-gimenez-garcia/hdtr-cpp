@@ -65,3 +65,6 @@ libcds-v1.0.12/includes
 *.o
 *.lo
 .deps
+libhdt/dict_tests/example*
+libhdt/dict_tests/testNewDictionary
+*.kct

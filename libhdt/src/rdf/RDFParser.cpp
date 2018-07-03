@@ -4,7 +4,6 @@
  *  Created on: 11/07/2011
  *      Author: mck
  */
-
 #include "RDFParser.hpp"
 #ifdef HAVE_SERD
 #include "RDFParserSerd.hpp"

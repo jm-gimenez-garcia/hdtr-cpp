@@ -94,12 +94,11 @@ public:
 	void saveShared(std::ostream &output, ProgressListener *listener, unsigned int& counter, const char marker);
 	void saveSubjects(std::ostream &output, ProgressListener *listener, unsigned int& counter, const char marker);
 	void saveObjects(std::ostream &output, ProgressListener *listener, unsigned int& counter, const char marker);
-	virtual void saveFourthSection(std::ostream &output, ProgressListener *listener, unsigned int& counter, const char marker)=0;
 
 	void load(std::istream &input, ControlInformation &ci, ProgressListener *listener = NULL);
-	virtual void insertFourthRegion(IntermediateListener& iListener, const std::string& line, unsigned int& numLine, unsigned int& numElements)=0;
-	virtual void getFourthSectionSize()const=0;
+	//virtual void getFourthSectionSize()const=0;
 	unsigned int insert(const std::string &str, const TripleComponentRole position);
+
 	virtual unsigned int getGlobalId(unsigned int mapping_type, unsigned int id, DictionarySection position)const;
 	unsigned int getGlobalId(unsigned int id, DictionarySection position)const;
 	virtual unsigned int getLocalId(unsigned int mapping_type, unsigned int id, TripleComponentRole position)const;
@@ -109,6 +108,8 @@ public:
 
 protected:
 	virtual unsigned int insertFourthElement(const std::string & str, const TripleComponentRole& pos)=0;
+	virtual void saveFourthSection(std::ostream &output, ProgressListener *listener, unsigned int& counter, const char marker)=0;
+	virtual void insertFourthRegion(IntermediateListener& iListener, const std::string& line, unsigned int& numLine, unsigned int& numElements)=0;
 
 
 protected:
@@ -121,6 +122,8 @@ protected:
 	virtual void updateIDs() ;
 	void convertMapping(unsigned int mapping_type);
 	virtual const std::vector<DictionaryEntry*> &getDictionaryEntryVector(unsigned int id, TripleComponentRole position)const;
+	virtual void populateHeaderFourthElementNum(Header &header, string rootNode)=0;
+	virtual void populateHeaderFourthElementMaxId(Header &header, string rootNode)=0;
 
 
 
@@ -143,8 +146,6 @@ public:
 	//virtual unsigned int getMaxGraphID()const=0;
 
 	void populateHeader(Header &header, string rootNode);
-	virtual void populateHeaderFourthElementNum(Header &header, string rootNode)=0;
-	virtual void populateHeaderFourthElementMaxId(Header &header, string rootNode)=0;
 
 	size_t load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener=NULL);
 

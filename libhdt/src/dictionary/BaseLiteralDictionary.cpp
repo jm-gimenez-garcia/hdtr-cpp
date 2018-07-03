@@ -593,12 +593,12 @@ case OBJECT:
 	} else {
 		unsigned int localId = 0;
 		if (mapping == MAPPING2) {
-			if(id <= shared->getLength() + subjects->getLength())
+			if(id <= shared->getLength() + objectsNotLiterals->getLength() + objectsLiterals->getLength())
 				localId = id - shared->getLength();
 			else
 				throw std::runtime_error("Item id too high");
 		}else {
-			if(id <= shared->getLength() + subjects->getLength() + objectsNotLiterals->getLength() + objectsLiterals->getLength())
+			if(id > shared->getLength()+subjects->getLength() && id <= shared->getLength() + subjects->getLength() + objectsNotLiterals->getLength() + objectsLiterals->getLength())
 				localId = 2+ id - shared->getLength() - subjects->getLength();
 			else
 				throw std::runtime_error("Item id too high");

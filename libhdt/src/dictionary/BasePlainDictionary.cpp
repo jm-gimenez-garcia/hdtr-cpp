@@ -331,6 +331,7 @@ unsigned int BasePlainDictionary::insert(const std::string & str, const TripleCo
 	return 0;
 }
 
+
 string intToStr(int val) {
 	std::stringstream out;
 	out << val;
@@ -547,15 +548,15 @@ unsigned int BasePlainDictionary::getLocalId(unsigned int mapping, unsigned int 
 				if ( (id <= sh_length + sub_length + obj_length) && (id > sh_length + sub_length) )
 					return id - sh_length - sub_length-1;
 				else
-					throw std::runtime_error("This globalID does not correspond to a SUBJECT");
+					throw std::runtime_error("This globalID does not correspond to a SUBJECT with MAPPING1");
 
 			}
 			else if (mapping==MAPPING2)
 			{
-				if (id <= sh_length + sub_length)
+				if (id <= sh_length + obj_length)
 					return id - sh_length -1 ;
 				else
-					throw std::runtime_error("This globalID does not correspond to a SUBJECT");
+					throw std::runtime_error("This globalID does not correspond to a SUBJECT with MAPPING2");
 			}
 			else
 				throw std::runtime_error("Uknown mapping");
@@ -662,7 +663,7 @@ void BasePlainDictionary::getSuggestions(const char *base, hdt::TripleComponentR
 IteratorUCharString* BasePlainDictionary::getSuggestions(const char *base, hdt::TripleComponentRole role)
 {throw std::logic_error("getSuggestions not implemented");}
 
-IteratorUInt *getIDSuggestions(const char *prefix, TripleComponentRole role)
+IteratorUInt *BasePlainDictionary::getIDSuggestions(const char *prefix, TripleComponentRole role)
 { throw std::logic_error("getIDSuggestions not implemented");}
 
 
