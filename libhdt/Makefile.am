@@ -56,6 +56,7 @@ src/libdcs/CSD_PFC.cpp \
 src/libdcs/VByte.cpp \
 src/libdcs/fmindex/SSA.cpp \
 src/libdcs/fmindex/SuffixArray.cpp \
+src/permutation/PermutationMRRR.cpp \
 src/rdf/RDFParser.cpp \
 src/rdf/RDFParserNtriples.cpp \
 src/rdf/RDFParserSerd.cpp \
@@ -129,6 +130,8 @@ src/hdt/BasicModifiableHDT.hpp\
 src/hdt/HDTFactory.hpp\
 src/hdt/TripleIDStringIterator.hpp\
 src/header/PlainHeader.hpp\
+src/permutation/Permutation.hpp \
+src/permutation/PermutationMRRR.hpp \
 src/rdf/RDFParserNtriples.hpp\
 src/rdf/RDFParserSerd.hpp\
 src/rdf/RDFSerializerNTriples.hpp\
