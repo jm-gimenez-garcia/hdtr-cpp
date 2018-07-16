@@ -48,6 +48,7 @@ namespace HDTVocabulary {
 	const std::string HDT_TRIPLES = HDT_TRIPLES_BASE+">";
 	const std::string HDT_QUADS = HDT_QUADS_BASE+">";
 	const std::string HDT_SEQ_BASE = HDT_BASE+"seq";
+	const std::string HDT_PERM_BASE = HDT_BASE+"perm";
 	const std::string HDT_BITMAP_BASE = HDT_BASE+"bitmap";
 
     // External vocabularies
@@ -133,6 +134,9 @@ namespace HDTVocabulary {
 	const std::string SEQ_TYPE_LOG2 = HDT_SEQ_BASE+"Log2>";
 	const std::string SEQ_TYPE_HUFFMAN = HDT_SEQ_BASE+"Huffman>";
 	const std::string SEQ_TYPE_WAVELET = HDT_SEQ_BASE+"Wavelet>";
+
+	//Permutation
+	const std::string PERM_TYPE_MRRR = HDT_PERM_BASE+"MRRR>";
 
 	// Bitmaps
 	const std::string BITMAP_TYPE_PLAIN = HDT_BITMAP_BASE+"Plain>";
