@@ -53,8 +53,8 @@ namespace hdt {
 class QuadID : public TripleID
 {
 private:
-	unsigned int identifier;
-	bool has_identifier;
+	unsigned int graph;
+	bool has_graph;
 
 
 public:
@@ -63,31 +63,31 @@ public:
 	 * Create empty QuadID.
 	 * @return
 	 */
-	QuadID(): TripleID(0, 0, 0), identifier(0),has_identifier(false){}
+	QuadID(): TripleID(0, 0, 0), graph(0),has_graph(false){}
 
 	/**
-	 * Create a new QuadID initialized using the supplied subject, predicate, object, identifier.
+	 * Create a new QuadID initialized using the supplied subject, predicate, object, graph.
 	 * @param subject
 	 * @param predicate
 	 * @param object
-	 * @param identifier
+	 * @param graph
 	 * @return
 	 */
 	QuadID(const unsigned int subj, const unsigned int pred, const unsigned int obj, const unsigned int ident) :
 		TripleID(subj, pred, obj),
-		identifier(ident),has_identifier(true){}
+		graph(ident),has_graph(true){}
 
 	QuadID(const QuadID& qId) :
 		TripleID(qId.subject, qId.predicate, qId.object),
-		identifier(qId.identifier),has_identifier(true){}
+		graph(qId.graph),has_graph(true){}
 
 	QuadID(const TripleID& trId):
 		TripleID(trId),
-		identifier(0),has_identifier(false) {}
+		graph(0),has_graph(false) {}
 
 	QuadID(const TripleID& trId, const unsigned int ident):
 		TripleID(trId),
-		identifier(ident),has_identifier(true){}
+		graph(ident),has_graph(true){}
 
 	~QuadID() {}
 
@@ -95,33 +95,33 @@ public:
 		return *this;
 	}
 	
-	bool hasIdentifier()const{return has_identifier;}
+	bool hasGraph()const{return has_graph;}
 
 	/**
-	 * Get the identifier component of this QuadID.
+	 * Get the graph component of this QuadID.
 	 * @return
 	 */
-	unsigned int getIdentifier() const {
-		if (!hasIdentifier())
-			throw std::runtime_error("This QuadID is a TripleID (no identifier)");
-		return identifier;
+	unsigned int getGraph() const {
+		if (!hasGraph())
+			throw std::runtime_error("This QuadID is a TripleID (no graph)");
+		return graph;
 	}
 
 	/**
-	 * Set the identifier component of this QuadID.
+	 * Set the graph component of this QuadID.
 	 * @return
 	 */
 	void setIdentifier(const unsigned int ident) {
-		identifier = ident;
-		has_identifier = true;
+		graph = ident;
+		has_graph = true;
 	}
 
 	void setAll(const unsigned int subj, const unsigned int pred, const unsigned int obj, const unsigned int ident) {
 		subject = subj;
 		predicate = pred;
 		object = obj;
-		identifier = ident;
-		has_identifier = true;
+		graph = ident;
+		has_graph = true;
 	}
 
 
@@ -132,8 +132,8 @@ public:
 		subject = 0;
 		predicate = 0;
 		object = 0;
-		identifier = 0;
-		has_identifier=false;
+		graph = 0;
+		has_graph=false;
 	}
 
 	/**
@@ -143,8 +143,8 @@ public:
 	 * @return
 	 */
 	friend std::ostream &operator<<(std::ostream &stream, const QuadID &qi) {
-		if(qi.hasIdentifier())
-			stream << qi.subject << " "<< qi.predicate <<" "<< qi.object <<" "<< qi.identifier;
+		if(qi.hasGraph())
+			stream << qi.subject << " "<< qi.predicate <<" "<< qi.object <<" "<< qi.graph;
 		else
 			stream << qi.subject << " "<< qi.predicate <<" "<< qi.object <<" "<< (unsigned int)0;
 
@@ -158,7 +158,7 @@ public:
 	 * @return boolean
 	 */
 	bool operator==(const QuadID &op)const {
-		return (subject == op.subject) && (object == op.object) && (predicate == op.predicate) && ((has_identifier && op.has_identifier && identifier == op.identifier) || !(has_identifier||op.has_identifier));
+		return (subject == op.subject) && (object == op.object) && (predicate == op.predicate) && ((has_graph && op.has_graph && graph == op.graph) || !(has_graph||op.has_graph));
 	}
 
 	bool operator==(const TripleID &op)const {
@@ -200,10 +200,10 @@ public:
 			{
 				result = object - other.object;
 				if(result==0)
-					if (!(has_identifier || other. has_identifier))
+					if (!(has_graph || other. has_graph))
 						return 0;
 					else
-						return identifier - other.identifier;
+						return graph - other.graph;
 				else 
 					return result;
 			}
@@ -230,7 +230,7 @@ public:
 		return (patt.subject == 0 || patt.subject == subject)
 			&& (patt.predicate == 0 || patt.predicate == predicate)
 			&& (patt.object == 0 || patt.object == object)
-			&& ((patt.hasIdentifier() && hasIdentifier() && (patt.identifier==0 || patt.identifier == identifier)) || !patt.hasIdentifier());
+			&& ((patt.hasGraph() && hasGraph() && (patt.graph==0 || patt.graph == graph)) || !patt.hasGraph());
 	}
 
 	/**
@@ -240,12 +240,12 @@ public:
 	 */
 	void replace(const QuadID& q) 
 	{
-		if (q.hasIdentifier())
-			setAll(q.subject, q.predicate, q.object, q.identifier); // replace()
+		if (q.hasGraph())
+			setAll(q.subject, q.predicate, q.object, q.graph); // replace()
 		else
 		{
 			setAll(q.subject, q.predicate, q.object, 0); // replace()
-			has_identifier = false;	
+			has_graph = false;	
 		}
 	}
 
@@ -259,7 +259,7 @@ public:
          * @return boolean
          */
         bool isEmpty() const {
-			return (TripleID::isEmpty() && ((has_identifier && identifier==0) || (!has_identifier)));
+			return (TripleID::isEmpty() && ((has_graph && graph==0) || (!has_graph)));
 		}
 
 	/**
@@ -268,7 +268,7 @@ public:
 	 * @return boolean
 	 */
 	bool isValid() const {
-            return TripleID::isValid() && (!hasIdentifier() || (hasIdentifier() && identifier==0));
+            return TripleID::isValid() && (!hasGraph() || (hasGraph() && graph==0));
 	}
 
 	/**
@@ -279,20 +279,20 @@ public:
 		tmp.append(subject==0 ? "?" : "S");
 		tmp.append(predicate==0 ? "?" : "P");
 		tmp.append(object==0 ? "?" : "O");
-		tmp.append(identifier==0 ? "?" : "I");
+		tmp.append(graph==0 ? "?" : "I");
 		return tmp;
 	}
 };
 
 
 /**
- * Represents a Quad where any of the componets subject,predicate,object,identifier are strings.
+ * Represents a Quad where any of the componets subject,predicate,object,graph are strings.
  */
 class QuadString : public TripleString
 {
 private:
-	std::string identifier;
-	bool has_identifier;
+	std::string graph;
+	bool has_graph;
 
 public:
 	/**
@@ -303,14 +303,14 @@ public:
 
 	QuadString(const QuadString& q):
 		TripleString(q.subject, q.predicate, q.object),
-		identifier(q.identifier), has_identifier(true){}
+		graph(q.graph), has_graph(true){}
 
 	QuadString(const TripleString& t):
-		TripleString(t.getSubject(), t.getPredicate(), t.getObject()), has_identifier(false){}
+		TripleString(t.getSubject(), t.getPredicate(), t.getObject()), has_graph(false){}
 
 	QuadString(const TripleString& t, const std::string ident):
 		TripleString(t.getSubject(), t.getPredicate(), t.getObject()),
-		identifier(ident), has_identifier(true){}
+		graph(ident), has_graph(true){}
 
 
 
@@ -319,11 +319,11 @@ public:
 	 * @param subject
 	 * @param predicate
 	 * @param object
-	 * @param identifier
+	 * @param graph
 	 * @return
 	 */
 	QuadString(const std::string subj, const std::string pred, const std::string obj, const std::string ident) :
-		TripleString(subj,pred,obj), identifier(ident), has_identifier(true){}
+		TripleString(subj,pred,obj), graph(ident), has_graph(true){}
 
 	QuadString& operator=(const QuadString& other) {
 		if(this!=&other) 
@@ -331,8 +331,8 @@ public:
 			subject = other.subject;
 			predicate = other.predicate;
 			object = other.object;
-			identifier = other.identifier;
-			has_identifier = other.has_identifier;
+			graph = other.graph;
+			has_graph = other.has_graph;
 		}
 		return *this;
 	}
@@ -342,7 +342,7 @@ public:
 	// returns a copy of the object
 	QuadString to_QuadString()const{return *this;}
 
-	virtual bool hasIdentifier()const{return has_identifier;}
+	virtual bool hasGraph()const{return has_graph;}
 
 
 	void setAll(const std:: string &subj, const std:: string &pred, const std:: string &obj, const std:: string& ident) 
@@ -350,25 +350,25 @@ public:
 		subject = subj;
 		predicate = pred;
 		object = obj;
-		identifier = ident;
-		has_identifier = true;
+		graph = ident;
+		has_graph = true;
 	}
 
 	/**
 	 * Get Identifier.
 	 * @return
 	 */
-	std::string getIdentifier() const{
-		return hasIdentifier() ? identifier : 0;
+	std::string getGraph() const{
+		return hasGraph() ? graph : 0;
 	}
 
 	/**
 	 * Set Identifier.
-	 * @param identifier
+	 * @param graph
 	 */
 	void setIdentifier(std::string& ident) {
-		identifier = ident;
-		has_identifier = true;
+		graph = ident;
+		has_graph = true;
 	}
 
 	/**
@@ -378,12 +378,12 @@ public:
 	 * @return
 	 */
 	friend std::ostream &operator<<(std::ostream &stream, const QuadString &ts) {
-		stream << ts.subject << " "<< ts.predicate <<" "<< ts.object <<" "<< ts.identifier;
+		stream << ts.subject << " "<< ts.predicate <<" "<< ts.object <<" "<< ts.graph;
 		return stream;
 	}
 
     bool operator==(const QuadString& qs) const	{
-		return (subject==qs.subject) && (object==qs.object) && (predicate==qs.predicate) && ((has_identifier && qs.has_identifier && identifier == qs.identifier) || !(has_identifier||qs.has_identifier));
+		return (subject==qs.subject) && (object==qs.object) && (predicate==qs.predicate) && ((has_graph && qs.has_graph && graph == qs.graph) || !(has_graph||qs.has_graph));
 	}
     
 	bool operator==(const TripleString& ts) const{
@@ -402,21 +402,21 @@ public:
 		return ((subject==patt.subject || patt.subject=="")
 		  	&& (predicate==patt.predicate || patt.predicate=="")
 			&& (object==patt.object || patt.object=="")
-			&& ((patt.hasIdentifier() && hasIdentifier() && (patt.identifier=="" || patt.identifier == identifier)) || !patt.hasIdentifier()));
+			&& ((patt.hasGraph() && hasGraph() && (patt.graph=="" || patt.graph == graph)) || !patt.hasGraph()));
     }
 
 	/**
 	 * Clear all components to the empty String "";
 	 */
 	void clear() 
-	{subject = predicate = object = identifier = ""; has_identifier=false;}
+	{subject = predicate = object = graph = ""; has_graph=false;}
 
 	/**
 	 * Check wether all components of the QuadString are empty.
 	 * @return
 	 */
 	bool isEmpty() const {
-		return (TripleString::isEmpty() && ((has_identifier && identifier=="") || (!has_identifier)));
+		return (TripleString::isEmpty() && ((has_graph && graph=="") || (!has_graph)));
 	}
 
 	/**
@@ -424,7 +424,7 @@ public:
 	 * @return
 	 */
 	bool hasEmpty() const {
-		return TripleString::hasEmpty() || (hasIdentifier() && identifier == "") ;
+		return TripleString::hasEmpty() || (hasGraph() && graph == "") ;
 	}
 
 	/**
@@ -455,10 +455,10 @@ public:
 		//if(object[0]=='?') object = "";
 		pos_a = pos_b+1;
 
-		// Reads the identifier
+		// Reads the graph
 		pos_b = line.find(" ", pos_a);
-		identifier = line.substr(pos_a, pos_b - pos_a);
-		//if(object[0]=='?') identifier = "";
+		graph = line.substr(pos_a, pos_b - pos_a);
+		//if(object[0]=='?') graph = "";
 		pos_a = pos_b;
 	}
 };

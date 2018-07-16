@@ -94,8 +94,11 @@ public:
 	void importShared(Dictionary *other, ProgressListener *listener, IntermediateListener& iListener); 
 
 	IteratorUCharString* getSubjects();
+	IteratorUCharString* getSubjects()const;
 	IteratorUCharString* getObjects();
+	IteratorUCharString* getObjects()const;
 	IteratorUCharString* getShared();
+	IteratorUCharString* getShared()const;
 	//virtual IteratorUCharString* getPredicates()=0;
 	//virtual IteratorUCharString* getGraphs()=0;
 
@@ -129,13 +132,15 @@ public:
 protected:
 	virtual csd::CSD *getDictionarySection(unsigned int id, TripleComponentRole position)const;
 	virtual unsigned int getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position)const;
-	unsigned int getGlobalId(unsigned int id, DictionarySection position)const{return getGlobalId(mapping, id, position);}
+	virtual unsigned int getGlobalId(unsigned int id, DictionarySection position)const{
+		return BaseFourSectionDictionary::getGlobalId(mapping, id, position);}
 	virtual unsigned int getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position)const;
-	unsigned int getLocalId(unsigned int id, TripleComponentRole position)const{return getLocalId(mapping,id,position);}
+	virtual unsigned int getLocalId(unsigned int id, TripleComponentRole position)const{return BaseFourSectionDictionary::getLocalId(mapping,id,position);}
 
 protected:
-	virtual void clear();
 	virtual void create();
+	virtual void clear_loc();
+	void clear();
 	
 };
 

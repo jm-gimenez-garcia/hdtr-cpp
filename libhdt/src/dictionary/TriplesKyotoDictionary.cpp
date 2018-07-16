@@ -22,6 +22,8 @@ TriplesKyotoDictionary::~TriplesKyotoDictionary() {
 
 IteratorUCharString *TriplesKyotoDictionary::getPredicates()
 {return new KyotoDictIterator(&predicates);}
+IteratorUCharString *TriplesKyotoDictionary::getPredicates()const
+{return new KyotoDictIterator(&predicates);}
 
 /*IteratorUCharString *TriplesKyotoDictionary::getGraphs()
 {

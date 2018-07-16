@@ -65,7 +65,7 @@ public:
 	 *            The position of the element to be returned
 	 * @return int
 	 */
-	size_t get(size_t position);
+	size_t get(size_t position)const;
 
 	/**
 	 * Gets the total number of elements in the stream

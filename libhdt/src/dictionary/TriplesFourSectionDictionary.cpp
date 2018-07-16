@@ -16,19 +16,22 @@ TriplesFourSectionDictionary::TriplesFourSectionDictionary() : predicates(new cs
 
 TriplesFourSectionDictionary::TriplesFourSectionDictionary(HDTSpecification & spec): predicates(new csd::CSD_PFC()){}
 
-TriplesFourSectionDictionary::~TriplesFourSectionDictionary()
-{clear();}
-
-void TriplesFourSectionDictionary::clear()
-{
-	if (predicates!=NULL)
-		{delete predicates; predicates=NULL;}	
+TriplesFourSectionDictionary::~TriplesFourSectionDictionary(){
+	clear_loc();
 }
+
+void TriplesFourSectionDictionary::clear_loc()
+{
+	if (predicates!=NULL){
+		delete predicates; predicates=NULL;
+	}	
+}
+
 void TriplesFourSectionDictionary::create()
 {
-	clear();
-	if (predicates==NULL)
-		{predicates = new csd::CSD_PFC();}
+	clear_loc();
+	predicates = new csd::CSD_PFC();
+	BaseFourSectionDictionary::create();
 }
 
 size_t TriplesFourSectionDictionary::getNumberOfElements()const{
@@ -59,7 +62,6 @@ void TriplesFourSectionDictionary::loadFourthSection(istream & input, Intermedia
 {
 	iListener.setRange(50,75);
 	iListener.notifyProgress(0, "Dictionary read predicates.");
-	delete predicates;
 	predicates = csd::CSD::load(input);
 	if(predicates==NULL){
 		predicates = new csd::CSD_PFC();
@@ -72,8 +74,6 @@ void TriplesFourSectionDictionary::loadFourthSection(unsigned char *ptr, unsigne
 {
     iListener.setRange(50,75);
     iListener.notifyProgress(0, "Dictionary read predicates.");
-    delete predicates;
-    predicates = csd::CSD::create(ptr[count]);
     if(predicates==NULL){
         predicates = new csd::CSD_PFC();
         throw runtime_error("Could not read predicates.");
@@ -89,7 +89,6 @@ void TriplesFourSectionDictionary::importFourthSection(Dictionary *other, Progre
 		NOTIFY(listener, "DictionaryPFC loading predicates", 25, 30);
 		iListener.setRange(20, 21);
 		IteratorUCharString *itPred = other_td->getPredicates();
-		delete predicates;
 		predicates = loadSection(itPred, blocksize, &iListener);
 		delete itPred;
 	}
@@ -100,6 +99,8 @@ void TriplesFourSectionDictionary::importFourthSection(Dictionary *other, Progre
 
 
 IteratorUCharString *TriplesFourSectionDictionary::getPredicates()
+{return predicates->listAll();}
+IteratorUCharString *TriplesFourSectionDictionary::getPredicates()const
 {return predicates->listAll();}
 
 /*IteratorUCharString *TriplesFourSectionDictionary::getGraphs(){
@@ -137,12 +138,11 @@ csd::CSD *TriplesFourSectionDictionary::getDictionarySection(unsigned int id, Tr
 	return (position==PREDICATE) ? predicates : BaseFourSectionDictionary::getDictionarySection(id, position);
 }
 
-unsigned int TriplesFourSectionDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) const{
-
+unsigned int TriplesFourSectionDictionary::getGlobalId(unsigned int map, unsigned int id, DictionarySection position) const{
 	if(position==NOT_SHARED_PREDICATE)
 		return id;
 	else
-		return BaseFourSectionDictionary::getGlobalId(mapping, id, position);
+		return BaseFourSectionDictionary::getGlobalId(map, id, position);
 }
 
 

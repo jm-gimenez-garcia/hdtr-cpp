@@ -8,7 +8,18 @@
 #include "BasicModifiableHDT.hpp"
 
 #include "TripleIDStringIterator.hpp"
+#include "../util/StopWatch.hpp"
 
+#include "TriplesPlainDictionary.hpp"
+#include "GraphsPlainDictionary.hpp"
+
+#include "PlainHeader.hpp"
+
+#include "TriplesList.hpp"
+#include "TriplesKyoto.hpp"
+#ifndef WIN32
+#include "../triples/TripleListDisk.hpp"
+#endif
 namespace hdt {
 
 BasicModifiableHDT::BasicModifiableHDT() {
@@ -37,7 +48,7 @@ void BasicModifiableHDT::createComponents() {
 
 	// FIXME: SELECT
 	header = new PlainHeader();
-	dictionary = new PlainDictionary();
+	dictionary = new TriplesPlainDictionary();
 	triples = new TriplesList();
 }
 

@@ -17,17 +17,20 @@ GraphsFourSectionDictionary::GraphsFourSectionDictionary() : graphs(new csd::CSD
 GraphsFourSectionDictionary::GraphsFourSectionDictionary(HDTSpecification & spec) : graphs(new csd::CSD_PFC()){}
 
 GraphsFourSectionDictionary::~GraphsFourSectionDictionary()
-{clear();}
-void GraphsFourSectionDictionary::clear()
+{clear_loc();}
+
+void GraphsFourSectionDictionary::clear_loc()
 {
-	if (graphs!=NULL)
-		{delete graphs; graphs=NULL;}	
+	if (graphs!=NULL){
+		delete graphs; graphs=NULL;
+	}	
 }
+
 void GraphsFourSectionDictionary::create()
 {
-	clear();
-	if (graphs==NULL)
-		{graphs = new csd::CSD_PFC();}
+	clear_loc();
+	graphs = new csd::CSD_PFC();
+	BaseFourSectionDictionary::create();
 }
 
 
@@ -60,7 +63,6 @@ void GraphsFourSectionDictionary::loadFourthSection(istream & input, Intermediat
 {
 	iListener.setRange(50,75);
 	iListener.notifyProgress(0, "Dictionary read graphs.");
-	delete graphs;
 	graphs = csd::CSD::load(input);
 	if(graphs==NULL){
 		graphs = new csd::CSD_PFC();
@@ -76,7 +78,6 @@ void GraphsFourSectionDictionary::loadFourthSection(unsigned char *ptr, unsigned
 
     iListener.setRange(50,75);
     iListener.notifyProgress(0, "Dictionary read graphs.");
-    delete graphs;
     graphs = csd::CSD::create(ptr[count]);
     if(graphs==NULL){
         graphs = new csd::CSD_PFC();
@@ -94,19 +95,18 @@ void GraphsFourSectionDictionary::importFourthSection(Dictionary *other, Progres
 		NOTIFY(listener, "DictionaryPFC loading graphs", 25, 30);
 		iListener.setRange(20, 21);
 		IteratorUCharString *itGr = other_gd->getGraphs();
-		delete graphs;
 		graphs = loadSection(itGr, blocksize, &iListener);
+		delete itGr;
 	}
 	else
 		throw runtime_error("Downcast error from Dictionary to GraphsDictionary.");
 }
 
-/*IteratorUCharString* GraphsFourSectionDictionary::getPredicates() {
-	throw runtime_error("No predicate section in this kind of dictionary");
-	return NULL;
-}*/
 
 IteratorUCharString* GraphsFourSectionDictionary::getGraphs() {
+	return graphs->listAll();
+}
+IteratorUCharString* GraphsFourSectionDictionary::getGraphs() const{
 	return graphs->listAll();
 }
 
@@ -117,20 +117,9 @@ void GraphsFourSectionDictionary::saveFourthSection(ostream& output, Intermediat
 	graphs->save(output);
 }
 
-/*unsigned int GraphsFourSectionDictionary::getNpredicates()const
-{
-	throw runtime_error("No predicate section in this kind of dictionary");
-	return 0;
-}*/
-unsigned int GraphsFourSectionDictionary::getNgraphs()const
+unsigned int GraphsFourSectionDictionary::getNunused()const
 {return graphs->getLength();}
 
-/*unsigned int GraphsFourSectionDictionary::getMaxPredicateID()const{
-	throw runtime_error("No predicate section in this kind of dictionary");
-	return 0;
-}*/
-unsigned int GraphsFourSectionDictionary::getMaxGraphID()const
-{return graphs->getLength();}
 
 
 

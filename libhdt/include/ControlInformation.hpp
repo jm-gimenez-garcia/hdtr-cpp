@@ -68,7 +68,9 @@ public:
 	 * @return
 	 */
 	ControlInformation();
+	ControlInformation(const ControlInformation& ci):format(ci.format),type(ci.type),map(ci.map){}
 	virtual ~ControlInformation();
+	ControlInformation& operator=(const ControlInformation& ci);
 
 	/** Serialize a ControlInformation to a stream
 	 * @param out

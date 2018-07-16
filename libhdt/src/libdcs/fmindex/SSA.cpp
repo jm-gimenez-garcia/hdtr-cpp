@@ -364,7 +364,7 @@ namespace csd{
 		return rank_tmp -1 + occ[c];
 	}
 
-	uchar * SSA::extract_id(uint id, uint max_len){	
+	uchar * SSA::extract_id(uint id, uint max_len)const{	
 		uchar *res = new uchar[max_len+2];
 		uint i = id;
 		uint pos = max_len+1;

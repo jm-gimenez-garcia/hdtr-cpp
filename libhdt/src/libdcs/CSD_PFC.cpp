@@ -161,7 +161,7 @@ uint32_t CSD_PFC::locate(const unsigned char *s, uint32_t len)
 	}
 }
 
-unsigned char* CSD_PFC::extract(uint32_t id)
+unsigned char* CSD_PFC::extract(uint32_t id)const
 {
 	if(!text || !blocks) {
 		return NULL;
@@ -443,7 +443,7 @@ unsigned int CSD_PFC::locateInBlock(size_t block, const unsigned char *str, unsi
 	return 0;
 }
 
-unsigned char *CSD_PFC::extractInBlock(unsigned int block, unsigned int o)
+unsigned char *CSD_PFC::extractInBlock(unsigned int block, unsigned int o)const
 {
 	size_t pos = blocks->get(block);
     uint64_t delta = 0;

@@ -46,7 +46,7 @@ HuffmanSequence::~HuffmanSequence() {
 	}
 }
 
-size_t HuffmanSequence::get(size_t position)
+size_t HuffmanSequence::get(size_t position)const
 {
 	if(position<vectorPlain.size())
 		return vectorPlain[position];

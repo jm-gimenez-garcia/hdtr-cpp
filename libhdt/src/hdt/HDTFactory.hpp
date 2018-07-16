@@ -37,6 +37,13 @@
 #include <string>
 
 namespace hdt {
+	class HDTSpecification;
+	class HDT;
+	class ModifiableHDT;
+	class Header;
+	class ControlInformation;
+	class Dictionary;
+	class Triples;
 
 /**
  * Factory of HDT classes

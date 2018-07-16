@@ -372,10 +372,16 @@ void BaseKyotoDictionary::import(Dictionary *other, ProgressListener *listener)
 
 IteratorUCharString *BaseKyotoDictionary::getSubjects() 
 {return new KyotoDictIterator(&subjects);}
+IteratorUCharString *BaseKyotoDictionary::getSubjects()const 
+{return new KyotoDictIterator(&subjects);}
 
 IteratorUCharString *BaseKyotoDictionary::getObjects() 
 {return new KyotoDictIterator(&objects);}
+IteratorUCharString *BaseKyotoDictionary::getObjects()const 
+{return new KyotoDictIterator(&objects);}
 
+IteratorUCharString *BaseKyotoDictionary::getShared()const 
+{return new KyotoDictIterator(&shared);}
 IteratorUCharString *BaseKyotoDictionary::getShared() 
 {return new KyotoDictIterator(&shared);}
 

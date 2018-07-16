@@ -24,7 +24,8 @@ int main(int argc, char* argv[])
 try
 {
 	// TriplesPlainDictionary object - ModifiableDictionary pointer
-	IntermediateListener iListener(NULL);
+	ProgressLIstener* listener = NULL;
+	IntermediateListener iListener(listener);
 	//ControlInformation controlInfo;
 	ModifiableDictionary* plain_dict = new TriplesPlainDictionary(); 
 	//ModifiableDictionary* plain_dict = new TriplesKyotoDictionary(); 

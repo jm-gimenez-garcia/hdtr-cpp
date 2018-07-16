@@ -17,10 +17,8 @@ public:
 	~GraphsLiteralDictionary();
 
 	protected:
-		void clear_all();
-		void create_all();
-		void clear();
-		void create();
+	void create();
+	void clear_loc();
 
 	unsigned int stringToId(const std::string &str, const TripleComponentRole position)const;
 	void loadFourthSection(std::istream & input, IntermediateListener& iListener);
@@ -35,19 +33,17 @@ public:
 	unsigned int getMaxID()const;
     uint64_t size()const;
 
-    //IteratorUCharString *getPredicates();
     IteratorUCharString *getGraphs();
+    IteratorUCharString *getGraphs()const;
 
-	//unsigned int getNpredicates()const;
-	unsigned int getNgraphs()const;
-
-	//unsigned int getMaxPredicateID()const;
-	unsigned int getMaxGraphID()const;
+	unsigned int getNunused()const;
 
 
 	csd::CSD* getDictionarySection(unsigned int id, TripleComponentRole position) const;
 	unsigned int getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position)const;
+	unsigned int getGlobalId(unsigned int id, DictionarySection position)const{return getGlobalId(mapping, id, position);}
 	unsigned int getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position)const;
+	unsigned int getLocalId(unsigned int id, TripleComponentRole position)const{return getLocalId(mapping, id, position);}
 	void getSuggestions(const char *base, TripleComponentRole role, std::vector<string> &out, int maxResults);
 
 

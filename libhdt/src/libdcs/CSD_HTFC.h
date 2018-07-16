@@ -81,7 +81,7 @@ class CSD_HTFC : public CSD
     /** Returns the string identified by id.
 	@id: the identifier to be extracted.
     */
-    uchar * extract(uint32_t id);
+    uchar * extract(uint32_t id)const;
 
     void freeString(const unsigned char *str);
 
@@ -156,7 +156,7 @@ class CSD_HTFC : public CSD
 	@o: internal offset for the required string in the block.
 	@s: the extracted string.
     */
-    void extractInBlock(uint block, uint o, uchar *s);
+    void extractInBlock(uint block, uint o, uchar *s)const;
 
     /** Obtains the length of the long common prefix (lcp) of str1 and str2.
 	@str1: first string in the comparison.
@@ -173,7 +173,7 @@ class CSD_HTFC : public CSD
 	@offset: offset within this last byte.
 	@deltaseq: the VByte subsequence encoding 'delta'.
     */
-    void decompressDelta(uchar *seq, uint *pos, uint *offset, uchar *deltaseq);
+    void decompressDelta(uchar *seq, uint *pos, uint *offset, uchar *deltaseq)const;
 
     /** Decompress the suffix associate to a given word.
 	@seq: string containing the text to be decoded.
@@ -182,7 +182,7 @@ class CSD_HTFC : public CSD
 	@suffix: pointer to store the suffix word.
 	@return: number of characters extracted.
     */
-    uint decompressWord(uchar *seq, uint *pos, uint *offset, uchar *suffix);
+    uint decompressWord(uchar *seq, uint *pos, uint *offset, uchar *suffix)const;
 
     /** Decompress the first word in a given block (starting in pos).
 	@seq: string containing the text to be decoded.
@@ -190,7 +190,7 @@ class CSD_HTFC : public CSD
 	@word: pointer to store the word.
 	@return: number of characters extracted.
     */
-    uint decompressFirstWord(uchar *seq, uint *pos, uchar *word);
+    uint decompressFirstWord(uchar *seq, uint *pos, uchar *word)const;
 
     /** Performs a Hu-Tucker encoding of code by using len bits.
 	@code: value to be encoded.
@@ -207,7 +207,7 @@ class CSD_HTFC : public CSD
 	@offset: offset within this last byte.
 	@return: the decoded char.
     */
-    uchar decodeHT(uchar *seq, uint *pos, uint *offset);
+    uchar decodeHT(uchar *seq, uint *pos, uint *offset)const;
   };
 };
 

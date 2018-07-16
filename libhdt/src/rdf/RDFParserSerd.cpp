@@ -7,6 +7,8 @@
 #include "../util/fileUtil.hpp"
 #include "RDFParserSerd.hpp"
 #include "RDFParser.hpp"
+#include "SingleQuad.hpp"
+#include "SingleTriple.hpp"
 
 namespace hdt {
 
@@ -93,11 +95,23 @@ SerdStatus hdtserd_on_statement(void               *handle,
                                 const SerdNode     *lang) {
 	RDFParserSerd *serdParser = reinterpret_cast<RDFParserSerd *>(handle);
 
-	serdParser->callback->processTriple(
-		TripleString(serdParser->getString(subject),
-		             serdParser->getString(predicate),
-		             serdParser->getStringObject(object, datatype, lang)),
-		serdParser->numByte);
+	if(!graph)
+	{
+		serdParser->callback->processTriple(
+			TripleString(serdParser->getString(subject),
+			serdParser->getString(predicate),
+			serdParser->getStringObject(object, datatype, lang)),
+			serdParser->numByte);
+	}
+	else
+	{
+		serdParser->callback->processQuad(
+			QuadString(serdParser->getString(subject),
+				serdParser->getString(predicate),
+				serdParser->getStringObject(object, datatype, lang),
+				serdParser->getString(graph)),
+			serdParser->numByte);
+	}
 
 	return SERD_SUCCESS;
 }

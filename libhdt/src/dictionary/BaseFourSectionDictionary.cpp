@@ -29,10 +29,20 @@ BaseFourSectionDictionary::BaseFourSectionDictionary(HDTSpecification & spec): b
 	}
 }
 
-BaseFourSectionDictionary::~BaseFourSectionDictionary()
-{clear();}
+BaseFourSectionDictionary::~BaseFourSectionDictionary(){
+	BaseFourSectionDictionary::clear_loc();
+}
 
-void BaseFourSectionDictionary::clear()
+
+void BaseFourSectionDictionary::create()
+{
+	BaseFourSectionDictionary::clear_loc();
+	subjects = new csd::CSD_PFC();
+	objects = new csd::CSD_PFC();
+	shared = new csd::CSD_PFC();
+}
+
+void BaseFourSectionDictionary::clear_loc()
 {
 	if (subjects!=NULL)
 		{delete subjects; subjects=NULL;}
@@ -41,12 +51,12 @@ void BaseFourSectionDictionary::clear()
 	if (shared!=NULL)
 		{delete shared; shared=NULL;}
 }
-void BaseFourSectionDictionary::create()
+
+
+void BaseFourSectionDictionary::clear()
 {
-	clear();
-	subjects = new csd::CSD_PFC();
-	objects = new csd::CSD_PFC();
-	shared = new csd::CSD_PFC();
+	clear_loc();
+	BaseFourSectionDictionary::clear_loc();
 }
 
 csd::CSD *loadSection(IteratorUCharString *iterator, uint32_t blocksize, ProgressListener *listener) {
@@ -116,7 +126,7 @@ unsigned int BaseFourSectionDictionary::stringToId(const string &key, const Trip
 void BaseFourSectionDictionary::load(istream & input, ControlInformation & ci, ProgressListener *listener/*=NULL*/)
 {
 	IntermediateListener iListener(listener);
-
+	clear();
 	loadControlInfo(input, ci);
 	loadShared(input, iListener);
 	loadSubjects(input, iListener);
@@ -139,7 +149,6 @@ void BaseFourSectionDictionary::loadShared(istream & input, IntermediateListener
 {
 	iListener.setRange(0,25);
 	iListener.notifyProgress(0, "Dictionary read shared area.");
-	delete shared;
 	shared = csd::CSD::load(input);
 	if(shared==NULL){
 		shared = new csd::CSD_PFC();
@@ -151,7 +160,6 @@ void BaseFourSectionDictionary::loadSubjects(istream & input, IntermediateListen
 {
 	iListener.setRange(25,50);
 	iListener.notifyProgress(0, "Dictionary read subjects.");
-	delete subjects;
 	subjects = csd::CSD::load(input);
 	if(subjects==NULL){
 		subjects = new csd::CSD_PFC();
@@ -163,7 +171,6 @@ void BaseFourSectionDictionary::loadObjects(istream & input, IntermediateListene
 {
 	iListener.setRange(75,100);
 	iListener.notifyProgress(0, "Dictionary read objects.");
-	delete objects;
 	objects = csd::CSD::load(input);
 	if(objects==NULL){
 		objects = new csd::CSD_PFC();
@@ -177,7 +184,7 @@ size_t BaseFourSectionDictionary::load(unsigned char *ptr, unsigned char *ptrMax
 {
     size_t count=0;
     IntermediateListener iListener(listener);
-	
+	clear();	
     loadControlInfo(ptr, ptrMax, count);
     loadShared(ptr, ptrMax, count, iListener);
     loadSubjects(ptr, ptrMax, count, iListener);
@@ -199,7 +206,6 @@ void BaseFourSectionDictionary::loadShared(unsigned char *ptr, unsigned char *pt
 {
     iListener.setRange(0,25);
     iListener.notifyProgress(0, "Dictionary read shared area.");
-    delete shared;
     shared = csd::CSD::create(ptr[count]);
     if(shared==NULL){
         shared = new csd::CSD_PFC();
@@ -213,7 +219,6 @@ void BaseFourSectionDictionary::loadSubjects(unsigned char *ptr, unsigned char *
 {
     iListener.setRange(25,50);
     iListener.notifyProgress(0, "Dictionary read subjects.");
-    delete subjects;
     subjects = csd::CSD::create(ptr[count]);
     if(subjects==NULL){
         subjects = new csd::CSD_PFC();
@@ -226,7 +231,6 @@ void BaseFourSectionDictionary::loadObjects(unsigned char *ptr, unsigned char *p
 {
     iListener.setRange(75,100);
     iListener.notifyProgress(0, "Dictionary read objects.");
-    delete objects;
     objects = csd::CSD::create(ptr[count]);
     if(objects==NULL){
         objects = new csd::CSD_PFC();
@@ -244,6 +248,7 @@ void BaseFourSectionDictionary::import(Dictionary *other, ProgressListener *list
 	try 
 	{
 		IntermediateListener iListener(listener);
+		clear();
 		importSubjects(other, listener, iListener);
 		importFourthSection(other, listener, iListener);
 		importObjects(other, listener, iListener);
@@ -254,9 +259,7 @@ void BaseFourSectionDictionary::import(Dictionary *other, ProgressListener *list
 	}
 	catch (exception& e) 
 	{
-		BaseFourSectionDictionary::clear();
 		clear();
-		BaseFourSectionDictionary::create();
 		create();
 		throw;
 	}
@@ -266,7 +269,6 @@ void BaseFourSectionDictionary::importSubjects(Dictionary *other, ProgressListen
 	NOTIFY(listener, "DictionaryPFC loading subjects", 0, 100);
 	iListener.setRange(0, 20);
 	IteratorUCharString *itSubj = other->getSubjects();
-	delete subjects;
 	subjects = loadSection(itSubj, blocksize, &iListener);
 	delete itSubj;
 }
@@ -275,7 +277,6 @@ void BaseFourSectionDictionary::importObjects(Dictionary *other, ProgressListene
 	NOTIFY(listener, "DictionaryPFC loading objects", 30, 90);
 	iListener.setRange(21, 90);
 	IteratorUCharString *itObj = other->getObjects();
-	delete objects;
 	objects = loadSection(itObj, blocksize, &iListener);
 	delete itObj;
 }
@@ -284,7 +285,6 @@ void BaseFourSectionDictionary::importShared(Dictionary *other, ProgressListener
 	NOTIFY(listener, "DictionaryPFC loading shared", 90, 100);
 	iListener.setRange(90, 100);
 	IteratorUCharString *itShared = other->getShared();
-	delete shared;
 	shared = loadSection(itShared, blocksize, &iListener);
 	delete itShared;
 }
@@ -292,10 +292,19 @@ void BaseFourSectionDictionary::importShared(Dictionary *other, ProgressListener
 IteratorUCharString *BaseFourSectionDictionary::getSubjects() {
 	return subjects->listAll();
 }
+IteratorUCharString *BaseFourSectionDictionary::getSubjects() const{
+	return subjects->listAll();
+}
 IteratorUCharString *BaseFourSectionDictionary::getObjects() {
 	return objects->listAll();
 }
-IteratorUCharString *BaseFourSectionDictionary::getShared() {
+IteratorUCharString *BaseFourSectionDictionary::getObjects() const{
+	return objects->listAll();
+}
+IteratorUCharString *BaseFourSectionDictionary::getShared(){
+	return shared->listAll();
+}
+IteratorUCharString *BaseFourSectionDictionary::getShared()const{
 	return shared->listAll();
 }
 
@@ -411,6 +420,7 @@ csd::CSD *BaseFourSectionDictionary::getDictionarySection(unsigned int id, Tripl
 unsigned int BaseFourSectionDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) const{
 	switch (position) {
 		case NOT_SHARED_SUBJECT:
+			
 			return shared->getLength()+id;
 		case NOT_SHARED_OBJECT:
 			return (mapping==MAPPING2) ? shared->getLength()+id : shared->getLength()+subjects->getLength()+id;

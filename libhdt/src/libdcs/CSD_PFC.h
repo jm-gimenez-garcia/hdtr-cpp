@@ -69,7 +69,7 @@ public:
 	/** Returns the string identified by id.
 	 @id: the identifier to be extracted.
 	 */
-	unsigned char * extract(uint32_t id);
+	unsigned char * extract(uint32_t id)const;
 
 	void freeString(const unsigned char *str);
 
@@ -139,7 +139,7 @@ protected:
 	 @o: internal offset for the required string in the block.
 	 @return: the extracted string.
 	 */
-	unsigned char *extractInBlock(unsigned int block, unsigned int o);
+	unsigned char *extractInBlock(unsigned int block, unsigned int o)const;
 
 	/** Obtains the length of the long common prefix (lcp) of str1 and str2.
 	 @str1: first string in the comparison.
@@ -169,7 +169,7 @@ public:
 	virtual ~PFCIterator() {
 	}
 
-	bool hasNext() {
+	bool hasNext()const {
 		return count <= max;
 	}
 
@@ -177,12 +177,16 @@ public:
 		return pfc->extract(count++);
 	}
 
-	size_t getNumberOfElements() {
+	size_t getNumberOfElements()const {
 		return max;
 	}
 
 	virtual void freeStr(unsigned char *ptr) {
 		pfc->freeString(ptr);
+	}
+
+	const std::string getStr(const unsigned int idx)const{
+		return std::string(reinterpret_cast<const char*>(pfc->extract(idx)));
 	}
 };
 
@@ -288,7 +292,7 @@ public:
 	virtual ~PFCSuggestionIterator() {
 	}
 
-	bool hasNext() {
+	bool hasNext()const {
 		if (terminate)
 			return false;
 		else
@@ -309,7 +313,7 @@ public:
 		return (unsigned char*)currentSolution;
 	}
 
-	size_t getNumberOfElements() {
+	size_t getNumberOfElements()const {
 		return 0; //not possible to estimate accurately.
 	}
 

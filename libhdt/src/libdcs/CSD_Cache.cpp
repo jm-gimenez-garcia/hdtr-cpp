@@ -66,7 +66,7 @@ uint32_t CSD_Cache::locate(const unsigned char *s, uint32_t len)
 }
 
 
-unsigned char* CSD_Cache::extract(uint32_t id)
+unsigned char* CSD_Cache::extract(uint32_t id)const
 {
 	return child->extract(id);
 /*

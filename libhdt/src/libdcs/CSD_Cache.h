@@ -73,7 +73,7 @@ private:
     /** Returns the string identified by id.
 	@id: the identifier to be extracted.
     */
-    unsigned char * extract(uint32_t id);
+    unsigned char * extract(uint32_t id)const;
 
     void freeString(const unsigned char *str);
 

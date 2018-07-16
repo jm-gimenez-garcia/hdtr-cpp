@@ -3,9 +3,13 @@
 #include "HDTVocabulary.hpp"
 #include "HDTListener.hpp"
 #include "Header.hpp"
+#include "DictionaryEntry.hpp"
 
 namespace hdt {
 
+string TriplesPlainDictionary::getType()const {
+	return HDTVocabulary::DICTIONARY_TYPE_PLAIN;
+}
 
 TriplesPlainDictionary::~TriplesPlainDictionary() {
 	for(unsigned int i=0;i<predicates.size();i++) {
@@ -21,23 +25,36 @@ unsigned int TriplesPlainDictionary::stringToId(const std::string &key, const Tr
 		return BasePlainDictionary::stringToId(key, position);
 	else
 	{
-		DictEntryIt ret;
-		if(key.length()==0)
+		unsigned int ret;
+		if(key.length()==0 || key.at(0) == '?') 
 			return 0;
-		ret = hashPredicate.find(key.c_str());
-   		return ret==hashPredicate.end() ? 0 : ret->second->id;
+		
+		return idFromString(predicates, key);
+
 	}
 }
 
 size_t TriplesPlainDictionary::getNumberOfElements()const
 {return BasePlainDictionary::getNumberOfElements() + predicates.size();}
 
-void TriplesPlainDictionary::startProcessing(ProgressListener *listener)
-{
-	predicates.clear();
-	BasePlainDictionary::startProcessing(listener);
-}
 
+// It is not necessary to override the virtual method startProcessing for TriplesPlainDictionary, beacause we MUST NOT CLEAR PREDICATES because it is already constructed before calling startProcessing
+
+void TriplesPlainDictionary::push_back(DictionaryEntry* entry, DictionarySection pos){
+	if (!entry)
+		return;
+	
+	if(pos==NOT_SHARED_PREDICATE)
+	{
+		const unsigned int nb_el = predicates.size();
+		entry->id = nb_el+1;
+		predicates.push_back(entry);
+		sizeStrings+=strlen(entry->str);
+	}
+	else
+		BasePlainDictionary::push_back(entry, pos);
+
+}
 
 void TriplesPlainDictionary::populateHeaderFourthElementNum(Header &header, string rootNode){
 	header.insert(rootNode, HDTVocabulary::DICTIONARY_NUMPREDICATES, getNpredicates());
@@ -65,48 +82,18 @@ void TriplesPlainDictionary::insertFourthRegion(IntermediateListener& iListener,
 
 
 
-unsigned int TriplesPlainDictionary::insertFourthElement(const std::string & str, const TripleComponentRole& pos)
-{
-	if(pos==PREDICATE) {
-		DictEntryIt it = hashPredicate.find(str.c_str());
-		if(it!=hashPredicate.end()) {
-			//cout << "  existing predicate: " << str << endl;
-			return it->second->id;
-		} else {
-			DictionaryEntry *entry = new DictionaryEntry;
-            		entry->str = new char [str.length()+1];
-			strcpy(entry->str, str.c_str());
-			entry->id = predicates.size()+1;
-			sizeStrings += str.length();
-			//cout << " Add new predicate: " << str.c_str() << endl;
-
-			hashPredicate[entry->str] = entry;
-			predicates.push_back(entry);
-			return entry->id;
-		}
-	}
-	return 0;
-}
-
-
-void TriplesPlainDictionary::insert(const string& str, const DictionarySection& pos) 
-{
-	if(pos!=NOT_SHARED_PREDICATE)
-		BasePlainDictionary::insert(str, pos);
-	else
-	{
-		if(str=="") return;
-		DictionaryEntry *entry = new DictionaryEntry;
-		entry->str = new char [str.length()+1];
-		strcpy(entry->str, str.c_str());
-		predicates.push_back(entry);
-		//entry->id = predicates.size();
-		hashPredicate[entry->str] = entry;
-	}
-}
 
 IteratorUCharString *TriplesPlainDictionary::getPredicates() {
-	return new DictIterator(predicates);
+	if (dict_sorted)
+		return new DictIterator(predicates);
+	else
+		throw std::runtime_error("The Plain dictionary has not been sorted !");
+}
+IteratorUCharString *TriplesPlainDictionary::getPredicates() const{
+	if (dict_sorted)
+		return new DictIterator_const(predicates);
+	else
+		throw std::runtime_error("The Plain dictionary has not been sorted !");
 }
 /*IteratorUCharString *TriplesPlainDictionary::getGraphs() {
 	throw std::runtime_error("No graph section in this kind of dictionary");
@@ -142,7 +129,6 @@ const vector<DictionaryEntry*>& TriplesPlainDictionary::getDictionaryEntryVector
 
 unsigned int TriplesPlainDictionary::getGlobalId(unsigned int mapping_type, unsigned int id, DictionarySection position) const
 {
-
 	if(position==NOT_SHARED_PREDICATE)
 		return id+1;
 	else

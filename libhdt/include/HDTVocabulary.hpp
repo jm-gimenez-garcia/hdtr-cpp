@@ -95,7 +95,11 @@ namespace HDTVocabulary {
 	const std::string DICTIONARY_TYPE_FOUR = HDT_DICTIONARY_BASE+"Four>";
 	const std::string DICTIONARY_TYPE_HTFC = HDT_DICTIONARY_BASE+"FrontCodingHuTucker>";
 	const std::string DICTIONARY_TYPE_LITERAL = HDT_DICTIONARY_BASE+"Literal>";
-	const std::string DICTIONARY_TYPE_REIFICATION = HDT_DICTIONARY_BASE+"Reification>";
+	const std::string DICTIONARY_TYPE_PLAIN_GRAPH = HDT_DICTIONARY_BASE+"PlainGraph>";
+	const std::string DICTIONARY_TYPE_FOUR_GRAPH = HDT_DICTIONARY_BASE+"FourGraph>";
+	const std::string DICTIONARY_TYPE_LITERAL_GRAPH = HDT_DICTIONARY_BASE+"LiteralGraph>";
+	const std::string DICTIONARY_TYPE_QUERYABLEREIFICATION = HDT_DICTIONARY_BASE+"QueryableReification>";
+	const std::string DICTIONARY_TYPE_MODIFIABLEREIFICATION = HDT_DICTIONARY_BASE+"ModifiableReification>";
 
 	// Triples
 	const std::string TRIPLES_TYPE = DUBLIN_CORE+"format>";

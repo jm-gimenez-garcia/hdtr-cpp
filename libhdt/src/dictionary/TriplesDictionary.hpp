@@ -49,6 +49,7 @@ public:
     virtual unsigned int getNpredicates()const=0;
     virtual unsigned int getMaxPredicateID()const=0;
     virtual IteratorUCharString *getPredicates()=0;
+    virtual IteratorUCharString *getPredicates()const=0;
 };
 
 

@@ -71,7 +71,7 @@ class CSD
     /** Returns the string identified by id.
 	@id: the identifier to be extracted.
     */
-    virtual unsigned char * extract(uint32_t id)=0;
+    virtual unsigned char * extract(uint32_t id)const=0;
 
     /**
      * Free the string returned by extract()

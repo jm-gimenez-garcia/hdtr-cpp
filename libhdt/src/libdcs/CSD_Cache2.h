@@ -47,7 +47,7 @@ class CSD_Cache2 : public CSD
 {
 private:
 	CSD *child;
-	vector<unsigned char *> array;
+	mutable vector<unsigned char *> array;
 
   public:		
     /** General constructor **/
@@ -66,7 +66,7 @@ private:
     /** Returns the string identified by id.
 	@id: the identifier to be extracted.
     */
-    unsigned char * extract(uint32_t id);
+    unsigned char * extract(uint32_t id)const;
 
     void freeString(const unsigned char *str);
 

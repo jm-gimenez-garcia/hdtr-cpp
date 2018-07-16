@@ -6,6 +6,10 @@
 
 namespace hdt {
 
+string GraphsPlainDictionary::getType()const {
+	return HDTVocabulary::DICTIONARY_TYPE_PLAIN_GRAPH;
+}
+
 GraphsPlainDictionary::~GraphsPlainDictionary() {
 	for(unsigned int i=0;i<graphs.size();i++) {
 		delete [] graphs[i]->str;
@@ -20,11 +24,10 @@ unsigned int GraphsPlainDictionary::stringToId(const std::string &key, const Tri
 		return BasePlainDictionary::stringToId(key, position);
 	else
 	{
-		DictEntryIt ret;
-		if(key.length()==0)
+		unsigned int ret;
+		if(key.length()==0 || key.at(0) == '?') 
 			return 0;
-		ret = hashGraph.find(key.c_str());
-   		return ret==hashGraph.end() ? 0 : ret->second->id;
+		return idFromString(graphs, key);
 	}
 }
 
@@ -37,6 +40,20 @@ void GraphsPlainDictionary::startProcessing(ProgressListener *listener)
 {
 	graphs.clear();
 	BasePlainDictionary::startProcessing(listener);
+}
+
+void GraphsPlainDictionary::push_back(DictionaryEntry* entry, DictionarySection pos){
+	if (!entry)
+		return;
+	
+	if(pos==UNUSED_GRAPH)
+	{
+		graphs.push_back(entry);
+		sizeStrings+=strlen(entry->str);
+	}
+	else
+		BasePlainDictionary::push_back(entry, pos);
+
 }
 
 void GraphsPlainDictionary::populateHeaderFourthElementNum(Header &header, string rootNode){
@@ -64,68 +81,23 @@ void GraphsPlainDictionary::insertFourthRegion(IntermediateListener& iListener, 
 	insert(line, UNUSED_GRAPH);	
 }
 
-unsigned int GraphsPlainDictionary::insertFourthElement(const std::string & str, const TripleComponentRole& pos)
-{
-	if(pos==GRAPH) {
-		DictEntryIt it = hashGraph.find(str.c_str());
-		if(it!=hashGraph.end()) {
-			//cout << "  existing graph: " << str << endl;
-			return it->second->id;
-		} else {
-			DictionaryEntry *entry = new DictionaryEntry;
-            		entry->str = new char [str.length()+1];
-			strcpy(entry->str, str.c_str());
-			entry->id = graphs.size()+1;
-			sizeStrings += str.length();
-			//cout << " Add new graph: " << str.c_str() << endl;
-
-			hashGraph[entry->str] = entry;
-			graphs.push_back(entry);
-			return entry->id;
-		}
-	}
-	return 0;
-}
-void GraphsPlainDictionary::insert(const string& str, const DictionarySection& pos) {
-
-	if(pos!=UNUSED_GRAPH)
-		BasePlainDictionary::insert(str, pos);
-	else
-	{
-		if(str=="") return;
-		DictionaryEntry *entry = new DictionaryEntry;
-		entry->str = new char [str.length()+1];
-		strcpy(entry->str, str.c_str());
-		graphs.push_back(entry);
-		//entry->id = graphs.size();
-		hashGraph[entry->str] = entry;
-	}
-}
 
 
-/*IteratorUCharString *GraphsPlainDictionary::getPredicates() {
-	throw std::runtime_error("No predicate section in this kind of dictionary");
-	return NULL;
-}*/
 IteratorUCharString *GraphsPlainDictionary::getGraphs() {
-	return new DictIterator(graphs);
+	if (dict_sorted)
+		return new DictIterator(graphs);
+	else
+		throw std::runtime_error("The Plain dictionary has not been sorted !");
+}
+IteratorUCharString *GraphsPlainDictionary::getGraphs() const{
+	if (dict_sorted)
+		return new DictIterator_const(graphs);
+	else
+		throw std::runtime_error("The Plain dictionary has not been sorted !");
 }
 
-/*unsigned int GraphsPlainDictionary::getMaxPredicateID()const {
-	throw std::runtime_error("No graph predicate in this kind of dictionary");
-	return 0;
-}*/
-unsigned int GraphsPlainDictionary::getMaxGraphID()const {
-	return graphs.size();
-}
-
-/*unsigned int GraphsPlainDictionary::getNpredicates()const {
-	throw std::runtime_error("No predicate section in this kind of dictionary");
-	return 0;
-}*/
-unsigned int GraphsPlainDictionary::getNgraphs()const
+unsigned int GraphsPlainDictionary::getNunused()const
 {return graphs.size();}
-
 
 
 void GraphsPlainDictionary::updateIDs() {
@@ -163,6 +135,7 @@ unsigned int GraphsPlainDictionary::getLocalId(unsigned int mapping_type, unsign
 	const unsigned int gr_length = graphs.size();
 	unsigned int last_obj_sub_glob_id;
 	unsigned int last_gr_glob_id;
+	const unsigned int shift = 1; //shift between
 
 	if(mapping_type==MAPPING1)
 	{
@@ -180,7 +153,7 @@ unsigned int GraphsPlainDictionary::getLocalId(unsigned int mapping_type, unsign
 
 	if(position==GRAPH)
 		if(id>last_obj_sub_glob_id && id<=last_gr_glob_id)
-			return id-last_obj_sub_glob_id;
+			return id-last_obj_sub_glob_id-shift;
 		else
 			throw std::runtime_error("This globalID does not correspond to an unused graph");
 	else

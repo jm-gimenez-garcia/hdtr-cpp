@@ -88,7 +88,7 @@ public:
 	 *            The position of the element to be returned
 	 * @return int
 	 */
-	virtual size_t get(size_t position)=0;
+	virtual size_t get(size_t position)const=0;
 
 	/**
 	 * Gets the total number of elements in the stream

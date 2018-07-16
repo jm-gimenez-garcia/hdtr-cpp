@@ -60,7 +60,7 @@ uint32_t CSD_Cache2::locate(const unsigned char *s, uint32_t len)
 }
 
 
-unsigned char* CSD_Cache2::extract(uint32_t id)
+unsigned char* CSD_Cache2::extract(uint32_t id)const
 {
 	if(id<1 || id>array.size()) {
 		return NULL;

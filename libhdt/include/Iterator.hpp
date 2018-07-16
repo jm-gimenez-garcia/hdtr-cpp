@@ -45,7 +45,7 @@ class IteratorUCharString {
 public:
 	virtual ~IteratorUCharString() { }
 
-	virtual bool hasNext() {
+	virtual bool hasNext()const {
 		return false;
 	}
 
@@ -56,12 +56,16 @@ public:
 		return 0;
 	}
 
-    virtual size_t getNumberOfElements() {
+    virtual size_t getNumberOfElements()const {
 		return 0;
 	}
 
 	virtual void freeStr(unsigned char* /*ptr*/) {
 
+	}
+
+	virtual const std::string getStr(const unsigned int idx)const{
+		return std::string("");
 	}
 };
 /*
@@ -92,7 +96,7 @@ public:
 	}
 	virtual ~MergeIteratorUCharString() { }
 
-	virtual bool hasNext() {
+	virtual bool hasNext()const {
 		if (prevString==1){
 			return (string2||it1->hasNext());
 		}
@@ -142,7 +146,7 @@ public:
 		return retString;
 	}
 
-    virtual size_t getNumberOfElements() {
+    virtual size_t getNumberOfElements()const {
 		return it1->getNumberOfElements()+it2->getNumberOfElements();
 	}
 
@@ -156,7 +160,7 @@ private:
 	std::vector<IteratorUCharString*> vecItUCharStr;
 public:
 	CompositeIteratorUCharString(const std::vector<IteratorUCharString*>& vecIt): vecItUCharStr(vecIt){}
-	bool hasNext();
+	bool hasNext()const;
 	unsigned char* next();
 };
 
@@ -167,7 +171,7 @@ class CachedIterator : public IteratorUCharString
 		unsigned char* cachedValue;
 	public:
 		CachedIterator(IteratorUCharString* it) : itUCharStr(it), cachedValue(it->next()){}
-		const unsigned char* getNext()const{return cachedValue;}
+		const unsigned char* getNext(){return cachedValue;}
 		int compare()const;
 };
 
@@ -179,7 +183,7 @@ public:
 	VectorIteratorUCharString(std::vector<std::string> &vector) : vector(vector), pos(0) { }
 	virtual ~VectorIteratorUCharString() { }
 
-	virtual bool hasNext() {
+	virtual bool hasNext()const {
 		return pos<vector.size();
 	}
 
@@ -198,7 +202,7 @@ public:
         in.close();
     }
 
-    virtual bool hasNext() {
+    virtual bool hasNext() const{
         return in.good();
     }
 

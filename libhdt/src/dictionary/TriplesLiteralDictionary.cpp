@@ -13,37 +13,26 @@
 
 namespace hdt {
 
-TriplesLiteralDictionary::TriplesLiteralDictionary(){
-	create();
+TriplesLiteralDictionary::TriplesLiteralDictionary() : predicates(new csd::CSD_PFC()){}
+	
+
+TriplesLiteralDictionary::~TriplesLiteralDictionary(){
+	clear_loc();
 }
 
-
-TriplesLiteralDictionary::~TriplesLiteralDictionary()
-{clear();}
-
-void TriplesLiteralDictionary::clear()
+void TriplesLiteralDictionary::clear_loc()
 {
-	if (predicates!=NULL)
-		{delete predicates; predicates=NULL;}	
+	if (predicates!=NULL){
+		delete predicates; predicates=NULL;
+	}	
 }
 void TriplesLiteralDictionary::create()
 {
-	clear();
-	if (predicates==NULL)
-		{predicates = new csd::CSD_PFC();}
+	clear_loc();
+	predicates = new csd::CSD_PFC();
+	BaseLiteralDictionary::create();
 }
 
-void TriplesLiteralDictionary::clear_all()
-{
-	clear();
-	BaseLiteralDictionary::clear();
-}
-void TriplesLiteralDictionary::create_all()
-{
-	clear_all();
-	BaseLiteralDictionary::create();
-	create();
-}
 
 unsigned int TriplesLiteralDictionary::getNpredicates()const
 {return predicates->getLength();}
@@ -76,7 +65,6 @@ void TriplesLiteralDictionary::loadFourthSection(std::istream & input, Intermedi
 	iListener.setRange(50, 75);
 	iListener.notifyProgress(0, "Dictionary read predicates.");
 
-	delete predicates;
 	predicates = csd::CSD::load(input);
 	if (predicates == NULL) {
 		predicates = new csd::CSD_PFC();
@@ -90,7 +78,6 @@ void TriplesLiteralDictionary::loadFourthSection(unsigned char *ptr, unsigned ch
 {
     iListener.setRange(50,75);
     iListener.notifyProgress(0, "Dictionary read predicates.");
-    delete predicates;
     predicates = csd::CSD::create(ptr[count]);
     if(predicates==NULL){
         predicates = new csd::CSD_PFC();
@@ -106,10 +93,9 @@ void TriplesLiteralDictionary::importFourthSection(Dictionary *other, ProgressLi
 	{
 		//NOTIFY(listener, "DictionaryPFC loading predicates", 25, 30);
 		IteratorUCharString *itPred = other_td->getPredicates();
-		delete predicates;
 		iListener.setRange(20, 21);
 		predicates = loadSectionPFC(itPred, blocksize, &iListener);
-		subjects = new csd::CSD_Cache2(subjects);
+		predicates = new csd::CSD_Cache2(predicates);
 		delete itPred;
 	}
 	else
@@ -123,6 +109,8 @@ void TriplesLiteralDictionary::saveFourthSection(std::ostream & output, Intermed
 }
 
 IteratorUCharString *TriplesLiteralDictionary::getPredicates()
+{throw std::logic_error("Not implemented");}
+IteratorUCharString *TriplesLiteralDictionary::getPredicates()const
 {throw std::logic_error("Not implemented");}
 /*IteratorUCharString *TriplesLiteralDictionary::getGraphs() {
 	throw std::runtime_error("No graph section in this kind of dictionary");

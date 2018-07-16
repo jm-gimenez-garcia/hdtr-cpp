@@ -80,7 +80,7 @@ LogSequence2::~LogSequence2() {
 
 }
 
-size_t LogSequence2::get(size_t position)
+size_t LogSequence2::get(size_t position)const
 {
 	if(position>=numentries) {
 		throw std::runtime_error("Trying to get an element bigger than the array.");

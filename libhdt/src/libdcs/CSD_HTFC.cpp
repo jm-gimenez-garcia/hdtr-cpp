@@ -362,7 +362,7 @@ void CSD_HTFC::dumpBlock(uint block) {
 	delete [] string;
 }
 
-unsigned char* CSD_HTFC::extract(uint32_t id)
+unsigned char* CSD_HTFC::extract(uint32_t id)const
 {
 	if(!text || !blocks) {
 		return NULL;
@@ -660,7 +660,7 @@ uint CSD_HTFC::locateInBlock(uint block, const unsigned char *s, uint len)
 	return id;
 }
 
-void CSD_HTFC::extractInBlock(uint block, uint o, unsigned char *s)
+void CSD_HTFC::extractInBlock(uint block, uint o, unsigned char *s)const
 {
 	unsigned char *deltaseq = new unsigned char[DELTA];
 	uint delta;
@@ -684,7 +684,7 @@ void CSD_HTFC::extractInBlock(uint block, uint o, unsigned char *s)
 	delete [] deltaseq;
 }
 
-void CSD_HTFC::decompressDelta(unsigned char *seq, uint *pos, uint *offset, unsigned char *deltaseq)
+void CSD_HTFC::decompressDelta(unsigned char *seq, uint *pos, uint *offset, unsigned char *deltaseq)const
 {
 	uint i = 0;
 
@@ -696,7 +696,7 @@ void CSD_HTFC::decompressDelta(unsigned char *seq, uint *pos, uint *offset, unsi
 	while (deltaseq[i-1] < 128);
 }
 
-uint CSD_HTFC::decompressFirstWord(unsigned char *seq, uint *pos, unsigned char *word)
+uint CSD_HTFC::decompressFirstWord(unsigned char *seq, uint *pos, unsigned char *word)const
 {
 	uint ptr = 0, offset = 0;
 
@@ -711,7 +711,7 @@ uint CSD_HTFC::decompressFirstWord(unsigned char *seq, uint *pos, unsigned char 
 	return ptr;
 }
 
-uint CSD_HTFC::decompressWord(unsigned char *seq, uint *pos, uint* offset, unsigned char *suffix)
+uint CSD_HTFC::decompressWord(unsigned char *seq, uint *pos, uint* offset, unsigned char *suffix)const
 {
 	uint ptr = 0;
 
@@ -726,7 +726,7 @@ uint CSD_HTFC::decompressWord(unsigned char *seq, uint *pos, uint* offset, unsig
 	return ptr;
 }
 
-unsigned char CSD_HTFC::decodeHT(unsigned char *seq, uint *pos, uint *offset)
+unsigned char CSD_HTFC::decodeHT(unsigned char *seq, uint *pos, uint *offset)const
 {
 	// REVISAR: OTRA IMPLEMENTACION QUE HAGA LOS DESPLAZAMIENTOS
 	// DE UNO EN UNO CONSIDERANDO UNA ESTRUCTURA TEMPORAL DONDE

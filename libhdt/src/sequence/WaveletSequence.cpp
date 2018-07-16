@@ -61,7 +61,7 @@ WaveletSequence::~WaveletSequence() {
 }
 
 
-size_t WaveletSequence::get(size_t position)
+size_t WaveletSequence::get(size_t position)const
 {
 	if(sequence==NULL)
 		return 0;

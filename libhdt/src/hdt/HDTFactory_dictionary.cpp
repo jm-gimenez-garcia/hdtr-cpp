@@ -25,15 +25,9 @@
  *
  */
 #include <stdexcept>
-#include <HDT.hpp>
 #include <HDTVocabulary.hpp>
 
 #include "HDTFactory.hpp"
-
-#include "BasicHDT.hpp"
-#include "BasicModifiableHDT.hpp"
-
-#include "../header/PlainHeader.hpp"
 
 #include "../dictionary/TriplesPlainDictionary.hpp"
 #include "../dictionary/GraphsPlainDictionary.hpp"
@@ -46,12 +40,6 @@
 #include "../dictionary/GraphsLiteralDictionary.hpp"
 #endif
 
-#include "../triples/TriplesList.hpp"
-#ifndef WIN32
-#include "../triples/TripleListDisk.hpp"
-#endif
-#include "../triples/PlainTriples.hpp"
-#include "../triples/BitmapTriples.hpp"
 
 
 using namespace hdt;
@@ -59,47 +47,6 @@ using namespace hdt;
 
 namespace hdt {
 
-HDT *HDTFactory::createDefaultHDT()
-{
-	BasicHDT *h = new BasicHDT();
-	return h;
-}
-
-HDT *HDTFactory::createHDT(HDTSpecification &spec)
-{
-	BasicHDT *h = new BasicHDT(spec);
-	return h;
-}
-
-ModifiableHDT *HDTFactory::createDefaultModifiableHDT()
-{
-	BasicModifiableHDT *h = new BasicModifiableHDT();
-	return h;
-}
-
-ModifiableHDT *HDTFactory::createModifiableHDT(HDTSpecification &spec)
-{
-	BasicModifiableHDT *h = new BasicModifiableHDT(spec);
-	return h;
-}
-
-Triples *HDTFactory::readTriples(ControlInformation &controlInformation) {
-	std::string triplesType = controlInformation.getFormat();
-
-	if(triplesType==HDTVocabulary::TRIPLES_TYPE_BITMAP) {
-		return new BitmapTriples();
-	} else if(triplesType==HDTVocabulary::TRIPLES_TYPE_PLAIN) {
-		return new PlainTriples();
-	} else if(triplesType==HDTVocabulary::TRIPLES_TYPE_TRIPLESLIST) {
-		return new TriplesList();
-#ifndef WIN32
-	} else if(triplesType==HDTVocabulary::TRIPLES_TYPE_TRIPLESLISTDISK) {
-		return new TripleListDisk();
-#endif
-	}
-
-	throw std::runtime_error("Triples Implementation not available");
-}
 
 Dictionary *HDTFactory::readDictionary(ControlInformation &controlInformation) {
 	std::string type = controlInformation.getFormat();
@@ -132,13 +79,6 @@ Dictionary *HDTFactory::readDictionary(ControlInformation &controlInformation) {
 	}
 
 	throw std::runtime_error("Dictionary Implementation not available");
-}
-
-Header *HDTFactory::readHeader(ControlInformation &controlInformation) {
-    if(controlInformation.getType()!=HEADER)
-		throw std::runtime_error("Trying to get Header from Non-Header section");
-
-	return new PlainHeader();
 }
 
 

@@ -12,30 +12,27 @@
 #include "Header.hpp"
 
 namespace hdt {
-GraphsLiteralDictionary::GraphsLiteralDictionary(){
-	create_all();
+GraphsLiteralDictionary::GraphsLiteralDictionary() : graphs(new csd::CSD_PFC()){}
+
+GraphsLiteralDictionary::~GraphsLiteralDictionary(){
+	clear_loc();
 }
 
-GraphsLiteralDictionary::~GraphsLiteralDictionary()
-{clear_all();}
-
-void GraphsLiteralDictionary::clear_all()
+void GraphsLiteralDictionary::clear_loc()
 {
-	if (graphs!=NULL)
-		{delete graphs; graphs=NULL;}	
+	if (graphs!=NULL){
+		delete graphs; graphs=NULL;
+	}	
 }
-void GraphsLiteralDictionary::create_all()
+void GraphsLiteralDictionary::create()
 {
-	clear_all();
-	if (graphs==NULL)
-		{graphs = new csd::CSD_PFC();}
+	clear_loc();
+	graphs = new csd::CSD_PFC();
+	BaseLiteralDictionary::create();
 }
 
 
-unsigned int GraphsLiteralDictionary::getNgraphs()const
-{return graphs->getLength();}
-
-unsigned int GraphsLiteralDictionary::getMaxGraphID()const
+unsigned int GraphsLiteralDictionary::getNunused()const
 {return graphs->getLength();}
 
 unsigned int GraphsLiteralDictionary::stringToId(const std::string &key, const TripleComponentRole position)const {
@@ -60,7 +57,6 @@ void GraphsLiteralDictionary::loadFourthSection(std::istream & input, Intermedia
 	iListener.setRange(50, 75);
 	iListener.notifyProgress(0, "Dictionary read graphs.");
 
-	delete graphs;
 	graphs = csd::CSD::load(input);
 	if (graphs == NULL) {
 		graphs = new csd::CSD_PFC();
@@ -74,7 +70,6 @@ void GraphsLiteralDictionary::loadFourthSection(unsigned char *ptr, unsigned cha
 {
     iListener.setRange(50,75);
     iListener.notifyProgress(0, "Dictionary read graphs.");
-    delete graphs;
     graphs = csd::CSD::create(ptr[count]);
     if(graphs==NULL){
         graphs = new csd::CSD_PFC();
@@ -90,10 +85,9 @@ void GraphsLiteralDictionary::importFourthSection(Dictionary *other, ProgressLis
 	{
 		//NOTIFY(listener, "DictionaryPFC loading graphs", 25, 30);
 		IteratorUCharString *itPred = other_gd->getGraphs();
-		delete graphs;
 		iListener.setRange(20, 21);
 		graphs = loadSectionPFC(itPred, blocksize, &iListener);
-		subjects = new csd::CSD_Cache2(subjects);
+		graphs = new csd::CSD_Cache2(graphs);
 		delete itPred;
 	}
 	else
@@ -107,22 +101,9 @@ void GraphsLiteralDictionary::saveFourthSection(std::ostream & output, Intermedi
 	graphs->save(output);
 }
 
-/*IteratorUCharString *GraphsLiteralDictionary::getPredicates() {
-	throw std::runtime_error("No predicate section in this kind of dictionary");
-	return NULL;
-}
-
-unsigned int GraphsLiteralDictionary::getNpredicates()const{
-	throw std::runtime_error("No predicate section in this kind of dictionary");
-	return 0;
-}
-unsigned int GraphsLiteralDictionary::getMaxPredicateID()const{
-	throw std::runtime_error("No predicate section in this kind of dictionary");
-	return 0;
-}*/
-
-
 IteratorUCharString *GraphsLiteralDictionary::getGraphs() 
+{throw std::logic_error("Not implemented");}
+IteratorUCharString *GraphsLiteralDictionary::getGraphs() const
 {throw std::logic_error("Not implemented");}
 
 void GraphsLiteralDictionary::populateHeaderNumFourthSection(Header & header, string rootNode)

@@ -33,7 +33,7 @@ void BitmapIdentifiableTriples::load(ModifiableTriples &triples, ProgressListene
 		x = triple->getSubject();
 		y = triple->getPredicate();
 		z = triple->getObject();
-		gr = triple->getIdentifier(); // returns 0 if triple is a TripleID
+		gr = triple->getGraph(); // returns 0 if triple is a TripleID
 
 
 		if(x==0 || y==0 || z==0) {
@@ -107,7 +107,7 @@ void BitmapIdentifiableTriples::load(ModifiableTriples &triples, ProgressListene
 
 	BitSequenceBuilder* bit_seq_build = new BitSequenceBuilderRG(4);
 	// 1024 just to try
-	permId = new PermutationMRRR(permId_tmp.getArray(),permId_tmp.size(),1024, bit_seq_build);
+	permId = new PermutationMRRR(permId_tmp.getArray(),permId_tmp.size(),8, bit_seq_build);
 
 	//PermutationBuilder* permBuild = new PermutationBuilderMRRR(ceil(log2((double)permId_tmp.size())),bit_seq_build);
 	//permId = permBuild->build(&permId_tmp[0],permId_tmp.size());

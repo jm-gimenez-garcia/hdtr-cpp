@@ -230,7 +230,7 @@ uint32_t CSD_FMIndex::locate_substring(unsigned char *s, uint32_t len, uint offs
 	return matches;
 }
 
-unsigned char * CSD_FMIndex::extract(uint32_t id) {
+unsigned char * CSD_FMIndex::extract(uint32_t id)const {
 	if (id == 0 || id > numstrings)
 		return NULL;
 	uint i;

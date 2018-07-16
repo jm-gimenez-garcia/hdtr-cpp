@@ -13,45 +13,63 @@
 
 namespace hdt {
 
-BaseLiteralDictionary::BaseLiteralDictionary() : blocksize(8) {
-BaseLiteralDictionary::create();
-}
+BaseLiteralDictionary::BaseLiteralDictionary() : 
+	subjects(new csd::CSD_PFC()),
+	objectsNotLiterals(new csd::CSD_PFC()), 
+	objectsLiterals(new csd::CSD_FMIndex()), 
+	shared(new csd::CSD_PFC()), 
+	blocksize(8) {}
 
-BaseLiteralDictionary::BaseLiteralDictionary(HDTSpecification & spec) : blocksize(8) {
-BaseLiteralDictionary::create();
-
-string blockSizeStr = "";
-try{
-	blockSizeStr = spec.get("dict.block.size");
-}catch(exception& e){}
-if (blockSizeStr != "") {
-	blocksize = atoi(blockSizeStr.c_str());
-}
+BaseLiteralDictionary::BaseLiteralDictionary(HDTSpecification & spec) : 
+	subjects(new csd::CSD_PFC()),
+	objectsNotLiterals(new csd::CSD_PFC()), 
+	objectsLiterals(new csd::CSD_FMIndex()), 
+	shared(new csd::CSD_PFC()), 
+	blocksize(8) 
+{
+	string blockSizeStr = "";
+	try{
+		blockSizeStr = spec.get("dict.block.size");
+	}catch(exception& e){}
+	if (blockSizeStr != "") {
+		blocksize = atoi(blockSizeStr.c_str());
+	}
 }
 
 BaseLiteralDictionary::~BaseLiteralDictionary() {
-BaseLiteralDictionary::clear();
+	BaseLiteralDictionary::clear_loc();
 }
 
+
+void BaseLiteralDictionary::create()
+{
+	BaseLiteralDictionary::clear();
+	subjects = new csd::CSD_PFC();
+	objectsNotLiterals = new csd::CSD_PFC();
+	objectsLiterals = new csd::CSD_FMIndex();
+	shared = new csd::CSD_PFC();
+}
+
+void BaseLiteralDictionary::clear_loc()
+{
+	if (subjects!=NULL){
+		delete subjects; subjects=NULL;
+	}
+	if (objectsNotLiterals!=NULL){
+		delete objectsNotLiterals; objectsNotLiterals=NULL;
+	}
+	if (objectsLiterals!=NULL){
+		delete objectsLiterals; objectsLiterals=NULL;
+	}
+	if (shared!=NULL){
+		delete shared; shared=NULL;
+	}
+}
 
 void BaseLiteralDictionary::clear()
 {
-if (subjects!=NULL)
-	{delete subjects; subjects=NULL;}
-if (objectsNotLiterals!=NULL)
-	{delete objectsNotLiterals; objectsNotLiterals=NULL;}
-if (objectsLiterals!=NULL)
-	{delete objectsLiterals; objectsLiterals=NULL;}
-if (shared!=NULL)
-	{delete shared; shared=NULL;}
-}
-void BaseLiteralDictionary::create()
-{
-BaseLiteralDictionary::clear();
-subjects = new csd::CSD_PFC();
-objectsNotLiterals = new csd::CSD_PFC();
-objectsLiterals = new csd::CSD_FMIndex();
-shared = new csd::CSD_PFC();
+	clear_loc();
+	BaseLiteralDictionary::clear_loc();
 }
 
 
@@ -147,7 +165,6 @@ void BaseLiteralDictionary::loadShared(std::istream & input, IntermediateListene
 {
 iListener.setRange(0, 25);
 iListener.notifyProgress(0, "Dictionary read shared area.");
-delete shared;
 shared = csd::CSD::load(input);
 if (shared == NULL) {
 	shared = new csd::CSD_PFC();
@@ -159,7 +176,6 @@ void BaseLiteralDictionary::loadSubjects(std::istream & input, IntermediateListe
 {
 iListener.setRange(25, 50);
 iListener.notifyProgress(0, "Dictionary read subjects.");
-delete subjects;
 subjects = csd::CSD::load(input);
 if (subjects == NULL) {
 	subjects = new csd::CSD_PFC();
@@ -175,7 +191,6 @@ iListener.setRange(75, 100);
 iListener.notifyProgress(0, "Dictionary read objects.");
 
 //load Objects Literal
-delete objectsLiterals;
 objectsLiterals = csd::CSD::load(input);
 if (objectsLiterals == NULL) {
 	objectsLiterals = new csd::CSD_FMIndex();
@@ -184,7 +199,6 @@ if (objectsLiterals == NULL) {
 objectsLiterals = new csd::CSD_Cache(objectsLiterals);
 
 // loadObjects Not Literal
-delete objectsNotLiterals;
 objectsNotLiterals = csd::CSD::load(input);
 if (objectsNotLiterals == NULL) {
 	objectsNotLiterals = new csd::CSD_PFC();
@@ -196,7 +210,7 @@ objectsNotLiterals = new csd::CSD_Cache(objectsNotLiterals);
 void BaseLiteralDictionary::load(std::istream & input, ControlInformation & ci,	ProgressListener *listener/*=NULL*/) {
 
 IntermediateListener iListener(listener);
-
+clear();
 loadControlInfo(input, ci);
 loadShared(input, iListener);
 loadSubjects(input, iListener);
@@ -219,7 +233,6 @@ void BaseLiteralDictionary::loadShared(unsigned char *ptr, unsigned char *ptrMax
 {
 iListener.setRange(0,25);
 iListener.notifyProgress(0, "Dictionary read shared area.");
-delete shared;
 shared = csd::CSD::create(ptr[count]);
 if(shared==NULL){
 	shared = new csd::CSD_PFC();
@@ -233,7 +246,6 @@ void BaseLiteralDictionary::loadSubjects(unsigned char *ptr, unsigned char *ptrM
 {
 iListener.setRange(25,50);
 iListener.notifyProgress(0, "Dictionary read subjects.");
-delete subjects;
 subjects = csd::CSD::create(ptr[count]);
 if(subjects==NULL){
 	subjects = new csd::CSD_PFC();
@@ -247,7 +259,6 @@ void BaseLiteralDictionary::loadObjects(unsigned char *ptr, unsigned char *ptrMa
 {
 iListener.setRange(75,85);
 iListener.notifyProgress(0, "Dictionary read objects literals.");
-delete objectsLiterals;
 objectsLiterals = csd::CSD::create(ptr[count]);
 if(objectsLiterals==NULL){
 	objectsLiterals = new csd::CSD_PFC();
@@ -258,7 +269,6 @@ objectsLiterals = new csd::CSD_Cache(objectsLiterals);
 
 iListener.setRange(75,100);
 iListener.notifyProgress(0, "Dictionary read objects Rest.");
-delete objectsNotLiterals;
 objectsNotLiterals = csd::CSD::create(ptr[count]);
 if(objectsNotLiterals==NULL){
 	objectsNotLiterals = new csd::CSD_PFC();
@@ -275,6 +285,7 @@ size_t BaseLiteralDictionary::load(unsigned char *ptr, unsigned char *ptrMax, Pr
 size_t count=0;
 
 IntermediateListener iListener(listener);
+clear();
 loadControlInfo(ptr, ptrMax, count);
 loadShared(ptr, ptrMax, count, iListener);
 loadSubjects(ptr, ptrMax, count, iListener);
@@ -284,58 +295,11 @@ loadObjects(ptr, ptrMax, count, iListener);
 return count;
 }
 
-class LiteralIterator : public IteratorUCharString {
-private:
-IteratorUCharString *child;
-unsigned char *previous, *nextItem;
-bool goon;
-
-public:
-LiteralIterator(IteratorUCharString *child) : child(child), previous(NULL), nextItem(NULL), goon(false) {
-	if(child->hasNext()) {
-		nextItem = child->next();
-	}
-}
-
-virtual ~LiteralIterator() {
-	// Attention: Does not delete child.
-}
-
-bool hasNext() {
-	if(goon) {
-		return nextItem!=NULL;
-	} else {
-		return nextItem!=NULL && nextItem[0]=='"';
-	}
-}
-
-unsigned char *next() {
-	if(previous) {
-		child->freeStr(previous);
-	}
-	previous = nextItem;
-	if(child->hasNext()) {
-		nextItem = child->next();
-	} else {
-		nextItem = NULL;
-	}
-	return previous;
-}
-
-size_t getNumberOfElements() {
-	return child->getNumberOfElements();
-}
-
-void doContinue() {
-	goon = true;
-}
-};
 
 void BaseLiteralDictionary::importShared(Dictionary *other, ProgressListener *listener, IntermediateListener& iListener)
 {
 	//NOTIFY(listener, "DictionaryPFC loading shared", 90, 100);
 	IteratorUCharString *itShared = other->getShared();
-	delete shared;
 	iListener.setRange(90, 100);
 	shared = loadSectionPFC(itShared, blocksize, &iListener);
 	shared = new csd::CSD_Cache(shared);
@@ -346,7 +310,6 @@ void BaseLiteralDictionary::importSubjects(Dictionary *other, ProgressListener *
 {
 	//NOTIFY(listener, "DictionaryPFC loading subjects", 0, 100);
 	IteratorUCharString *itSubj = other->getSubjects();
-	delete subjects;
 	iListener.setRange(0, 20);
 	subjects = loadSectionPFC(itSubj, blocksize, &iListener);
 	subjects = new csd::CSD_Cache(subjects);
@@ -360,13 +323,11 @@ void BaseLiteralDictionary::importObjects(Dictionary *other, ProgressListener *l
 	IteratorUCharString *itObj = other->getObjects();
 	LiteralIterator litIt(itObj);
 
-	delete objectsLiterals;
 	objectsLiterals = loadSectionFMIndex(&litIt, false, 4, 64, true, &iListener);
 	objectsLiterals = new csd::CSD_Cache(objectsLiterals);
 	litIt.doContinue();
 
 	iListener.setRange(50, 90);
-	delete objectsNotLiterals;
 	objectsNotLiterals = loadSectionPFC(&litIt, blocksize, &iListener);
 	objectsNotLiterals = new csd::CSD_Cache(objectsNotLiterals);
 	delete itObj;
@@ -376,7 +337,7 @@ void BaseLiteralDictionary::importObjects(Dictionary *other, ProgressListener *l
 void BaseLiteralDictionary::import(	Dictionary *other, ProgressListener *listener) {
 try {
 	IntermediateListener iListener(listener);
-
+	clear();
 	importShared(other,listener, iListener);
 	importSubjects(other,listener, iListener);
 	importFourthSection(other,listener, iListener);
@@ -385,7 +346,7 @@ try {
 	sizeStrings = other->size();
 	mapping = other->getMapping();
 } catch (std::exception& e) {
-	create_all();
+	create();
 	throw;
 }
 }
@@ -394,12 +355,22 @@ IteratorUCharString *BaseLiteralDictionary::getSubjects() {
 throw std::logic_error("Not implemented");
 }
 
+IteratorUCharString *BaseLiteralDictionary::getSubjects() const{
+throw std::logic_error("Not implemented");
+}
 
 IteratorUCharString *BaseLiteralDictionary::getObjects() {
 throw std::logic_error("Not implemented");
 }
 
-IteratorUCharString *BaseLiteralDictionary::getShared() {
+IteratorUCharString *BaseLiteralDictionary::getObjects() const{
+throw std::logic_error("Not implemented");
+}
+
+IteratorUCharString *BaseLiteralDictionary::getShared(){
+throw std::logic_error("Not implemented");
+}
+IteratorUCharString *BaseLiteralDictionary::getShared()const{
 throw std::logic_error("Not implemented");
 }
 
@@ -638,10 +609,6 @@ default:
 
 }
 
-unsigned int BaseLiteralDictionary::getGlobalId(unsigned int id, DictionarySection position) const{
-return getGlobalId(mapping, id, position);
-}
-
 unsigned int BaseLiteralDictionary::getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position) const{
 switch (position) {
 case SUBJECT:
@@ -676,9 +643,6 @@ default:
 
 }
 
-unsigned int BaseLiteralDictionary::getLocalId(unsigned int id, TripleComponentRole position) const{
-return getLocalId(mapping, id, position);
-}
 
 hdt::IteratorUCharString* BaseLiteralDictionary::getSuggestions(const char *prefix, hdt::TripleComponentRole role)
 {

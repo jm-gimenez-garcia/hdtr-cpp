@@ -47,7 +47,7 @@ LogSequence::~LogSequence() {
 }
 
 
-size_t LogSequence::get(size_t position)
+size_t LogSequence::get(size_t position)const
 {
 	if(array==NULL)
 		return 0;

@@ -54,16 +54,13 @@ public:
 
 	void importFourthSection(Dictionary *other, ProgressListener *listener, IntermediateListener& iListener);
 
-	//IteratorUCharString* getPredicates();
 	IteratorUCharString* getGraphs();
+	IteratorUCharString* getGraphs()const;
 
 	void saveFourthSection(std::ostream& output, IntermediateListener& iListener);
 
-	//unsigned int getNpredicates()const;
-	unsigned int getNgraphs()const;
+	unsigned int getNunused()const;
 
-	//unsigned int getMaxPredicateID()const;
-	unsigned int getMaxGraphID()const;
 	
 	uint64_t size()const;
 	size_t getNumberOfElements()const;
@@ -74,11 +71,13 @@ public:
 protected:
 	csd::CSD* getDictionarySection(unsigned int id, TripleComponentRole position) const;
 	unsigned int getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position)const;
+	unsigned int getGlobalId(unsigned int id, DictionarySection position)const{return getGlobalId(mapping, id, position);}
 	unsigned int getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position)const;
+	unsigned int getLocalId(unsigned int id, TripleComponentRole position)const{return getLocalId(mapping, id, position);}
 
 protected:
-	void clear();
 	void create();
+	void clear_loc();
 };
 }
 #endif /* HDT_GFS_DICTIONARY_HPP_ */

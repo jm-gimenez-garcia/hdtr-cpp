@@ -20,12 +20,9 @@ GraphsKyotoDictionary::~GraphsKyotoDictionary() {
 #endif
 }
 
-/*IteratorUCharString *GraphsKyotoDictionary::getPredicates()
-{
-	throw std::runtime_error("No predicate section in this kind of dictionary");
-	return NULL;
-}*/
 IteratorUCharString *GraphsKyotoDictionary::getGraphs()
+{return new KyotoDictIterator(&graphs);}
+IteratorUCharString *GraphsKyotoDictionary::getGraphs()const
 {return new KyotoDictIterator(&graphs);}
 
 size_t GraphsKyotoDictionary::getNumberOfElements()const
@@ -128,21 +125,9 @@ unsigned int GraphsKyotoDictionary::getLocalId(unsigned int mapping, unsigned in
 
 }
 
-/*unsigned int GraphsKyotoDictionary::getNpredicates()const{
-	throw std::runtime_error("No predicate section in this kind of dictionary");
-	return 0;
-}*/
-
-unsigned int GraphsKyotoDictionary::getNgraphs()const
+unsigned int GraphsKyotoDictionary::getNunused()const
 {return graphs.count();}
 
-/*unsigned int GraphsKyotoDictionary::getMaxPredicateID()const {
-	throw std::runtime_error("No predicate section in this kind of dictionary");
-	return 0;
-}*/
-
-unsigned int GraphsKyotoDictionary::getMaxGraphID() const
-{return graphs.count();}
 
 
 

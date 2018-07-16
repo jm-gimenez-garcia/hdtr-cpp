@@ -159,8 +159,11 @@ public:
     //virtual unsigned int getMaxGraphID()const=0;
 
     virtual IteratorUCharString *getSubjects()=0;
+    virtual IteratorUCharString *getSubjects()const=0;
     virtual IteratorUCharString *getObjects()=0;
+    virtual IteratorUCharString *getObjects()const=0;
     virtual IteratorUCharString *getShared()=0;
+    virtual IteratorUCharString *getShared()const=0;
     //virtual IteratorUCharString *getPredicates()=0;
     //virtual IteratorUCharString *getGraphs()=0;
 

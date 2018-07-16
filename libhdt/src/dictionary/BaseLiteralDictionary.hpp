@@ -8,6 +8,7 @@
 #include <Dictionary.hpp>
 #include <HDTSpecification.hpp>
 #include <HDTEnums.hpp>
+#include "Iterator.hpp"
 
 //#include "../libdcs/CSD.h"
 
@@ -19,8 +20,8 @@ namespace hdt {
 class ControlInformation;
 class ProgressListener;
 class IntermediateListener;
-class IteratorUCharString;
 class Header;
+
 
 
 class BaseLiteralDictionary : virtual public Dictionary {
@@ -39,10 +40,9 @@ protected:
 
 
 protected:
-	virtual void clear();
 	virtual void create();
-	virtual void clear_all()=0;
-	virtual void create_all()=0;
+	virtual void clear_loc();
+	void clear();
 
 public:
 	BaseLiteralDictionary();
@@ -117,8 +117,11 @@ public:
 
 
     IteratorUCharString *getSubjects();
+    IteratorUCharString *getSubjects()const;
     IteratorUCharString *getObjects();
+    IteratorUCharString *getObjects()const;
     IteratorUCharString *getShared();
+    IteratorUCharString *getShared()const;
     //virtual IteratorUCharString *getPredicates()=0;
     //virtual IteratorUCharString *getGraphs()=0;
 
@@ -139,12 +142,53 @@ public:
 protected:
 	virtual csd::CSD *getDictionarySection(unsigned int id, TripleComponentRole position)const;
 	virtual unsigned int getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position)const;
-	unsigned int getGlobalId(unsigned int id, DictionarySection position)const;
+	virtual unsigned int getGlobalId(unsigned int id, DictionarySection position)const{return BaseLiteralDictionary::getGlobalId(mapping, id, position);}
 	virtual unsigned int getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position)const;
-	unsigned int getLocalId(unsigned int id, TripleComponentRole position)const;
+	virtual unsigned int getLocalId(unsigned int id, TripleComponentRole position)const{return BaseLiteralDictionary::getLocalId(mapping, id, position);}
 
 
 };
+
+
+class LiteralIterator : public IteratorUCharString 
+{
+private:
+IteratorUCharString *child;
+unsigned char *previous, *nextItem;
+bool goon;
+
+public:
+	LiteralIterator(IteratorUCharString *child_it) : child(child_it), previous(NULL), nextItem(NULL), goon(false) {
+	if(child->hasNext()) {
+		nextItem = child->next();
+	}
+}
+	virtual ~LiteralIterator() {} // Attention: Does not delete child.
+	bool hasNext()const;
+	unsigned char *next(); 
+	size_t getNumberOfElements()const{return child->getNumberOfElements();}
+	void doContinue(){goon = true;}
+
+};
+
+inline bool LiteralIterator::hasNext()const {
+	if(goon) {
+		return nextItem!=NULL;
+	} else {
+		return nextItem!=NULL && nextItem[0]=='"';
+	}
+}
+inline unsigned char *LiteralIterator::next() {
+	if(previous) 
+		child->freeStr(previous);
+
+	previous = nextItem;
+	if(child->hasNext())
+		nextItem = child->next();
+	else
+		nextItem = NULL;
+	return previous;
+}
 
 csd::CSD *loadSectionPFC(IteratorUCharString *iterator, uint32_t blocksize, ProgressListener *listener);
 csd::CSD *loadSectionFMIndex(IteratorUCharString *iterator, bool sparse_bitsequence, int bparam, size_t bwt_sample, bool use_sample, hdt::ProgressListener *listener);

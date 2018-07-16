@@ -38,6 +38,7 @@
 #include "HDTVocabulary.hpp"
 #include <algorithm>
 
+#include "DictionaryEntry.hpp"
 
 namespace hdt {
 
@@ -53,11 +54,9 @@ bool DictionaryEntry::cmpID(DictionaryEntry *c1, DictionaryEntry *c2) {
 }
 
 
-BasePlainDictionary::BasePlainDictionary() {
-	mapping = MAPPING2;
-}
+BasePlainDictionary::BasePlainDictionary() : mapping(MAPPING2), dict_sorted(false){}
 
-BasePlainDictionary::BasePlainDictionary(HDTSpecification &specification) : spec(specification) {
+BasePlainDictionary::BasePlainDictionary(HDTSpecification &specification) : spec(specification), dict_sorted(false) {
 	string map ="";
 	try{
 		map = spec.get("dictionary.mapping");
@@ -105,21 +104,21 @@ std::string BasePlainDictionary::idToString(const unsigned int id, const TripleC
 
 unsigned int BasePlainDictionary::stringToId(const std::string &key, const TripleComponentRole position)const
 {
-	DictEntryIt ret;
+	unsigned int ret;
 
-	if(key.length()==0)
+	if(key.length()==0 || key.at(0) == '?') 
 		return 0;
 
-	if(position==SUBJECT) {
-		ret = hashSubject.find(key.c_str());
-    		return ret==hashSubject.end()   ? 0 : ret->second->id;
+	switch (position) {
+		case SUBJECT:
+			ret = idFromString(shared, key);
+				return (ret==0) ? idFromString(subjects, key) : ret;
+		case OBJECT:
+			ret = idFromString(shared, key);
+				return (ret==0) ? idFromString(objects, key) : ret;
+		default:
+			return 0;
 	}
-	else if(position==OBJECT){
-		ret = hashObject.find(key.c_str());
-    		return ret==hashObject.end()    ? 0 : ret->second->id;
-	}
-	else
-		throw std::runtime_error("BasePlainDictionary::stringToId : Uknown TripleComponentRole");
 	return 0;
 }
 
@@ -133,15 +132,20 @@ void BasePlainDictionary::startProcessing(ProgressListener *listener)
 void BasePlainDictionary::stopProcessing(ProgressListener *listener)
 {
 	IntermediateListener iListener(listener);
-	iListener.setRange(0,50);
-	split(listener);
-
 	iListener.setRange(0,100);
 	lexicographicSort(&iListener);
+	
 
 	//dumpSizes(cout);
 }
+void BasePlainDictionary::insert(const string& str, const DictionarySection& pos){
+	throw std::logic_error("This method (BasePlainDictionary::insert(...)) shouldn't be called. ModifiableReificationDictionary::insert(...) should have been called instead.");
 
+}
+
+unsigned int BasePlainDictionary::insert(const std::string & str, const TripleComponentRole pos){
+	throw std::logic_error("This method (BasePlainDictionary::insert(...)) shouldn't be called. ModifiableReificationDictionary::insert(...) should have been called instead.");
+	}
 void BasePlainDictionary::saveControlInfo(std::ostream &output, ControlInformation &controlInfo)
 {
 	controlInfo.setFormat(HDTVocabulary::DICTIONARY_TYPE_PLAIN);
@@ -205,6 +209,9 @@ void BasePlainDictionary::save(std::ostream &output, ControlInformation &control
 
 void BasePlainDictionary::load(std::istream & input, ControlInformation &ci, ProgressListener *listener)
 {
+
+	//ControlInformation has already been read from input in BasicHDT::loadFromHDT
+	
 	std::string line;
 	unsigned char region = 1;
 
@@ -214,6 +221,7 @@ void BasePlainDictionary::load(std::istream & input, ControlInformation &ci, Pro
 	if(format!=getType()) {
 		throw std::runtime_error("Trying to read a BasePlainDictionary but the data is not BasePlainDictionary");
 	}
+
 
 	this->mapping = ci.getUint("mapping");
 	this->sizeStrings = ci.getUint("sizeStrings");
@@ -246,6 +254,8 @@ void BasePlainDictionary::load(std::istream & input, ControlInformation &ci, Pro
 
 	// No stopProcessing() Needed. Dictionary already split and sorted in file.
     updateIDs();
+
+	dict_sorted = true;
 }
 
 size_t BasePlainDictionary::load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener)
@@ -258,15 +268,43 @@ void BasePlainDictionary::import(Dictionary *other, ProgressListener *listener) 
 }
 
 IteratorUCharString *BasePlainDictionary::getSubjects() {
-	return new DictIterator(this->subjects);
+	if (dict_sorted)
+		return new DictIterator(subjects);
+	else
+		throw std::runtime_error("The Plain dictionary has not been sorted !");
 }
-IteratorUCharString *BasePlainDictionary::getObjects(){
-	return new DictIterator(this->objects);
-}
-IteratorUCharString *BasePlainDictionary::getShared() {
-	return new DictIterator(this->shared);
+IteratorUCharString *BasePlainDictionary::getSubjects()const {
+	if (dict_sorted)
+		return new DictIterator_const(subjects);
+	else
+		throw std::runtime_error("The Plain dictionary has not been sorted !");
 }
 
+IteratorUCharString *BasePlainDictionary::getObjects(){
+	if (dict_sorted)
+		return new DictIterator(objects);
+	else
+		throw std::runtime_error("The Plain dictionary has not been sorted !");
+}
+IteratorUCharString *BasePlainDictionary::getObjects()const{
+	if (dict_sorted)
+		return new DictIterator_const(objects);
+	else
+		throw std::runtime_error("The Plain dictionary has not been sorted !");
+}
+
+IteratorUCharString *BasePlainDictionary::getShared()const {
+	if (dict_sorted)
+		return new DictIterator_const(shared);
+	else
+		throw std::runtime_error("The Plain dictionary has not been sorted !");
+}
+IteratorUCharString *BasePlainDictionary::getShared() {
+	if (dict_sorted)
+		return new DictIterator(shared);
+	else
+		throw std::runtime_error("The Plain dictionary has not been sorted !");
+}
 size_t BasePlainDictionary::getNumberOfElements()const{
 	return shared.size() + subjects.size() + objects.size();
 }
@@ -276,60 +314,6 @@ uint64_t BasePlainDictionary::size()const{
 }
 
 
-unsigned int BasePlainDictionary::insert(const std::string & str, const TripleComponentRole pos)
-{
-	if(str=="") return 0;
-
-	insertFourthElement(str, pos);
-
-	DictEntryIt subjectIt = hashSubject.find(str.c_str());
-	DictEntryIt objectIt = hashObject.find(str.c_str());
-
-	bool foundSubject = subjectIt!=hashSubject.end();
-	bool foundObject = objectIt!=hashObject.end();
-	//cout << "A: " << foundSubject << " B: " << foundSubject << endl;
-
-	if(pos==SUBJECT) {
-		if( !foundSubject && !foundObject) {
-			// Did not exist, create new.
-			DictionaryEntry *entry = new DictionaryEntry;
-            		entry->str = new char [str.length()+1];
-			strcpy(entry->str, str.c_str());
-			sizeStrings += str.length();
-
-			//cout << " Add new subject: " << str << endl;
-			hashSubject[entry->str] = entry;
-		} else if(foundSubject) {
-			// Already exists in subjects.
-			//cout << "   existing subject: " << str << endl;
-		} else if(foundObject) {
-			// Already exists in objects.
-			//cout << "   existing subject as object: " << str << endl;
-			hashSubject[objectIt->second->str] = objectIt->second;
-		}
-	} else if(pos==OBJECT) {
-		if(!foundSubject && !foundObject) {
-			// Did not exist, create new.
-			DictionaryEntry *entry = new DictionaryEntry;
-            		entry->str = new char [str.length()+1];
-			strcpy(entry->str, str.c_str());
-			sizeStrings += str.length();
-
-			//cout << " Add new object: " << str << endl;
-			hashObject[entry->str] = entry;
-		} else if(foundObject) {
-			// Already exists in objects.
-			//cout << "     existing object: " << str << endl;
-		} else if(foundSubject) {
-			// Already exists in subjects.
-			//cout << "     existing object as subject: " << str << endl;
-			hashObject[subjectIt->second->str] = subjectIt->second;
-		}
-	}
-
-	// FIXME: Return inserted index?
-	return 0;
-}
 
 
 string intToStr(int val) {
@@ -341,76 +325,6 @@ string intToStr(int val) {
 
 // PRIVATE
 
-void BasePlainDictionary::insert(const string& str, const DictionarySection& pos) {
-
-	if(str=="") return;
-
-	DictionaryEntry *entry = new DictionaryEntry;
-	entry->str = new char [str.length()+1];
-	strcpy(entry->str, str.c_str());
-
-	switch(pos) {
-	case SHARED_SUBJECT:
-	case SHARED_OBJECT:
-		shared.push_back(entry);
-		//entry->id = subjects_shared.size();
-		hashSubject[entry->str] = entry;
-		hashObject[entry->str] = entry;
-		break;
-	case NOT_SHARED_SUBJECT:
-		subjects.push_back(entry);
-		//entry->id = subjects_shared.size()+subjects_not_shared.size();
-		hashSubject[entry->str] = entry;
-		break;
-	case NOT_SHARED_OBJECT:
-		objects.push_back(entry);
-		//entry->id = subjects_shared.size()+objects_not_shared.size();
-		hashObject[entry->str] = entry;
-		break;
-	default:
-		throw std::runtime_error("BasePlainDictionary::insert : uknown DictionarySection");
-		break;
-	}
-}
-
-/** Split
- * @return void
- */
-void BasePlainDictionary::split(ProgressListener *listener) {
-	subjects.clear();
-	shared.clear();
-	objects.clear();
-
-	unsigned int total = hashSubject.size()+hashObject.size();
-	unsigned int count = 0;
-
-	for(DictEntryIt subj_it = hashSubject.begin(); subj_it!=hashSubject.end() && subj_it->first; subj_it++) {
-		//cout << "Check Subj: " << subj_it->first << endl;
-		DictEntryIt other = hashObject.find(subj_it->first);
-
-		if(other==hashObject.end()) {
-			// Only subject
-			subjects.push_back(subj_it->second);
-		} else {
-			// Exist in both
-			shared.push_back(subj_it->second);
-		}
-		count++;
-		NOTIFYCOND(listener, "Extracting shared subjects", count, total);
-	}
-
-	for(DictEntryIt obj_it = hashObject.begin(); obj_it!=hashObject.end(); ++obj_it) {
-		//cout << "Check Obj: " << obj_it->first << endl;
-		DictEntryIt other = hashSubject.find(obj_it->first);
-
-		if(other==hashSubject.end()) {
-			// Only object
-			objects.push_back(obj_it->second);
-		}
-		count++;
-		NOTIFYCOND(listener, "Extracting shared objects", count, total);
-	}
-}
 
 /** Lexicographic Sort
  * @param mapping Description of the param.
@@ -443,6 +357,8 @@ void BasePlainDictionary::lexicographicSort(ProgressListener *listener) {
 #endif
     NOTIFY(listener, "Update Dictionary IDs", 99, 100);
     updateIDs();
+
+	dict_sorted = true;
 }
 
 void BasePlainDictionary::idSort() {
@@ -463,6 +379,7 @@ void BasePlainDictionary::idSort() {
 #endif
 
 	updateIDs();
+	//dict_sorted = true;
 }
 
 
@@ -520,13 +437,7 @@ unsigned int BasePlainDictionary::getGlobalId(unsigned int mapping, unsigned int
 
 }
 
-
-unsigned int BasePlainDictionary::getGlobalId(unsigned int id, DictionarySection position) const{
-	return getGlobalId(mapping, id, position);
-}
-
 unsigned int BasePlainDictionary::getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position) const{
-
 	const unsigned int sh_length = shared.size();
 	const unsigned int sub_length = subjects.size();
 	const unsigned int obj_length = objects.size();
@@ -538,7 +449,11 @@ unsigned int BasePlainDictionary::getLocalId(unsigned int mapping, unsigned int 
 			else if(id <= sh_length+sub_length)
 				return id-sh_length-1;
 			else
+			{
+				cerr << "globid=" << id<<endl;
+				cerr << "sh_length=" << sh_length<<endl;
 				throw std::runtime_error("This globalID does not correspond to a SUBJECT");
+			}
 			break;
 		case OBJECT:
 			if(id <= sh_length) 
@@ -548,7 +463,7 @@ unsigned int BasePlainDictionary::getLocalId(unsigned int mapping, unsigned int 
 				if ( (id <= sh_length + sub_length + obj_length) && (id > sh_length + sub_length) )
 					return id - sh_length - sub_length-1;
 				else
-					throw std::runtime_error("This globalID does not correspond to a SUBJECT with MAPPING1");
+					throw std::runtime_error("This globalID does not correspond to an OBJECT with MAPPING1");
 
 			}
 			else if (mapping==MAPPING2)
@@ -556,7 +471,7 @@ unsigned int BasePlainDictionary::getLocalId(unsigned int mapping, unsigned int 
 				if (id <= sh_length + obj_length)
 					return id - sh_length -1 ;
 				else
-					throw std::runtime_error("This globalID does not correspond to a SUBJECT with MAPPING2");
+					throw std::runtime_error("This globalID does not correspond to an OBJECT with MAPPING2");
 			}
 			else
 				throw std::runtime_error("Uknown mapping");
@@ -569,12 +484,6 @@ unsigned int BasePlainDictionary::getLocalId(unsigned int mapping, unsigned int 
 
 
 }
-
-unsigned int BasePlainDictionary::getLocalId(unsigned int id, TripleComponentRole position) const{
-	return getLocalId(mapping,id,position);
-}
-
-
 
 /** Get Max Id
  * @return The expected result
@@ -635,6 +544,27 @@ void BasePlainDictionary::updateID(unsigned int oldid, unsigned int newid, Dicti
 	}
 }
 
+void BasePlainDictionary::push_back(DictionaryEntry* entry, DictionarySection pos){
+
+	switch(pos){
+		case SHARED_SUBJECT:
+		case SHARED_OBJECT:
+			shared.push_back(entry);
+			sizeStrings+=strlen(entry->str);
+			break;
+		case NOT_SHARED_SUBJECT:
+			subjects.push_back(entry);
+			sizeStrings+=strlen(entry->str);
+			break;
+		case NOT_SHARED_OBJECT:
+			objects.push_back(entry);
+			sizeStrings+=strlen(entry->str);
+			break;
+		default:
+			break;
+	}
+}
+
 void BasePlainDictionary::populateHeader(Header &header, string rootNode)
 {
 	header.insert(rootNode, HDTVocabulary::DICTIONARY_TYPE, HDTVocabulary::DICTIONARY_TYPE_PLAIN);
@@ -649,9 +579,6 @@ void BasePlainDictionary::populateHeader(Header &header, string rootNode)
 	header.insert(rootNode, HDTVocabulary::DICTIONARY_SIZE_STRINGS, size());
 }
 
-string BasePlainDictionary::getType()const {
-	return HDTVocabulary::DICTIONARY_TYPE_PLAIN;
-}
 
 unsigned int BasePlainDictionary::getMapping()const {
 	return mapping;

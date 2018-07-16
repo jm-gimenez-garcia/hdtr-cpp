@@ -58,6 +58,7 @@ public:
 	void importFourthSection(Dictionary *other, ProgressListener *listener, IntermediateListener& iListener);
 
 	IteratorUCharString* getPredicates();
+	IteratorUCharString* getPredicates()const;
 	//IteratorUCharString* getGraphs();
 
 	void saveFourthSection(std::ostream & output, IntermediateListener& iListener);
@@ -76,13 +77,16 @@ public:
 private:
 	csd::CSD* getDictionarySection(unsigned int id, TripleComponentRole position) const;
 	unsigned int getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position)const;
+	unsigned int getGlobalId(unsigned int id, DictionarySection position)const{
+		return getGlobalId(mapping, id, position);}
 	unsigned int getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position)const;
+	unsigned int getLocalId(unsigned int id, TripleComponentRole position)const{return getLocalId(mapping, id, position);}
 
 	
 
 protected:
-	void clear();
 	void create();
+	void clear_loc();
 };
 
 

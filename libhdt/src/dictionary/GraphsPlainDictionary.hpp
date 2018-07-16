@@ -10,36 +10,34 @@ class GraphsPlainDictionary : public BasePlainDictionary, public GraphsDictionar
 
 private:
 	std::vector<DictionaryEntry*> graphs;
-	DictEntryHash hashGraph;
 
-	//unsigned int getNpredicates()const;
-	unsigned int getNgraphs()const;
+	unsigned int getNunused()const;
 
-	//unsigned int getMaxPredicateID()const;
-	unsigned int getMaxGraphID()const;
-
-    //IteratorUCharString *getPredicates();
     IteratorUCharString *getGraphs();
+    IteratorUCharString *getGraphs()const;
 
 public:
 	GraphsPlainDictionary(){}
-	virtual ~GraphsPlainDictionary();
+	GraphsPlainDictionary(HDTSpecification &spec):BasePlainDictionary(spec){}
+	~GraphsPlainDictionary();
 	unsigned int stringToId(const std::string &str, const TripleComponentRole position)const;
 	size_t getNumberOfElements()const;
 	unsigned int getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position)const;
+	unsigned int getGlobalId(unsigned int id, DictionarySection position)const{return getGlobalId(mapping, id, position);}
 	unsigned int getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position)const;
+	unsigned int getLocalId(unsigned int id, TripleComponentRole position)const{return getLocalId(mapping, id, position);}
 	void updateID(unsigned int oldid, unsigned int newid, DictionarySection position);
 	void startProcessing(ProgressListener *listener = NULL);
+	void push_back(DictionaryEntry* entry, DictionarySection pos);
+	string getType()const;
 
 
 
 private:
-	void insert(const std::string& entry, const DictionarySection& pos);
 	void lexicographicSortFourthElement(){std::sort(graphs.begin(), graphs.end(), DictionaryEntry::cmpLexicographic);}
 	void idSortFourthElement() {std::sort(graphs.begin(), graphs.end(), DictionaryEntry::cmpID);}
 	void updateIDs();
 	const std::vector<DictionaryEntry*> &getDictionaryEntryVector(unsigned int id, TripleComponentRole position)const;
-	unsigned int insertFourthElement(const std::string & str, const TripleComponentRole& pos);
 	void saveFourthSection(std::ostream &output, ProgressListener *listener, unsigned int& counter, const char marker);
 	void insertFourthRegion(IntermediateListener& iListener, const std::string& line, unsigned int& numLine, unsigned int& numElements);
 	void populateHeaderFourthElementNum(Header &header, string rootNode);

@@ -42,7 +42,7 @@ ArraySequence::ArraySequence() {
 ArraySequence::~ArraySequence() {
 }
 
-size_t ArraySequence::get(size_t position)
+size_t ArraySequence::get(size_t position)const
 {
 	return vector[position];
 }

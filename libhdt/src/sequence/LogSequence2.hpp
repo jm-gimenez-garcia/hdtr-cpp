@@ -70,7 +70,7 @@ private:
 	 * @param bitsField Length in bits of each field
 	 * @param index Position to store in
 	 */
-	inline size_t get_field(const size_t *data, const size_t bitsField, const size_t index) {
+	inline size_t get_field(const size_t *data, const size_t bitsField, const size_t index) const{
 		size_t bitPos = index*bitsField;
 		size_t i=bitPos/W;
 		size_t j=bitPos%W;
@@ -143,7 +143,7 @@ public:
 	 *            The position of the element to be returned
 	 * @return int
 	 */
-	size_t get(size_t position);
+	size_t get(size_t position)const;
 
 	/**
 	 * Sets the element in a specific position

@@ -17,6 +17,7 @@ public:
 	virtual ~TriplesKyotoDictionary();
 
     IteratorUCharString *getPredicates();
+    IteratorUCharString *getPredicates()const;
     //IteratorUCharString *getGraphs();
 	size_t getNumberOfElements()const;
 
@@ -32,7 +33,9 @@ public:
 	unsigned int insert(const std::string & str, const TripleComponentRole pos);
 
 	unsigned int getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position)const ;
+	unsigned int getGlobalId(unsigned int id, DictionarySection position)const {return getGlobalId(mapping, id, position);}
 	unsigned int getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position)const ;
+	unsigned int getLocalId(unsigned int id, TripleComponentRole position)const {return getLocalId(mapping, id, position);}
 
 	void dumpSizes(std::ostream &out);
 

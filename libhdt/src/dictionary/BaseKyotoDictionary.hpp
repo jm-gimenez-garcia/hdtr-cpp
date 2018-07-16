@@ -77,8 +77,11 @@ public:
 	virtual ~BaseKyotoDictionary();
 
     IteratorUCharString *getSubjects();
+    IteratorUCharString *getSubjects()const;
     IteratorUCharString *getObjects();
+    IteratorUCharString *getObjects()const;
     IteratorUCharString *getShared();
+    IteratorUCharString *getShared()const;
     //virtual IteratorUCharString *getPredicates()=0;
     //virtual IteratorUCharString *getGraphs()=0;
 	virtual size_t getNumberOfElements()const;
@@ -97,10 +100,10 @@ public:
     void import(Dictionary *other, ProgressListener *listener=NULL);
 
 	virtual unsigned int getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position)const ;
-	unsigned int getGlobalId(unsigned int id, DictionarySection position)const {return getGlobalId(mapping, id, position);}
+	virtual unsigned int getGlobalId(unsigned int id, DictionarySection position)const {return BaseKyotoDictionary::getGlobalId(mapping, id, position);}
 
 	virtual unsigned int getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position)const ;
-	unsigned int getLocalId(unsigned int id, TripleComponentRole position)const {return getLocalId(mapping,id,position);}
+	virtual unsigned int getLocalId(unsigned int id, TripleComponentRole position)const {return BaseKyotoDictionary::getLocalId(mapping,id,position);}
 
 	unsigned int getMaxID()const;
 
@@ -154,7 +157,7 @@ public:
 		delete cur;
 	}
 
-	bool hasNext() {
+	bool hasNext()const {
 		return count<db->count();
 	}
 
@@ -164,7 +167,7 @@ public:
 		return (unsigned char*)(key.c_str());
 	}
 
-	size_t getNumberOfElements() {
+	size_t getNumberOfElements()const {
 		return db->count();
 	}
 };

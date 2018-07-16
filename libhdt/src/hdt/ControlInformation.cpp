@@ -42,6 +42,18 @@ namespace hdt {
 ControlInformation::ControlInformation() : type(UNKNOWN_CI) {}
 
 ControlInformation::~ControlInformation() {}
+	
+ControlInformation& ControlInformation::operator=(const ControlInformation& ci){
+	if(this!=&ci)
+	{
+		clear();
+		format = ci.format;
+		type = ci.type;
+		for (PropertyMap::const_iterator it=ci.map.begin(); it!=ci.map.end(); ++it)
+			map[it->first] = it->second;
+	}
+	return *this;
+}
 
 void ControlInformation::save(std::ostream &out) {
 	CRC16 crc;

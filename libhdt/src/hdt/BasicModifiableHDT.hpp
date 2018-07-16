@@ -16,21 +16,16 @@
 
 #include "HDTFactory.hpp"
 
-#include "../util/StopWatch.hpp"
 
-#include "../header/PlainHeader.hpp"
 
-#include "../dictionary/PlainDictionary.hpp"
-#include "../dictionary/KyotoDictionary.hpp"
-
-#include "../triples/TriplesList.hpp"
-#include "../triples/TriplesKyoto.hpp"
-#ifndef WIN32
-#include "../triples/TripleListDisk.hpp"
-#endif
 
 
 namespace hdt {
+	class Dictionary;
+	class ModifiableTriples;
+	class Triples;
+	class Header;
+	class ProgressListener;
 
 class BasicModifiableHDT : public ModifiableHDT {
 private:

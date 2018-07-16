@@ -29,6 +29,14 @@ public:
 			st.reset();
 		}
 	}
+
+	void processQuad(const QuadString & qs, unsigned long long pos) {
+		count++;
+		if(count%1000000 == 0) {
+			cout << (count/1000000) << " M quads parsed in " << st << endl;
+			st.reset();
+		}
+	}
 };
 
 
