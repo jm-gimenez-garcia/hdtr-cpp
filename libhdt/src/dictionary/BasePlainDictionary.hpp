@@ -78,7 +78,7 @@ protected:
 	virtual void lexicographicSortFourthElement()=0;
 	void idSort();
 	virtual void idSortFourthElement()=0; 
-	virtual void updateIDs() ;
+	virtual void updateIDs()=0;
 	void convertMapping(unsigned int mapping_type);
 	virtual const std::vector<DictionaryEntry*> &getDictionaryEntryVector(unsigned int id, TripleComponentRole position)const;
 	virtual void populateHeaderFourthElementNum(Header &header, string rootNode)=0;

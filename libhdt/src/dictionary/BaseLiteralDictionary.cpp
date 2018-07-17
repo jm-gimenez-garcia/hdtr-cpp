@@ -590,9 +590,11 @@ return NULL;
 unsigned int BaseLiteralDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) const{
 switch (position) {
 case NOT_SHARED_SUBJECT:
+case NOT_SHARED_SUBJECT_GRAPH:
 	return shared->getLength() + id;
 
 case NOT_SHARED_OBJECT:
+case NOT_SHARED_OBJECT_GRAPH:
 	if (mapping == MAPPING2) {
 		return shared->getLength() + id;
 	} else {
@@ -601,6 +603,8 @@ case NOT_SHARED_OBJECT:
 
 case SHARED_SUBJECT:
 case SHARED_OBJECT:
+case SHARED_SUBJECT_GRAPH:
+case SHARED_OBJECT_GRAPH:
 	return id;
 default:
 	throw std::runtime_error("Item not found");

@@ -157,10 +157,18 @@ csd::CSD *GraphsLiteralDictionary::getDictionarySection(unsigned int id, TripleC
 }
 
 unsigned int GraphsLiteralDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) const{
-	if(position==UNUSED_GRAPH)
-		return id;
-	else
-		return BaseLiteralDictionary::getGlobalId(mapping, id, position);
+	switch(position)
+	{
+		case UNUSED_GRAPH:
+			return id;
+		case NOT_SHARED_SUBJECT_GRAPH:
+		case NOT_SHARED_OBJECT_GRAPH:
+		case SHARED_OBJECT_GRAPH:
+		case SHARED_SUBJECT_GRAPH:
+			return BaseLiteralDictionary::getGlobalId(mapping, id, position);
+		default:
+			throw runtime_error("Invalid DictionarySection in GraphsDictionary");
+	}
 }
 
 

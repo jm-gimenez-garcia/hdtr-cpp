@@ -183,9 +183,11 @@ void BaseKyotoDictionary::updateIDs(DB *db) {
 unsigned int BaseKyotoDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position)const {
 	switch (position) {
 		case NOT_SHARED_SUBJECT:
+		case NOT_SHARED_SUBJECT_GRAPH:
 			return shared.count()+id+1;
 
 		case NOT_SHARED_OBJECT:
+		case NOT_SHARED_OBJECT_GRAPH:
 			if(mapping==MAPPING2)
 				return shared.count()+id+1;
 			else 
@@ -193,6 +195,8 @@ unsigned int BaseKyotoDictionary::getGlobalId(unsigned int mapping, unsigned int
 
 		case SHARED_SUBJECT:
 		case SHARED_OBJECT:
+		case SHARED_SUBJECT_GRAPH:
+		case SHARED_OBJECT_GRAPH:
 			return id+1;
 		default:
 			throw std::runtime_error("Item not found");

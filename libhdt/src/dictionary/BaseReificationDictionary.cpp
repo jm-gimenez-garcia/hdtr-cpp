@@ -100,13 +100,9 @@ unsigned int BaseReificationDictionary::getGlobalId(unsigned int mapping_type, u
 			return getGlobalIdFromTrGrGlobalId(getTriplesDictionaryPtr()->getGlobalId(locid, pos), pos);
 		case SHARED_OBJECT_GRAPH:
 		case SHARED_SUBJECT_GRAPH:
-			return getGlobalIdFromTrGrGlobalId(getGraphsDictionaryPtr()->getGlobalId(locid, SHARED_OBJECT), pos);
 		case NOT_SHARED_SUBJECT_GRAPH:
-			return getGlobalIdFromTrGrGlobalId(getGraphsDictionaryPtr()->getGlobalId(locid, NOT_SHARED_SUBJECT), pos);
 		case NOT_SHARED_OBJECT_GRAPH:
-			return getGlobalIdFromTrGrGlobalId(getGraphsDictionaryPtr()->getGlobalId(locid, NOT_SHARED_OBJECT), pos);
 		case UNUSED_GRAPH:
-			cout << "getGraphsDictionaryPtr()->getGlobalId(locid=" << locid<< ", pos=" << pos << ") = " << getGraphsDictionaryPtr()->getGlobalId(locid, pos) << endl;
 			return getGlobalIdFromTrGrGlobalId(getGraphsDictionaryPtr()->getGlobalId(locid, pos), pos);
 		default:
 			throw std::logic_error("Unkown type of DictionarySection");

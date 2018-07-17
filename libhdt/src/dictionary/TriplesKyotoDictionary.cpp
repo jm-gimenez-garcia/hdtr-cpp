@@ -80,10 +80,18 @@ unsigned int TriplesKyotoDictionary::insert(const std::string & str, const Tripl
 }	
 
 unsigned int TriplesKyotoDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) const{
-	if(position == NOT_SHARED_PREDICATE)
+	switch(position)
+	{
+		case NOT_SHARED_PREDICATE:
 			return id+1;
-	else
+		case SHARED_SUBJECT:
+		case NOT_SHARED_SUBJECT:
+		case SHARED_OBJECT:
+		case NOT_SHARED_OBJECT:
 			return BaseKyotoDictionary::getGlobalId(mapping, id, position);
+		default:
+			throw runtime_error("Invalid DictionarySection in TriplesDictionary");
+	}
 }
 
 

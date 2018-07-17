@@ -139,10 +139,18 @@ csd::CSD *TriplesFourSectionDictionary::getDictionarySection(unsigned int id, Tr
 }
 
 unsigned int TriplesFourSectionDictionary::getGlobalId(unsigned int map, unsigned int id, DictionarySection position) const{
-	if(position==NOT_SHARED_PREDICATE)
-		return id;
-	else
-		return BaseFourSectionDictionary::getGlobalId(map, id, position);
+	switch(position)
+	{
+		case NOT_SHARED_PREDICATE:
+			return id;
+		case SHARED_SUBJECT:
+		case NOT_SHARED_SUBJECT:
+		case SHARED_OBJECT:
+		case NOT_SHARED_OBJECT:
+			return BaseFourSectionDictionary::getGlobalId(map, id, position);
+		default:
+			throw runtime_error("Invalid DictionarySection in TriplesDictionary");
+	}
 }
 
 

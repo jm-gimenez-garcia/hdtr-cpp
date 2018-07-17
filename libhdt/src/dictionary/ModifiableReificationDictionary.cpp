@@ -171,15 +171,19 @@ void ModifiableReificationDictionary::insert(const string& str, const Dictionary
 	switch(pos) {
 	case SHARED_SUBJECT:
 	case SHARED_OBJECT:
+	case SHARED_SUBJECT_GRAPH:
+	case SHARED_OBJECT_GRAPH:
 		//entry->id = subjects_shared.size();
 		hashSubject[entry->str] = entry;
 		hashObject[entry->str] = entry;
 		break;
 	case NOT_SHARED_SUBJECT:
+	case NOT_SHARED_SUBJECT_GRAPH:
 		//entry->id = subjects_shared.size()+subjects_not_shared.size();
 		hashSubject[entry->str] = entry;
 		break;
 	case NOT_SHARED_OBJECT:
+	case NOT_SHARED_OBJECT_GRAPH:
 		//entry->id = subjects_shared.size()+objects_not_shared.size();
 		hashObject[entry->str] = entry;
 		break;
@@ -221,10 +225,10 @@ void ModifiableReificationDictionary::split(ProgressListener *listener) {
 	
 			if(other==hashObject.end()) {
 				// Only subject in graphs dictionary
-				graphsModifDict->push_back(subj_it->second, NOT_SHARED_SUBJECT);
+				graphsModifDict->push_back(subj_it->second, NOT_SHARED_SUBJECT_GRAPH);
 			} else {
 				// subject+object in graphs dictionary
-				graphsModifDict->push_back(subj_it->second, SHARED_SUBJECT);
+				graphsModifDict->push_back(subj_it->second, SHARED_SUBJECT_GRAPH);
 			}
 			NOTIFYCOND(listener, "Extracting shared subjects", count, total);
 		}
@@ -242,7 +246,7 @@ void ModifiableReificationDictionary::split(ProgressListener *listener) {
 				triplesModifDict->push_back(obj_it->second, NOT_SHARED_OBJECT);
 			}else{
 				// Only object in graphs dictionary
-				graphsModifDict->push_back(obj_it->second, NOT_SHARED_OBJECT);
+				graphsModifDict->push_back(obj_it->second, NOT_SHARED_OBJECT_GRAPH);
 			}
 		}
 		count++;

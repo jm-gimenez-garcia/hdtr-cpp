@@ -388,13 +388,6 @@ void BasePlainDictionary::idSort() {
  * @return void
  */
 void BasePlainDictionary::updateIDs() {
-	unsigned int i;
-	for (i = 0; i < shared.size(); i++) 
-		shared[i]->id = getGlobalId(i, SHARED_SUBJECT);
-	for (i = 0; i < subjects.size(); i++) 
-		subjects[i]->id = getGlobalId(i, NOT_SHARED_SUBJECT);
-	for (i = 0; i < objects.size(); i++) 
-		objects[i]->id = getGlobalId(i, NOT_SHARED_OBJECT);
 }
 
 
@@ -424,15 +417,19 @@ const vector<DictionaryEntry*> &BasePlainDictionary::getDictionaryEntryVector(un
 unsigned int BasePlainDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) const{
 	switch (position) {
 		case NOT_SHARED_SUBJECT:
+		case NOT_SHARED_SUBJECT_GRAPH:
 			if(id >= getNsubjects() - getNshared())
 				throw std::logic_error("NOT_SHARED_SUBJECT idx exceeds dimension");
 			return shared.size()+id+1;
 		case NOT_SHARED_OBJECT:
+		case NOT_SHARED_OBJECT_GRAPH:
 			if(id >= getNobjects() - getNshared())
 				throw std::logic_error("NOT_SHARED_OBJECT idx exceeds dimension");
 			return (mapping==MAPPING2) ? shared.size()+id+1 : shared.size()+subjects.size()+id+1;
 		case SHARED_SUBJECT:
 		case SHARED_OBJECT:
+		case SHARED_SUBJECT_GRAPH:
+		case SHARED_OBJECT_GRAPH:
 			if(id >= getNshared())
 				throw std::logic_error("SHARED_OBJECT idx exceeds dimension");
 			return id+1;
@@ -537,12 +534,16 @@ void BasePlainDictionary::updateID(unsigned int oldid, unsigned int newid, Dicti
 	switch (position) {
 		case SHARED_SUBJECT:
 		case SHARED_OBJECT:
+		case SHARED_SUBJECT_GRAPH:
+		case SHARED_OBJECT_GRAPH:
 			shared[oldid]->id = newid;
 			break;
 		case NOT_SHARED_SUBJECT:
+		case NOT_SHARED_SUBJECT_GRAPH:
 			subjects[oldid]->id = newid;
 			break;
 		case NOT_SHARED_OBJECT:
+		case NOT_SHARED_OBJECT_GRAPH:
 			objects[oldid]->id = newid;
 			break;
 		default:
@@ -555,14 +556,18 @@ void BasePlainDictionary::push_back(DictionaryEntry* entry, DictionarySection po
 	switch(pos){
 		case SHARED_SUBJECT:
 		case SHARED_OBJECT:
+		case SHARED_SUBJECT_GRAPH:
+		case SHARED_OBJECT_GRAPH:
 			shared.push_back(entry);
 			sizeStrings+=strlen(entry->str);
 			break;
 		case NOT_SHARED_SUBJECT:
+		case NOT_SHARED_SUBJECT_GRAPH:
 			subjects.push_back(entry);
 			sizeStrings+=strlen(entry->str);
 			break;
 		case NOT_SHARED_OBJECT:
+		case NOT_SHARED_OBJECT_GRAPH:
 			objects.push_back(entry);
 			sizeStrings+=strlen(entry->str);
 			break;

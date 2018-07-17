@@ -44,15 +44,25 @@ void TriplesPlainDictionary::push_back(DictionaryEntry* entry, DictionarySection
 	if (!entry)
 		return;
 	
-	if(pos==NOT_SHARED_PREDICATE)
+	switch(pos)
 	{
-		const unsigned int nb_el = predicates.size();
-		entry->id = nb_el+1;
-		predicates.push_back(entry);
-		sizeStrings+=strlen(entry->str);
+		case NOT_SHARED_PREDICATE:
+		{
+			const unsigned int nb_el = predicates.size();
+			entry->id = nb_el+1;
+			predicates.push_back(entry);
+			sizeStrings+=strlen(entry->str);
+			break;
+		}
+		case SHARED_SUBJECT:
+		case NOT_SHARED_SUBJECT:
+		case SHARED_OBJECT:
+		case NOT_SHARED_OBJECT:
+			BasePlainDictionary::push_back(entry, pos);
+			break;
+		default:
+			throw runtime_error("Invalid DictionarySection in TriplesDictionary");
 	}
-	else
-		BasePlainDictionary::push_back(entry, pos);
 
 }
 
@@ -119,9 +129,14 @@ unsigned int TriplesPlainDictionary::getNpredicates()const
 
 void TriplesPlainDictionary::updateIDs() 
 {
+	for (unsigned int i = 0; i < shared.size(); i++) 
+		shared[i]->id = getGlobalId(i, SHARED_SUBJECT);
+	for (unsigned int i = 0; i < subjects.size(); i++) 
+		subjects[i]->id = getGlobalId(i, NOT_SHARED_SUBJECT);
+	for (unsigned int i = 0; i < objects.size(); i++) 
+		objects[i]->id = getGlobalId(i, NOT_SHARED_OBJECT);
 	for (unsigned int i = 0; i < predicates.size(); i++) 
 		predicates[i]->id = getGlobalId(mapping, i, NOT_SHARED_PREDICATE);
-	BasePlainDictionary::updateIDs();
 }
 
 const vector<DictionaryEntry*>& TriplesPlainDictionary::getDictionaryEntryVector(unsigned int id, TripleComponentRole position) const
@@ -129,10 +144,19 @@ const vector<DictionaryEntry*>& TriplesPlainDictionary::getDictionaryEntryVector
 
 unsigned int TriplesPlainDictionary::getGlobalId(unsigned int mapping_type, unsigned int id, DictionarySection position) const
 {
-	if(position==NOT_SHARED_PREDICATE)
-		return id+1;
-	else
-		return BasePlainDictionary::getGlobalId(mapping_type, id, position);
+	switch(position)
+	{
+		case NOT_SHARED_PREDICATE:
+			return id+1;
+		case SHARED_SUBJECT:
+		case NOT_SHARED_SUBJECT:
+		case SHARED_OBJECT:
+		case NOT_SHARED_OBJECT:
+			return BasePlainDictionary::getGlobalId(mapping_type, id, position);
+		default:
+			throw runtime_error("Invalid DictionarySection in TriplesDictionary");
+			
+	}
 }
 unsigned int TriplesPlainDictionary::getLocalId(unsigned int mapping_type, unsigned int id, TripleComponentRole position) const
 {
@@ -148,10 +172,20 @@ unsigned int TriplesPlainDictionary::getLocalId(unsigned int mapping_type, unsig
 
 void TriplesPlainDictionary::updateID(unsigned int oldid, unsigned int newid, DictionarySection position) 
 {
-	if (position==NOT_SHARED_PREDICATE)
-		predicates[oldid]->id = newid;
-	else
-		BasePlainDictionary::updateID(oldid, newid, position);
+	switch(position)
+	{
+		case NOT_SHARED_PREDICATE:
+			predicates[oldid]->id = newid;
+			break;
+		case SHARED_SUBJECT:
+		case NOT_SHARED_SUBJECT:
+		case SHARED_OBJECT:
+		case NOT_SHARED_OBJECT:
+			BasePlainDictionary::updateID(oldid, newid, position);
+			break;
+		default:
+			throw runtime_error("Invalid DictionarySection in TriplesDictionary");
+	}
 }
 
 

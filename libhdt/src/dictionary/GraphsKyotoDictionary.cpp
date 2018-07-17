@@ -72,20 +72,28 @@ unsigned int GraphsKyotoDictionary::insert(const std::string & str, const Triple
 }
 
 unsigned int GraphsKyotoDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position)const {
-	if(position == UNUSED_GRAPH)
+
+	switch(position)
 	{
-		if(mapping==MAPPING1)
-			return shared.count()+subjects.count()+objects.count()+id+1;
-		else if(mapping==MAPPING2)
-		{
-			unsigned int max_s_o = (subjects.count()>objects.count()) ? subjects.count() : objects.count();
-			return shared.count()+max_s_o+id+1;
-		}
-		else
-			throw std::runtime_error("Unknown mapping");
+		case UNUSED_GRAPH:
+			if(mapping==MAPPING1)
+				return shared.count()+subjects.count()+objects.count()+id+1;
+			else if(mapping==MAPPING2)
+			{
+				unsigned int max_s_o = (subjects.count()>objects.count()) ? subjects.count() : objects.count();
+				return shared.count()+max_s_o+id+1;
+			}
+			else
+				throw std::runtime_error("Unknown mapping");
+			break;
+		case NOT_SHARED_SUBJECT_GRAPH:
+		case NOT_SHARED_OBJECT_GRAPH:
+		case SHARED_OBJECT_GRAPH:
+		case SHARED_SUBJECT_GRAPH:
+			return BaseKyotoDictionary::getGlobalId(mapping, id, position);
+		default:
+			throw runtime_error("Invalid DictionarySection in GraphsDictionary");
 	}
-	else
-		return BaseKyotoDictionary::getGlobalId(mapping, id, position);
 
 }
 
