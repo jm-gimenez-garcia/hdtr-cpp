@@ -27,6 +27,7 @@ public:
 
 	const TriplesDictionary* getTriplesDictionaryPtr()const;
 	const GraphsDictionary* getGraphsDictionaryPtr()const;
+private:
 	TriplesDictionary* getTriplesDictionaryPtr();
 	GraphsDictionary* getGraphsDictionaryPtr();
 

@@ -420,12 +420,17 @@ csd::CSD *BaseFourSectionDictionary::getDictionarySection(unsigned int id, Tripl
 unsigned int BaseFourSectionDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) const{
 	switch (position) {
 		case NOT_SHARED_SUBJECT:
-			
+			if(id > getNsubjects() - getNshared())
+				throw std::logic_error("NOT_SHARED_SUBJECT idx exceeds dimension");
 			return shared->getLength()+id;
 		case NOT_SHARED_OBJECT:
+			if(id > getNobjects() - getNshared())
+				throw std::logic_error("NOT_SHARED_OBJECT idx exceeds dimension");
 			return (mapping==MAPPING2) ? shared->getLength()+id : shared->getLength()+subjects->getLength()+id;
 		case SHARED_SUBJECT:
 		case SHARED_OBJECT:
+			if(id > getNshared())
+				throw std::logic_error("SHARED_OBJECT idx exceeds dimension");
 			return id;
 		default:
 			throw runtime_error("Item not found");

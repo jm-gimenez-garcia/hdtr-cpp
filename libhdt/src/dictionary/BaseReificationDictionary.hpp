@@ -65,11 +65,11 @@ public:
     void getSuggestions(const char *base, TripleComponentRole role, std::vector<std::string> &out, int maxResults);
     IteratorUCharString *getSuggestions(const char *prefix, TripleComponentRole role);
     IteratorUInt *getIDSuggestions(const char *prefix, TripleComponentRole role);
-
+public:
 	// new methods
-protected:
 	virtual const TriplesDictionary* getTriplesDictionaryPtr()const=0;
 	virtual const  GraphsDictionary* getGraphsDictionaryPtr()const=0;
+protected:
 	virtual TriplesDictionary* getTriplesDictionaryPtr()=0;
 	virtual GraphsDictionary* getGraphsDictionaryPtr()=0;
 	unsigned int getTrGrGlobalIdFromGlobalId(unsigned int globid, TripleComponentRole position)const;

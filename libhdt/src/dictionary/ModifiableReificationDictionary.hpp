@@ -30,9 +30,9 @@ class ModifiableReificationDictionary : public BaseReificationDictionary, public
 		void insert(const string& str, const DictionarySection& pos);
 		std::string getType()const;
 	
-private:
 		const TriplesDictionary* getTriplesDictionaryPtr()const;
 		const GraphsDictionary* getGraphsDictionaryPtr()const;
+private:
 		TriplesDictionary* getTriplesDictionaryPtr();
 		GraphsDictionary* getGraphsDictionaryPtr();
 };

@@ -424,11 +424,17 @@ const vector<DictionaryEntry*> &BasePlainDictionary::getDictionaryEntryVector(un
 unsigned int BasePlainDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) const{
 	switch (position) {
 		case NOT_SHARED_SUBJECT:
+			if(id >= getNsubjects() - getNshared())
+				throw std::logic_error("NOT_SHARED_SUBJECT idx exceeds dimension");
 			return shared.size()+id+1;
 		case NOT_SHARED_OBJECT:
+			if(id >= getNobjects() - getNshared())
+				throw std::logic_error("NOT_SHARED_OBJECT idx exceeds dimension");
 			return (mapping==MAPPING2) ? shared.size()+id+1 : shared.size()+subjects.size()+id+1;
 		case SHARED_SUBJECT:
 		case SHARED_OBJECT:
+			if(id >= getNshared())
+				throw std::logic_error("SHARED_OBJECT idx exceeds dimension");
 			return id+1;
 		default:
 			throw std::runtime_error("Item not found");

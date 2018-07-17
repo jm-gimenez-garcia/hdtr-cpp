@@ -88,7 +88,7 @@ unsigned int BaseReificationDictionary::getGlobalId(unsigned int id, DictionaryS
 	getGlobalId(MAPPING1, id, pos);
 }
 
-//id is the local ID in the Triples/Graphs Dictionary ; the return value is the global ID in the reification dictionary 
+//locid is the local ID in the Triples/Graphs Dictionary ; the return value is the global ID in the reification dictionary 
 // mapping_type is not used ; only the mapping of TriplesDictionary or GraphsDictionary is used
 unsigned int BaseReificationDictionary::getGlobalId(unsigned int mapping_type, unsigned int locid, DictionarySection pos)const{
 	switch(pos){
@@ -106,6 +106,7 @@ unsigned int BaseReificationDictionary::getGlobalId(unsigned int mapping_type, u
 		case NOT_SHARED_OBJECT_GRAPH:
 			return getGlobalIdFromTrGrGlobalId(getGraphsDictionaryPtr()->getGlobalId(locid, NOT_SHARED_OBJECT), pos);
 		case UNUSED_GRAPH:
+			cout << "getGraphsDictionaryPtr()->getGlobalId(locid=" << locid<< ", pos=" << pos << ") = " << getGraphsDictionaryPtr()->getGlobalId(locid, pos) << endl;
 			return getGlobalIdFromTrGrGlobalId(getGraphsDictionaryPtr()->getGlobalId(locid, pos), pos);
 		default:
 			throw std::logic_error("Unkown type of DictionarySection");
@@ -155,7 +156,10 @@ unsigned int BaseReificationDictionary::getGlobalIdFromTrGrGlobalId(unsigned int
 			if (getGraphsDictionaryPtr()->getMapping() == MAPPING1)
 				return Tsh + Tsubj + Tobj + tr_gr_globid;
 			else if (getGraphsDictionaryPtr()->getMapping() == MAPPING2)
-				return Tsh + Tsubj + Gsubj + Tobj + tr_gr_globid;
+			{
+				const unsigned int min_gr_subj_obj = (Gobj < Gsubj) ? Gobj : Gsubj;
+				return Tsh + Tsubj + min_gr_subj_obj + Tobj + tr_gr_globid;
+			}
 			else
 				throw std::logic_error("Unkown type of mapping");
 			break;
