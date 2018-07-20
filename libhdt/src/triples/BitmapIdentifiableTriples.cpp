@@ -1,5 +1,8 @@
 #include "BitmapIdentifiableTriples.hpp"
 #include "SingleQuad.hpp"
+#include "PermutationMRRR.h"
+
+using namespace std;
 
 namespace hdt{
 
@@ -13,9 +16,9 @@ void BitmapIdentifiableTriples::load(ModifiableTriples &triples, ProgressListene
 	bitmapZ = new BitSequence375(triples.getNumberOfElements());
 	bitmapId = new BitSequence375(triples.getNumberOfElements());
 
-	//LogSequence2* permId_tmp = std::vector<unsigned int> permId_tmp;
-	LogSequence2* permId_tmp = new LogSequence2(bits(triples.getNumberOfElements()),triples.getNumberOfElements());
-	//permId_tmp.reserve(triples.getNumberOfElements()/2);
+	//LogSequence2* permId_tmp = new LogSequence2(bits(triples.getNumberOfElements()),triples.getNumberOfElements());
+	std::vector<size_t> permId_tmp;
+	permId_tmp.reserve(triples.getNumberOfElements()/2); //pre-allocate the vector to at least the estimate number of graphs
 
 	LogSequence2 *vectorY = new LogSequence2(bits(triples.getNumberOfElements()));
 	LogSequence2 *vectorZ = new LogSequence2(bits(triples.getNumberOfElements()),triples.getNumberOfElements());
@@ -30,10 +33,10 @@ void BitmapIdentifiableTriples::load(ModifiableTriples &triples, ProgressListene
 
 		swapComponentOrder(triple, SPO, order);
 
-		x = triple->getSubject();
-		y = triple->getPredicate();
-		z = triple->getObject();
-		gr = triple->getGraph(); // returns 0 if triple is a TripleID
+		x = toRoleId(triple->getSubject(), SUBJECT);
+		y = toRoleId(triple->getPredicate(), PREDICATE);
+		z = toRoleId(triple->getObject(), OBJECT);
+		gr = toRoleId(triple->getGraph(), GRAPH); // returns 0 if triple is a TripleID
 
 
 		if(x==0 || y==0 || z==0) {
@@ -103,17 +106,9 @@ void BitmapIdentifiableTriples::load(ModifiableTriples &triples, ProgressListene
 	delete arrayZ;
 	arrayZ = vectorZ;
 
-	permId_tmp->reduceBits();
 
-	BitSequenceBuilder* bit_seq_build = new BitSequenceBuilderRG(4);
-	// 1024 just to try
-	permId = new PermutationMRRR(permId_tmp.getArray(),permId_tmp.size(),8, bit_seq_build);
+	permId = new PermutationMRRR(permId_tmp, 8);
 
-	//PermutationBuilder* permBuild = new PermutationBuilderMRRR(ceil(log2((double)permId_tmp.size())),bit_seq_build);
-	//permId = permBuild->build(&permId_tmp[0],permId_tmp.size());
-
-	delete bit_seq_build ; bit_seq_build=NULL;
-	//delete permId_tmp;  this array is not deleted as permutation points to it
 
 
 #if 0

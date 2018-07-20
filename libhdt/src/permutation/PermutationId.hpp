@@ -6,6 +6,8 @@
 
 namespace hdt{
 class ProgressListener;
+class PermutationMRRR;
+
 class PermutationId{
 
 	public:
@@ -14,7 +16,7 @@ class PermutationId{
 
 	private:
 		static const uint8_t TYPE_PERMUTATION;
-		cds_static::PermutationMRRR* permu;
+		PermutationMRRR* permu;
 
 };
 }

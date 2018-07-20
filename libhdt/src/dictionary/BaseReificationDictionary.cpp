@@ -6,8 +6,8 @@
 
 namespace hdt{
 
-BaseReificationDictionary::BaseReificationDictionary(){}
-BaseReificationDictionary::BaseReificationDictionary(HDTSpecification &spec){}
+BaseReificationDictionary::BaseReificationDictionary(){toGlobalID=roleIdToGlobalId; toRoleID=globalIdToRoleId;}
+BaseReificationDictionary::BaseReificationDictionary(HDTSpecification &spec){toGlobalID=roleIdToGlobalId; toRoleID=globalIdToRoleId;}
 
 BaseReificationDictionary::~BaseReificationDictionary(){}
 
@@ -491,5 +491,11 @@ void BaseReificationDictionary::save(std::ostream &output, ControlInformation &c
 	ci = ci_original;
 	g_dict->save(output,ci);
 }
+
+
+
+
+
+
 
 }

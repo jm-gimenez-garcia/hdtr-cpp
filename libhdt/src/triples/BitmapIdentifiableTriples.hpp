@@ -2,11 +2,12 @@
 #ifndef __HDT_BITMAPIDENTIFIABLETRIPLES_HPP__
 #define __HDT_BITMAPIDENTIFIABLETRIPLES_HPP__
 
+#include "TripleTranslator.hpp"
 #include "BitmapTriples.hpp"
 namespace hdt {
 class PermutationId;
 
-class BitmapIdentifiableTriples : public BitmapTriples {
+class BitmapIdentifiableTriples : public BitmapTriples, public TripleTranslator {
 public:
 	~BitmapIdentifiableTriples(){}
 	IteratorTripleID *search(TripleID &pattern);
