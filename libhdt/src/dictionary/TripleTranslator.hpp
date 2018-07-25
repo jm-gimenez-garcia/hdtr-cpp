@@ -3,7 +3,6 @@
 #include <functional>
 #include "HDTEnums.hpp"
 
-
 namespace hdt{
 
 class TripleTranslator{
@@ -18,12 +17,6 @@ class TripleTranslator{
 		void setToRoleIDFunction(std::function<unsigned int(unsigned int,TripleComponentRole)> fcn){toRoleID=fcn;}
 		virtual ~TripleTranslator(){}
 };
-
-
-
-
-
-
 
 }
 #endif
