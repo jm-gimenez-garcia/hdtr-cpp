@@ -1,7 +1,7 @@
 CXX := g++
 
 HDT_CPP_ROOT ?= /home/gt78520h/fslahc.ujmse.local_ZRR/hdt-2-cpp_github_merged
-LOCAL_LIB_DIR ?= /home/gt78520h/local
+LOCAL_LIB_DIR := $(HDT_CPP_ROOT)/extern_libraries
 
 
 LIBCDS_DIR := $(HDT_CPP_ROOT)/libhdt/src/libdcs
@@ -29,7 +29,7 @@ OBJ = $(patsubst %.cpp,%.o,$(SRC))
 EXE = $(patsubst %.cpp,%,$(SRC))
 
 
-CXXFLAGS := $(CXXFLAGS) -std=c++11 -I$(HDT_CPP_ROOT)/libhdt/include -I$(HDT_CPP_ROOT)/libhdt/src/dictionary -I$(HDT_CPP_ROOT)/libhdt/src/triples -I$(LIBCDS_DIR) -I$(LIBHDT_DIR) -I$(LIBLOGSEQ2_DIR) -I$(LIBUTIL_DIR) -I$(LIBRDF_DIR) -I$(LIBDICT_DIR) -I$(LIBTRIPLES_DIR) -I$(LIBCSD_DIR)/include 
+CXXFLAGS := $(CXXFLAGS) -std=c++11 -I$(LOCAL_LIB_DIR)/serd/include/serd-0 -I$(LOCAL_LIB_DIR)/zlib/include -I$(LOCAL_LIB_DIR)/local/kyotocabinet/include -I$(HDT_CPP_ROOT)/libhdt/include -I$(HDT_CPP_ROOT)/libhdt/src/dictionary -I$(HDT_CPP_ROOT)/libhdt/src/triples -I$(LIBCDS_DIR) -I$(LIBHDT_DIR) -I$(LIBLOGSEQ2_DIR) -I$(LIBUTIL_DIR) -I$(LIBRDF_DIR) -I$(LIBDICT_DIR) -I$(LIBTRIPLES_DIR) -I$(LIBCSD_DIR)/include 
 
 LDFLAGS := -L$(LOCAL_LIB_DIR)/serd/lib -L$(LOCAL_LIB_DIR)/zlib/lib -L$(LOCAL_LIB_DIR)/kyotocabinet/lib -L$(LIBCDS_DIR) -L$(LIBCSD_DIR) -L$(LIBHDT_DIR) -L$(LIBRDF_DIR) -L$(LIBLOGSEQ2_DIR) -L$(LIBUTIL_DIR) -L$(LIBDICT_DIR) -L$(LIBTRIPLES_DIR)  -Wl,-Bstatic -ldict -lcds -lcsd -lhdt -lrdf -llogseq2 -lutil  -ltriples -lgzstream -lkyotocabinet -Wl,-Bdynamic -lz -lserd-0 -lpthread 
 
