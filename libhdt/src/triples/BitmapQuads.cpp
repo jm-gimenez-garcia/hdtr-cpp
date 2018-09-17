@@ -1,4 +1,4 @@
-#include "BitmapIdentifiableTriples.hpp"
+#include "BitmapQuads.hpp"
 #include "SingleQuad.hpp"
 #include "PermutationMRRR.h"
 
@@ -6,7 +6,7 @@ using namespace std;
 
 namespace hdt{
 
-void BitmapIdentifiableTriples::load(ModifiableTriples &triples, ProgressListener *listener) 
+void BitmapQuads::load(ModifiableTriples &triples, ProgressListener *listener) 
 {
 	triples.sort(order);
 
@@ -14,7 +14,7 @@ void BitmapIdentifiableTriples::load(ModifiableTriples &triples, ProgressListene
 
 	bitmapY = new BitSequence375(triples.getNumberOfElements()/2);
 	bitmapZ = new BitSequence375(triples.getNumberOfElements());
-	bitmapId = new BitSequence375(triples.getNumberOfElements());
+	bitmapG = new BitSequence375(triples.getNumberOfElements());
 
 	//LogSequence2* permId_tmp = new LogSequence2(bits(triples.getNumberOfElements()),triples.getNumberOfElements());
 	std::vector<size_t> permId_tmp;
@@ -76,10 +76,10 @@ void BitmapIdentifiableTriples::load(ModifiableTriples &triples, ProgressListene
 		}
 		
 		if (gr == 0)
-			bitmapId->append(false);
+			bitmapG->append(false);
 		else
 		{
-			bitmapId->append(true);
+			bitmapG->append(true);
 			permId_tmp->push_back(gr);
 		}
 
@@ -107,7 +107,7 @@ void BitmapIdentifiableTriples::load(ModifiableTriples &triples, ProgressListene
 	arrayZ = vectorZ;
 
 
-	permId = new PermutationMRRR(permId_tmp, 8);
+	permutation = new PermutationMRRR(permId_tmp, 8);
 
 
 
@@ -122,7 +122,7 @@ void BitmapIdentifiableTriples::load(ModifiableTriples &triples, ProgressListene
 
 
 
-void BitmapIdentifiableTriples::save(std::ostream &output, ControlInformation &controlInformation, ProgressListener *listener)
+void BitmapQuads::save(std::ostream &output, ControlInformation &controlInformation, ProgressListener *listener)
 {
 	CHECK_BITMAPTRIPLES_INITIALIZED
 
@@ -132,35 +132,35 @@ void BitmapIdentifiableTriples::save(std::ostream &output, ControlInformation &c
 
 	IntermediateListener iListener(listener);
 	iListener.setRange(0,5);
-	iListener.notifyProgress(0, "BitmapIdentifiableTriples saving Bitmap Y");
+	iListener.notifyProgress(0, "BitmapQuads saving Bitmap Y");
 	bitmapY->save(output);
 
 	iListener.setRange(5,15);
-	iListener.notifyProgress(0, "BitmapIdentifiableTriples saving Bitmap Z");
+	iListener.notifyProgress(0, "BitmapQuads saving Bitmap Z");
 	bitmapZ->save(output);
 
 	iListener.setRange(15,30);
-	iListener.notifyProgress(0, "BitmapIdentifiableTriples saving Stream Y");
+	iListener.notifyProgress(0, "BitmapQuads saving Stream Y");
 	arrayY->save(output);
 
 	iListener.setRange(30,70);
-	iListener.notifyProgress(0, "BitmapIdentifiableTriples saving Stream Z");
+	iListener.notifyProgress(0, "BitmapQuads saving Stream Z");
 	arrayZ->save(output);
 
 	iListener.setRange(70,80);
-	iListener.notifyProgress(0, "BitmapIdentifiableTriples saving Bitmap Id");
-	bitmapId->save(output);
+	iListener.notifyProgress(0, "BitmapQuads saving Bitmap Id");
+	bitmapG->save(output);
 	
 	iListener.setRange(80,100);
-	iListener.notifyProgress(0, "BitmapIdentifiableTriples saving Permutation Id");
-	permId->save(output);
+	iListener.notifyProgress(0, "BitmapQuads saving Permutation Id");
+	permutation->save(output);
 
 }
-void BitmapIdentifiableTriples::load(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener = NULL)
+void BitmapQuads::load(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener = NULL)
 {
 	std::string format = controlInformation.getFormat();
 	if(format!=getType()) {
-		throw std::runtime_error("Trying to read a BitmapIdentifiableTriples but the data is not BitmapIdentifiableTriples");
+		throw std::runtime_error("Trying to read a BitmapQuads but the data is not BitmapQuads");
 	}
 
 	order = (TripleComponentOrder) controlInformation.getUint("order");
@@ -168,46 +168,46 @@ void BitmapIdentifiableTriples::load(std::istream &input, ControlInformation &co
 	IntermediateListener iListener(listener);
 
 	iListener.setRange(0,5);
-	iListener.notifyProgress(0, "BitmapIdentifiableTriples loading Bitmap Y");
+	iListener.notifyProgress(0, "BitmapQuads loading Bitmap Y");
 	bitmapY = BitSequence375::load(input);
 	if(bitmapY==NULL){
 		throw std::runtime_error("Could not read bitmapY.");
 	}
 
 	iListener.setRange(5,10);
-	iListener.notifyProgress(0, "BitmapIdentifiableTriples loading Bitmap Z");
+	iListener.notifyProgress(0, "BitmapQuads loading Bitmap Z");
 	bitmapZ = BitSequence375::load(input);
 	if(bitmapZ==NULL){
 		throw std::runtime_error("Could not read bitmapZ.");
 	}
 
 	iListener.setRange(10,20);
-	iListener.notifyProgress(0, "BitmapIdentifiableTriples loading Array Y");
+	iListener.notifyProgress(0, "BitmapQuads loading Array Y");
 	delete arrayY;
 	arrayY = IntSequence::getArray(input);
 	arrayY->load(input);
 
 	iListener.setRange(20,35);
-	iListener.notifyProgress(0, "BitmapIdentifiableTriples loading Array Z");
+	iListener.notifyProgress(0, "BitmapQuads loading Array Z");
 	delete arrayZ;
 	arrayZ = IntSequence::getArray(input);
     arrayZ->load(input);
 
 	iListener.setRange(35,40);
 	iListener.notifyProgress(0, "BitmapTriples loading Bitmap Id");
-	delete bitmapId;
-	bitmapId = BitSequence375::load(input);
-	if(bitmapId==NULL){
+	delete bitmapG;
+	bitmapG = BitSequence375::load(input);
+	if(bitmapG==NULL){
 		throw std::runtime_error("Could not read Bitmap Id.");
 	}
 
 
 	iListener.setRange(40,50);
 	iListener.notifyProgress(0, "BitmapTriples loading Permutation");
-	delete permId;
-	permId->load(input);
-	if(permId==NULL){
-		throw std::runtime_error("Could not read permId.");
+	delete permutation;
+	permutation->load(input);
+	if(permutation==NULL){
+		throw std::runtime_error("Could not read permutation.");
 	}
 
 }

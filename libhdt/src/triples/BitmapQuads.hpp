@@ -7,17 +7,16 @@
 namespace hdt {
 class PermutationId;
 
-class BitmapIdentifiableTriples : public BitmapTriples, public TripleTranslator {
+class BitmapQuads : public BitmapTriples, public TripleTranslator {
 public:
-	~BitmapIdentifiableTriples(){}
+	~BitmapQuads(){}
 	IteratorTripleID *search(TripleID &pattern);
 	void load(ModifiableTriples &triples, ProgressListener *listener);
 	void save(std::ostream &output, ControlInformation &controlInformation, ProgressListener *listener);
 	
 private:
-	BitSequence375* bitmapId;
-	PermutationId* permId;
-	//permutation* permId;
+	BitSequence375* bitmapG;
+	Permutation* permutation;
 
 
 };
