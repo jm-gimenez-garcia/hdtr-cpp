@@ -50,6 +50,8 @@ void BasicModifiableHDT::createComponents() {
 	header = new PlainHeader();
 	dictionary = new TriplesPlainDictionary();
 	triples = new TriplesList();
+	triples->setToGlobalIDFunction(dictionary->getToGlobalIDFunction());
+	triples->setToRoleIDFunction(dictionary->getToRoleIDFunction());
 }
 
 

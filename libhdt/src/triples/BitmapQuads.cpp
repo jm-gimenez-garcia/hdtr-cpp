@@ -6,7 +6,7 @@ using namespace std;
 
 namespace hdt{
 
-void BitmapQuads::load(ModifiableTriples &triples, ProgressListener *listener) 
+void BitmapQuads::load(ModifiableTriples &triples, ProgressListener *listener/*=NULL*/) 
 {
 	triples.sort(order);
 
@@ -122,7 +122,7 @@ void BitmapQuads::load(ModifiableTriples &triples, ProgressListener *listener)
 
 
 
-void BitmapQuads::save(std::ostream &output, ControlInformation &controlInformation, ProgressListener *listener)
+void BitmapQuads::save(std::ostream &output, ControlInformation &controlInformation, ProgressListener *listener/*=NULL*/)
 {
 	CHECK_BITMAPTRIPLES_INITIALIZED
 
@@ -156,7 +156,7 @@ void BitmapQuads::save(std::ostream &output, ControlInformation &controlInformat
 	permutation->save(output);
 
 }
-void BitmapQuads::load(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener = NULL)
+void BitmapQuads::load(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener/*=NULL*/)
 {
 	std::string format = controlInformation.getFormat();
 	if(format!=getType()) {
@@ -211,6 +211,28 @@ void BitmapQuads::load(std::istream &input, ControlInformation &controlInformati
 	}
 
 }
+
+
+IteratorTripleID *BitmapQuads::search(TripleID& pattern)
+{
+	QuadId patt = pattern.to_QuadId();
+	if(!patt.hasGraph())
+		return BitmapTriples::search(pattern.to_TripleID());
+	else
+	{
+		if(patt.getGraph()==0)
+		{
+			return new BitmapQuadIteratorWrapper(this, BitmapTriples::search(pattern));
+		}
+		else
+		{
+			return new BitmapQuadIteratorSingle(this, patt); 
+		}
+	}
+}
+
+
+
 
 }
 

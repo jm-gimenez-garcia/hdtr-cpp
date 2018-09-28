@@ -131,6 +131,11 @@ public:
 	string getType() const;
 	TripleComponentOrder getOrder() const;
 
+
+	AdjacencyList getAdjY(){return AdjacencyList(arrayY, bitmapY);}
+	AdjacencyList getAdjZ(){return AdjacencyList(arrayZ, bitmapZ);}
+
+
 	friend class BitmapTriplesSearchIterator;
 	friend class MiddleWaveletIterator;
 	friend class IteratorY;

@@ -90,6 +90,7 @@ public:
 
 
 	virtual QuadID to_QuadID() const ;
+	virtual TripleID to_TripleID() const ;
 	QuadID to_QuadID_pattern() const ;
 
 	/**
@@ -338,6 +339,7 @@ public:
 	}
 
 	virtual QuadString to_QuadString()const;
+	virtual QuadString to_TripleString()const;
 	virtual QuadString to_QuadString_pattern()const;
 
 

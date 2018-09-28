@@ -138,6 +138,8 @@ void BasicHDT::createComponents() {
 	} else {
 		triples = new BitmapTriples(spec);
 	}
+	triples->setToGlobalIDFunction(dictionary->getToGlobalIDFunction());
+	triples->setToRoleIDFunction(dictionary->getToRoleIDFunction());
 }
 
 void BasicHDT::deleteComponents() {
@@ -429,6 +431,8 @@ void BasicHDT::loadFromRDF(const char *fileName, string baseUri, RDFNotation not
 		iListener.setRange(50,99);
 		loadTriples(fileName, baseUri.c_str(), notation, &iListener);
 
+		triples->setToGlobalIDFunction(dictionary->getToGlobalIDFunction());
+		triples->setToRoleIDFunction(dictionary->getToRoleIDFunction());
 		fillHeader(baseUri);
 
 	}catch (std::exception& e) {
@@ -666,6 +670,9 @@ void BasicHDT::loadFromSeveralHDT(const char **fileNames, size_t numFiles, strin
 
 		iListener.setRange(50,99);
 		loadTriplesFromHDTs(fileNames, numFiles, baseUri.c_str(), &iListener);
+		
+		triples->setToGlobalIDFunction(dictionary->getToGlobalIDFunction());
+		triples->setToRoleIDFunction(dictionary->getToRoleIDFunction());
 
 		fillHeader(baseUri);
 
@@ -773,6 +780,8 @@ void BasicHDT::loadFromHDT(std::istream & input, ProgressListener *listener)
 	delete triples;
 	triples = HDTFactory::readTriples(controlInformation);
 	triples->load(input, controlInformation, &iListener);
+	triples->setToGlobalIDFunction(dictionary->getToGlobalIDFunction());
+	triples->setToRoleIDFunction(dictionary->getToRoleIDFunction());
     } catch (std::exception& e) {
         // cerr << "Exception loading HDT: " << ex;
         deleteComponents();
@@ -866,6 +875,8 @@ size_t BasicHDT::loadMMap(unsigned char *ptr, unsigned char *ptrMax, ProgressLis
     delete triples;
     triples = HDTFactory::readTriples(controlInformation);
     count += triples->load(&ptr[count], ptrMax,  &iListener);
+	triples->setToGlobalIDFunction(dictionary->getToGlobalIDFunction());
+	triples->setToRoleIDFunction(dictionary->getToRoleIDFunction());
 
 	return count;
 }
