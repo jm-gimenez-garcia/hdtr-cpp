@@ -1,7 +1,13 @@
 #ifndef BITMAPQUADITERATORSINGLE_HPP_
 #define BITMAPQUADITERATORSINGLE_HPP_
 
+#include "Iterator.hpp"
+#include "SingleQuad.hpp"
+
 namespace hdt{
+class BitmapQuads;
+class Permutation;
+class BitSequence375;
 
 class BitmapQuadIteratorSingle : public IteratorTripleID{
 	private:
@@ -41,15 +47,6 @@ inline bool BitmapQuadIteratorSingle::canGoTo()
 
 inline size_t BitmapQuadIteratorSingle::estimatedNumResults()
 {return (has_next || has_previous) ? 1 : 0;}
-
-inline ResultEstimationType BitmapQuadIteratorSingle::numResultEstimation()
-{return ResultEstimationType::EXACT;}
-
-inline TripleComponentOrder ResultEstimationType::getOrder()
-{return quads.getOrder();}
-
-
-
 
 
 }

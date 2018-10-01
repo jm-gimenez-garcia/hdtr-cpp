@@ -1,13 +1,18 @@
 #ifndef BITMAPQUADITERATORWRAPPER_HPP
 #define BITMAPQUADITERATORWRAPPER_HPP
 
+#include "Iterator.hpp"
+
 namespace hdt{
+class BitmapQuads;
+class Permutation;
+class BitSequence375;
+class TripleID;
 
 class BitmapQuadIteratorWrapper : public IteratorTripleID{
 	private:
 		IteratorTripleID* it;
 		BitmapQuads* quads;
-		AdjacencyList adjY, adjZ;
 		Permutation* perm;
 		BitSequence375* bitmapPerm;
 		TripleID* previousTriple;

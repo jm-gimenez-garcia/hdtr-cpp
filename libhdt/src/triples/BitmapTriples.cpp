@@ -41,7 +41,6 @@
 
 namespace hdt {
 
-#define CHECK_BITMAPTRIPLES_INITIALIZED if(bitmapY==NULL || bitmapZ==NULL){	throw std::runtime_error("Accessing uninitialized BitmapTriples"); }
 
 BitmapTriples::BitmapTriples() : order(SPO) {
 	string typey="";
@@ -920,5 +919,18 @@ size_t BitmapTriples::size() const
 	}
 	return arrayY->size()+arrayZ->size()+bitmapY->getSizeBytes()+bitmapZ->getSizeBytes();
 }
+
+void BitmapTriples::initTripleIDFromPos(TripleID* tid_ptr, const unsigned int pos)const{
+	const unsigned int posY = getAdjZ().findListIndex(pos);
+
+	const unsigned int obj = getAdjZ().get(pos);
+	const unsigned int pred = getAdjY().get(posY);
+	const unsigned int subj = getAdjY().findListIndex(posY) + 1;
+	if(tid_ptr)
+		delete tid_ptr;
+	tid_ptr = new TripleID();
+	tid_ptr->setAll(subj,pred,obj);
+}
+
 
 } // namespace hdt

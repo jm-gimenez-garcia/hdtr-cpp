@@ -43,6 +43,8 @@
 
 #include "TripleOrderConvert.hpp"
 
+#define CHECK_BITMAPTRIPLES_INITIALIZED if(bitmapY==NULL || bitmapZ==NULL){	throw std::runtime_error("Accessing uninitialized BitmapTriples"); }
+
 namespace hdt {
 
 class PredicateIndex;
@@ -79,7 +81,7 @@ public:
 	 * @param triple
 	 * @return
 	 */
-	IteratorTripleID *search(TripleID &triple);
+	virtual IteratorTripleID *search(TripleID &triple);
 
 	/**
 	 * Calculates the cost to retrieve a specific pattern
@@ -104,7 +106,7 @@ public:
 	 * @param output
 	 * @return
 	 */
-	void save(std::ostream &output, ControlInformation &controlInformation, ProgressListener *listener = NULL);
+	virtual void save(std::ostream &output, ControlInformation &controlInformation, ProgressListener *listener = NULL);
 
 	/**
 	 * Loads triples from a file
@@ -112,11 +114,13 @@ public:
 	 * @param input
 	 * @return
 	 */
-	void load(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener = NULL);
+	virtual void load(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener = NULL);
+
+	virtual void initTripleIDFromPos(TripleID* tid_ptr, const unsigned int pos)const;
 
 	size_t load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener=NULL);
 
-	void load(ModifiableTriples &triples, ProgressListener *listener = NULL);
+	virtual void load(ModifiableTriples &triples, ProgressListener *listener = NULL);
 
 	void generateIndex(ProgressListener *listener);
 	void generateIndexFast(ProgressListener *listener);
@@ -132,8 +136,8 @@ public:
 	TripleComponentOrder getOrder() const;
 
 
-	AdjacencyList getAdjY(){return AdjacencyList(arrayY, bitmapY);}
-	AdjacencyList getAdjZ(){return AdjacencyList(arrayZ, bitmapZ);}
+	AdjacencyList getAdjY()const{return AdjacencyList(arrayY, bitmapY);}
+	AdjacencyList getAdjZ()const{return AdjacencyList(arrayZ, bitmapZ);}
 
 
 	friend class BitmapTriplesSearchIterator;

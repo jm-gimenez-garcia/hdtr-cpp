@@ -1,15 +1,17 @@
 #include "BitmapQuadIteratorWrapper.hpp"
+#include "BitmapQuads.hpp"
+#include "Permutation.hpp"
+#include "BitSequence375.h"
+#include "SingleQuad.hpp"
 
 namespace hdt{
 
 BitmapQuadIteratorWrapper::BitmapQuadIteratorWrapper(BitmapQuads* bmq, IteratorTripleID* it_tid):
 	it(it_tid),
 	quads(bmq),
-	adjY(bmq->adjY),
-	adjZ(bmq->adjZ),
-	perm(bmq->permutation),
-	bitmapPerm(bmq->bitmapG),
-	previousTriple(NULL);
+	perm(bmq->getPermutationPtr()),
+	bitmapPerm(bmq->getBitmapPermPtr()),
+	previousTriple(NULL){}
 
 BitmapQuadIteratorWrapper::~BitmapQuadIteratorWrapper(){
 	if (previousTriple)
@@ -21,12 +23,12 @@ BitmapQuadIteratorWrapper::~BitmapQuadIteratorWrapper(){
 }
 
 TripleID* BitmapQuadIteratorWrapper::next(){
-	TripleID tid(it->next());
-	return new QuadID(tid, getGraphID(tid));
+	TripleID* tid(it->next());
+	return new QuadID(*tid, getGraphID(*tid));
 }
 TripleID* BitmapQuadIteratorWrapper::previous(){
-	TripleID tid(it->previous());
-	return new QuadID(tid, getGraphID(tid));
+	TripleID* tid(it->previous());
+	return new QuadID(*tid, getGraphID(*tid));
 }
 
 
@@ -47,12 +49,14 @@ unsigned int BitmapQuadIteratorWrapper::getGraphIDNewTriple(const TripleID& tid)
 	const unsigned int pred = tid.getPredicate();
 	const unsigned int obj = tid.getObject();
 
-	predPos = adjY->find(subj-1, pred);
-	objPos = adjZ->find(predPos, obj);
+	predPos = quads->getAdjY().find(subj-1, pred);
+	objPos = quads->getAdjZ().find(predPos, obj);
 
-	TripleID tid_prev;
 	if(objPos != 0){
-		while(bitmap.get(--objPos)!=tid);
+		TripleID* tid_ptr;
+		do{
+			quads->initTripleIDFromPos(tid_ptr,--objPos);
+		}while(*tid_ptr != tid);
 		objPos++;
 	}
 	if(bitmapPerm->access(objPos))

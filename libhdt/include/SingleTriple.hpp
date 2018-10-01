@@ -334,13 +334,13 @@ public:
 		return *this;
 	}
 
-	~TripleString() {
+	virtual ~TripleString() {
 
 	}
 
 	virtual QuadString to_QuadString()const;
-	virtual QuadString to_TripleString()const;
-	virtual QuadString to_QuadString_pattern()const;
+	virtual TripleString to_TripleString()const;
+	QuadString to_QuadString_pattern()const;
 
 
 

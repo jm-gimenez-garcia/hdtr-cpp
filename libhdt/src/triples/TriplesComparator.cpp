@@ -30,6 +30,7 @@
  */
 #include <stdexcept>
 #include "TriplesComparator.hpp"
+#include "SingleQuad.hpp"
 
 namespace hdt {
 

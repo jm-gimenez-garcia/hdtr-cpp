@@ -36,6 +36,7 @@
 
 namespace hdt {
 class TripleID;
+class QuadID;
 
 class TriplesComparator {
 
@@ -47,6 +48,7 @@ class TriplesComparator {
 		TriplesComparator(TripleComponentOrder compOrder);
 		virtual ~TriplesComparator();
 		bool operator()(const TripleID &a, const TripleID &b);
+		bool operator()(const QuadID &a, const QuadID &b);
         void setOrder(TripleComponentOrder compOrder);
 
 }; //TriplesComparator{}

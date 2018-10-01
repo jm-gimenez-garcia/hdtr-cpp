@@ -91,15 +91,9 @@ public:
 
 	~QuadID() {}
 
-	QuadID to_QuadID() const {
-		return *this;
-	}
-	TripleID to_TripleID() const {
-		if(!has_graph)
-			return TripleID(subject,predicate,object);
-		else
-			throw std::runtime_error("This QuadID is not a TripleID (there is a graph). Unable to do a lossless conversion from QuadID to TripleID.");
-	}
+	QuadID to_QuadID() const;
+
+	TripleID to_TripleID() const;
 	
 	bool hasGraph()const{return has_graph;}
 
@@ -347,13 +341,9 @@ public:
 	~QuadString() {}
 
 	// returns a copy of the object
-	QuadString to_QuadString()const{return *this;}
-	TripleString to_TripleString()const{
-		if(!has_graph)
-			return TripleString(subject,predicate,object);
-		else
-			throw std::runtime_error("This QuadString is not a TripleString (there is a graph). Unable to do a lossless conversion from QuadString to TripleString.");
-	}
+	QuadString to_QuadString()const;
+
+	TripleString to_TripleString()const;
 
 	virtual bool hasGraph()const{return has_graph;}
 

@@ -1,7 +1,19 @@
 #include "BitmapQuadIteratorSingle.hpp"
 #include "TripleOrderConvert.hpp"
 
+#include "HDTEnums.hpp"
+#include "BitmapQuads.hpp"
+#include "Permutation.hpp"
+#include "BitSequence375.h"
+
 namespace hdt{
+
+ResultEstimationType BitmapQuadIteratorSingle::numResultEstimation()
+{return ResultEstimationType::EXACT;}
+
+TripleComponentOrder BitmapQuadIteratorSingle::getOrder()
+{return quads->getOrder();}
+
 
 BitmapQuadIteratorSingle::BitmapQuadIteratorSingle(BitmapQuads* bmq, QuadID patt):
 	quads(bmq),
@@ -40,8 +52,6 @@ void BitmapQuadIteratorSingle::goToStart(){
 	const int patZ = pattern.getObject();
 	const int patG = pattern.getGraph();
 
-	const AdjencyList adjY = AdjencyList();
-
 	const unsigned int numReifiedTriple = perm->revpi(patG);
 	const unsigned int posZ = bitmapPerm->select1(numReifiedTriple+1);
 	obj = quads->getAdjZ().get(posZ);
@@ -57,7 +67,16 @@ void BitmapQuadIteratorSingle::goToStart(){
 			has_next = false;
 		}
 		else
-			has_next = true;
+		{
+			subj = quads->getAdjY().findListIndex(posY) + 1;
+			if (patX != 0 && patX != subj) 
+			{
+				subj = pred = obj = 0;
+				has_next = false;
+			}
+			else
+				has_next = true;
+		}
 	}
 }
 

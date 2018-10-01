@@ -41,6 +41,7 @@
 #include <iostream>
 #include <iterator>
 #include <vector>
+#include "TripleTranslator.hpp"
 
 namespace hdt {
 
@@ -50,7 +51,7 @@ class ModifiableTriples;
  * Interface that defines readonly access to a set of triples. It allows loading a saving from a file.
  */
 
-class Triples {
+class Triples : public TripleTranslator {
 public:
 
 	virtual ~Triples() {}

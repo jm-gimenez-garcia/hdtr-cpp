@@ -6,7 +6,7 @@ QuadID TripleID::to_QuadID() const {
 TripleID TripleID::to_TripleID() const {
 	return *this;
 }
- QuadID TripleID::to_QuadID_pattern() const {
+QuadID TripleID::to_QuadID_pattern() const {
 	return QuadID(*this,0);
 }
 

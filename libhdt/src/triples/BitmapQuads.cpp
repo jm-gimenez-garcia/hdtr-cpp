@@ -1,6 +1,12 @@
 #include "BitmapQuads.hpp"
 #include "SingleQuad.hpp"
-#include "PermutationMRRR.h"
+#include "PermutationMRRR.hpp"
+#include "BitSequence375.h"
+#include "SingleQuad.hpp"
+#include "Iterator.hpp"
+#include "BitmapQuadIteratorWrapper.hpp"
+#include "BitmapQuadIteratorSingle.hpp"
+#include "TripleTranslatorIteratorWrapper.hpp"
 
 using namespace std;
 
@@ -33,10 +39,14 @@ void BitmapQuads::load(ModifiableTriples &triples, ProgressListener *listener/*=
 
 		swapComponentOrder(triple, SPO, order);
 
-		x = toRoleId(triple->getSubject(), SUBJECT);
-		y = toRoleId(triple->getPredicate(), PREDICATE);
-		z = toRoleId(triple->getObject(), OBJECT);
-		gr = toRoleId(triple->getGraph(), GRAPH); // returns 0 if triple is a TripleID
+		x = toRoleID(triple->getSubject(), SUBJECT);
+		y = toRoleID(triple->getPredicate(), PREDICATE);
+		z = toRoleID(triple->getObject(), OBJECT);
+		QuadID qid(triple->to_QuadID());
+		if (qid.hasGraph())
+			gr = toRoleID(qid.getGraph(), GRAPH); // returns 0 if triple is a TripleID
+		else
+			gr = 0;
 
 
 		if(x==0 || y==0 || z==0) {
@@ -80,7 +90,7 @@ void BitmapQuads::load(ModifiableTriples &triples, ProgressListener *listener/*=
 		else
 		{
 			bitmapG->append(true);
-			permId_tmp->push_back(gr);
+			permId_tmp.push_back(gr);
 		}
 
 		lastX = x;
@@ -215,23 +225,37 @@ void BitmapQuads::load(std::istream &input, ControlInformation &controlInformati
 
 IteratorTripleID *BitmapQuads::search(TripleID& pattern)
 {
-	QuadId patt = pattern.to_QuadId();
+	IteratorTripleID* tid_it;
+	QuadID patt = pattern.to_QuadID();
 	if(!patt.hasGraph())
-		return BitmapTriples::search(pattern.to_TripleID());
+		tid_it = BitmapTriples::search(pattern);
 	else
 	{
 		if(patt.getGraph()==0)
 		{
-			return new BitmapQuadIteratorWrapper(this, BitmapTriples::search(pattern));
+			tid_it = new BitmapQuadIteratorWrapper(this, BitmapTriples::search(pattern));
 		}
 		else
 		{
-			return new BitmapQuadIteratorSingle(this, patt); 
+			tid_it = new BitmapQuadIteratorSingle(this, patt); 
 		}
 	}
+	return new TripleTranslatorIteratorWrapper(this, tid_it);
 }
 
-
+//equivalent of get method in java
+void BitmapQuads::initTripleIDFromPos(TripleID* tid_ptr, const unsigned int pos)const{
+	const unsigned int g = bitmapG->access(pos) ? permutation->pi(bitmapG->rank1(pos)) : 0;
+	TripleID* tid_ptr_tmp;
+	BitmapTriples::initTripleIDFromPos(tid_ptr_tmp,pos);
+	if(tid_ptr)
+		delete tid_ptr;
+	if(g==0)
+		tid_ptr = new TripleID(*tid_ptr_tmp);
+	else
+		tid_ptr = new QuadID(*tid_ptr_tmp,g);
+	delete tid_ptr_tmp;
+}
 
 
 }
