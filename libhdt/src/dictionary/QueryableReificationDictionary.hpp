@@ -24,6 +24,7 @@ public:
 	~QueryableReificationDictionary();
 	//from Dictionary:
 	std::string getType()const;
+	void populateHeader(Header &header, std::string rootNode);
 
 	const TriplesDictionary* getTriplesDictionaryPtr()const;
 	const GraphsDictionary* getGraphsDictionaryPtr()const;

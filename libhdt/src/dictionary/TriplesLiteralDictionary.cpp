@@ -54,7 +54,7 @@ unsigned int TriplesLiteralDictionary::stringToId(const std::string &key, const 
 		unsigned int ret;
 		ret = predicates->locate((const unsigned char *) key.c_str(), key.length());
 		if (ret != 0) 
-			return BaseLiteralDictionary::getGlobalId(ret, NOT_SHARED_PREDICATE);
+			return getGlobalId(ret, NOT_SHARED_PREDICATE);
 	}
     return 0;
 }

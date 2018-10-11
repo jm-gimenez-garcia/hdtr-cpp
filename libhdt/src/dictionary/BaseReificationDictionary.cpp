@@ -376,7 +376,7 @@ unsigned int BaseReificationDictionary::stringToId(const std::string &key, Tripl
                 	ret = getGraphsDictionaryPtr()->stringToId(key,position );
 				break;
         }
-		
+	return ret;	
 }
 
 
@@ -437,10 +437,6 @@ void BaseReificationDictionary::import(BaseReificationDictionary *other, Progres
 	//Dictionary* grDict = other->getGraphsDictionaryPtr();
 	getGraphsDictionaryPtr()->import(other->getGraphsDictionaryPtr());
 }
-
-
-void BaseReificationDictionary::populateHeader(Header &header, std::string rootNode)
-{throw std::logic_error("Not implemented");}
 
 
 

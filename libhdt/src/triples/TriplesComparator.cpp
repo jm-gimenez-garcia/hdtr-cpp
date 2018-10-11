@@ -134,8 +134,9 @@ bool TriplesComparator::operator()(const QuadID &a, const QuadID &b)
 	}
 	// Graphs
 
-	unsigned int g1 = a.getGraph();
-	unsigned int g2 = b.getGraph();
+	unsigned int g1 = (a.hasGraph()) ? g1 = a.getGraph() : 0;
+	unsigned int g2 = (b.hasGraph()) ? g2 = b.getGraph() : 0;
+
 
 	// Might as well use TripleID::compare()... right?
 	// Actual comparison

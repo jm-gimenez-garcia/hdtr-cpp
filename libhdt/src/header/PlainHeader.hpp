@@ -32,10 +32,14 @@
 #ifndef PLAINHEADER_H_
 #define PLAINHEADER_H_
 
-#include <HDT.hpp>
-#include <Header.hpp>
+#include "Header.hpp"
+#include "HDTSpecification.hpp"
+#include "SingleTriple.hpp"
+#include "Iterator.hpp"
 
 namespace hdt {
+class ProgressListener;
+class ControlInformation;
 
 class PlainHeader : public Header {
 private:

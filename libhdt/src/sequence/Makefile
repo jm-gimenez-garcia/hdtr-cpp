@@ -1,11 +1,11 @@
 CXX=g++
 
-CXXFLAGS := $(CXXFLAGS) -std=c++11 -I. -I../../include
+CXXFLAGS := $(CXXFLAGS) -std=c++11 -I. -I../../include -I../../../libcds/include
 
-SRC := ./LogSequence2.cpp
+SRC := $(wildcard ./*.cpp)
 OBJ := $(patsubst %.cpp,%.o,$(SRC)) 
 
-STATIC_LIB := liblogseq2.a
+STATIC_LIB := libsequence.a
 
 all: $(STATIC_LIB)
 

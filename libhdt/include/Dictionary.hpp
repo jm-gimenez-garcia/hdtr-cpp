@@ -36,6 +36,7 @@
 #include <vector>
 #include "HDTEnums.hpp"
 #include "SingleTriple.hpp"
+#include "SingleQuad.hpp"
 
 
 namespace std{
@@ -105,6 +106,32 @@ public:
 	    ts.setSubject(idToString(tripleID.getSubject(), SUBJECT));
     	ts.setPredicate(idToString(tripleID.getPredicate(), PREDICATE));
     	ts.setObject(idToString(tripleID.getObject(), OBJECT));
+    }
+
+    /**
+    * Convert a QuadString object to a QuadID, using the dictionary to perform the conversion.
+    * If any of the components do not exist in the dictionary, it throws an exception.
+    * @param quadString QuadString to be converted.
+    * @return resulting QuadID
+    */
+    void quadStringtoQuadID(const QuadString &quadString, QuadID &qid) const{
+    	qid.setSubject(stringToId(quadString.getSubject(), SUBJECT));
+    	qid.setPredicate(stringToId(quadString.getPredicate(), PREDICATE));
+    	qid.setObject(stringToId(quadString.getObject(), OBJECT));
+    	qid.setGraph(stringToId(quadString.getGraph(), GRAPH));
+    }
+
+    /**
+    * Convert a TripleID object to a TripleString, using the dictionary to perform the conversion.
+    * If any of the components do not exist in the dictionary, it throws an exception.
+    * @param tripleID TripleID to be converted.
+    * @return resultant TripleSTring
+    */
+    void quadIDtoQuadString(QuadID& qid, QuadString& qs) {
+	    qs.setSubject(idToString(qid.getSubject(), SUBJECT));
+    	qs.setPredicate(idToString(qid.getPredicate(), PREDICATE));
+    	qs.setObject(idToString(qid.getObject(), OBJECT));
+    	qs.setGraph(idToString(qid.getGraph(), GRAPH));
     }
 
     /** Number of total elements of the dictionary

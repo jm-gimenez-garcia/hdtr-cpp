@@ -107,12 +107,13 @@ public:
 		return graph;
 	}
 
+
 	/**
 	 * Set the graph component of this QuadID.
 	 * @return
 	 */
-	void setIdentifier(const unsigned int ident) {
-		graph = ident;
+	void setGraph(const unsigned int gr) {
+		graph = gr;
 		has_graph = true;
 	}
 
@@ -369,8 +370,8 @@ public:
 	 * Set Identifier.
 	 * @param graph
 	 */
-	void setIdentifier(std::string& ident) {
-		graph = ident;
+	void setGraph(const std::string& gr) {
+		graph = gr;
 		has_graph = true;
 	}
 

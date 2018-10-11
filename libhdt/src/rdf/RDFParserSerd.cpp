@@ -218,7 +218,10 @@ void RDFParserSerd::doParse(const char *fileName, const char *baseUri, RDFNotati
 		if(in_fd==NULL) {
 			throw ParseException("Could not open input file for parsing");
 		}
-		serd_reader_read_file_handle(reader, in_fd, (const uint8_t *)fileName);
+		SerdStatus stat = serd_reader_read_file_handle(reader, in_fd, (const uint8_t *)fileName);
+		if (stat!=SERD_SUCCESS){
+			throw std::logic_error("Error when calling serd_reader_read_file_handle");
+		}
 		fclose(in_fd);
 	}
 

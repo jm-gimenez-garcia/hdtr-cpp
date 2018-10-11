@@ -38,5 +38,9 @@ GraphsDictionary* QueryableReificationDictionary::getGraphsDictionaryPtr()
 std::string QueryableReificationDictionary::getType()const
 {return HDTVocabulary::DICTIONARY_TYPE_QUERYABLEREIFICATION;}
 
+void QueryableReificationDictionary::populateHeader(Header &header, std::string rootNode){
+	header.insert(rootNode, HDTVocabulary::DICTIONARY_TYPE, HDTVocabulary::DICTIONARY_TYPE_QUERYABLEREIFICATION);
+}
+
 
 }

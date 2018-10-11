@@ -30,6 +30,8 @@
  */
 #include <stdexcept>
 #include "AdjacencyList.hpp"
+#include "IntSequence.hpp"
+#include "../bitsequence/BitSeq.h"
 
 namespace hdt {
 

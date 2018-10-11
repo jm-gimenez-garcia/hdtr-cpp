@@ -35,7 +35,6 @@
 #include <vector>
 #include <iostream>
 
-#include <HDTListener.hpp>
 
 #include <Iterator.hpp>
 
@@ -67,6 +66,7 @@ public:
 };
 */
 
+class ProgressListener;
 
 class IntSequence {
 

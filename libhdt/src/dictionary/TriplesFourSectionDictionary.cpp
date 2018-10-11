@@ -53,7 +53,7 @@ unsigned int TriplesFourSectionDictionary::stringToId(const string &key, const T
         if(key.length()==0)
 			return 0;
 		ret = predicates->locate((const unsigned char *)key.c_str(), key.length());
-		return (ret==0) ? 0 :  BaseFourSectionDictionary::getGlobalId(ret, NOT_SHARED_PREDICATE);
+		return (ret==0) ? 0 : getGlobalId(ret, NOT_SHARED_PREDICATE);
 	}
 }
 

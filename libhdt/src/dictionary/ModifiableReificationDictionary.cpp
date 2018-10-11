@@ -270,4 +270,7 @@ void ModifiableReificationDictionary::split(ProgressListener *listener) {
 std::string ModifiableReificationDictionary::getType()const
 {return HDTVocabulary::DICTIONARY_TYPE_MODIFIABLEREIFICATION;}
 
+void ModifiableReificationDictionary::populateHeader(Header &header, std::string rootNode){
+	header.insert(rootNode, HDTVocabulary::DICTIONARY_TYPE, HDTVocabulary::DICTIONARY_TYPE_MODIFIABLEREIFICATION);
+}
 }

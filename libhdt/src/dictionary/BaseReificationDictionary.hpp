@@ -35,7 +35,7 @@ public:
 	unsigned int getMaxID()const;
 	void import(BaseReificationDictionary *other, ProgressListener *listener=NULL);
 	void import(Dictionary *other, ProgressListener *listener=NULL);
-	void populateHeader(Header &header, std::string rootNode);
+	virtual void populateHeader(Header &header, std::string rootNode)=0;
 	void save(std::ostream &output, ControlInformation &ci, ProgressListener *listener = NULL);
 	void load(std::istream &input, ControlInformation &ci, ProgressListener *listener = NULL);
 	size_t load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener=NULL);

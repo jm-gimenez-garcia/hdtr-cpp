@@ -33,10 +33,10 @@
 #ifndef ADJACENCYLIST_HPP_
 #define ADJACENCYLIST_HPP_
 
-#include "IntSequence.hpp"
-#include "../bitsequence/BitSeq.h"
 
 namespace hdt {
+class IntSequence;
+class BitSeq;
 
 class AdjacencyList {
 private:

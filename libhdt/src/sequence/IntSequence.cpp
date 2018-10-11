@@ -35,6 +35,7 @@
 #include "WaveletSequence.hpp"
 #endif
 
+#include <HDTListener.hpp>
 #include "LogSequence2.hpp"
 #include "ArraySequence.hpp"
 

@@ -44,7 +44,7 @@ unsigned int TriplesKyotoDictionary::stringToId(const std::string &key, const Tr
 		if(key.length()==0 || key.at(0) == '?') 
 			return 0;
 		if(predicates.get((const char *)key.c_str(),(size_t)key.length(), (char *) &ret, sizeof(ret)))
-			return BaseKyotoDictionary::getGlobalId(ret, NOT_SHARED_PREDICATE);
+			return getGlobalId(ret, NOT_SHARED_PREDICATE);
 		else
 			return 0;
 	}

@@ -16,3 +16,6 @@ $(LIBCSD): $(OBJ)
 
 .o: .cpp
 	$(CXX) $(CXXFLAGS) $^ -o $@
+
+clean:
+	rm -f $(OBJ) $(LIBCSD)

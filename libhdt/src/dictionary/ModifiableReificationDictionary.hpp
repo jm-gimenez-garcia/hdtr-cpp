@@ -29,6 +29,7 @@ class ModifiableReificationDictionary : public BaseReificationDictionary, public
 		unsigned int insert(const std::string & str, const TripleComponentRole pos);
 		void insert(const string& str, const DictionarySection& pos);
 		std::string getType()const;
+		void populateHeader(Header &header, std::string rootNode);
 	
 		const TriplesDictionary* getTriplesDictionaryPtr()const;
 		const GraphsDictionary* getGraphsDictionaryPtr()const;
