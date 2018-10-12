@@ -1,1 +1,0 @@
-export CXXFLAGS="-DHAVE_CDS -DHAVE_KYOTO -DHAVE_SERD -DHAVE_ZLIB -I$LOCAL_LIB_DIR/serd/include/serd-0 -I$LOCAL_LIB_DIR/zlib/include -I$LOCAL_LIB_DIR/local/kyotocabinet/include"

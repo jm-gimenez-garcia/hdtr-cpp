@@ -16,7 +16,7 @@ using namespace std;
 using namespace hdt;
 int main(int argc, char* argv[])
 {
-	string fileName="../../testfiles/example1.nt";
+	string fileName="../../../testfiles/example1.nt";
 	if (argc>=2)
 		fileName = string(argv[1]);
 	cout << "test file : " << fileName <<endl;
