@@ -12,6 +12,19 @@ using namespace std;
 
 namespace hdt{
 
+
+
+BitmapQuads::BitmapQuads(HDTSpecification &specification): 
+	BitmapTriples(specification),
+	bitmapG(NULL),
+	permutation(NULL){}
+
+BitmapQuads::BitmapQuads() :
+	BitmapTriples(),
+	bitmapG(NULL),
+	permutation(NULL){}
+
+
 void BitmapQuads::load(ModifiableTriples &triples, ProgressListener *listener/*=NULL*/) 
 {
 	triples.sort(order);
@@ -40,11 +53,14 @@ void BitmapQuads::load(ModifiableTriples &triples, ProgressListener *listener/*=
 		swapComponentOrder(triple, SPO, order);
 
 		x = toRoleID(triple->getSubject(), SUBJECT);
+
 		y = toRoleID(triple->getPredicate(), PREDICATE);
 		z = toRoleID(triple->getObject(), OBJECT);
 		QuadID qid(triple->to_QuadID());
 		if (qid.hasGraph())
+		{
 			gr = toRoleID(qid.getGraph(), GRAPH); // returns 0 if triple is a TripleID
+		}
 		else
 			gr = 0;
 
@@ -58,14 +74,12 @@ void BitmapQuads::load(ModifiableTriples &triples, ProgressListener *listener/*=
 			vectorY->push_back(y);
 			vectorZ->push_back(z);
 
-
 		} else if(x!=lastX) {
             if(x!=lastX+1) {
                 throw std::runtime_error("Error: The subjects must be correlative.");
             }
 			bitmapY->append(true);
 			vectorY->push_back(y);
-
 			bitmapZ->append(true);
 			vectorZ->push_back(z);
 		} else if(y!=lastY) {
@@ -78,7 +92,7 @@ void BitmapQuads::load(ModifiableTriples &triples, ProgressListener *listener/*=
 			bitmapZ->append(true);
 			vectorZ->push_back(z);
 		} else {
-            if(z<=lastZ) {
+            if(z<lastZ) {
                 throw std::runtime_error("Error, The objects must be in increasing order.");
             }
             bitmapZ->append(false);
@@ -86,7 +100,9 @@ void BitmapQuads::load(ModifiableTriples &triples, ProgressListener *listener/*=
 		}
 		
 		if (gr == 0)
+		{
 			bitmapG->append(false);
+		}
 		else
 		{
 			bitmapG->append(true);

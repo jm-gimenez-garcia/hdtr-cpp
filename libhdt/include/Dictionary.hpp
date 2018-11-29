@@ -118,6 +118,7 @@ public:
     	qid.setSubject(stringToId(quadString.getSubject(), SUBJECT));
     	qid.setPredicate(stringToId(quadString.getPredicate(), PREDICATE));
     	qid.setObject(stringToId(quadString.getObject(), OBJECT));
+
     	qid.setGraph(stringToId(quadString.getGraph(), GRAPH));
     }
 

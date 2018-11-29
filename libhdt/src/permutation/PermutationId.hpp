@@ -2,7 +2,7 @@
 #define __PERMUTATIONID_HPP__
 
 #include <stdint.h>
-#include "Permutation.h"
+#include "Permutation.hpp"
 
 namespace hdt{
 class ProgressListener;
@@ -16,7 +16,7 @@ class PermutationId{
 
 	private:
 		static const uint8_t TYPE_PERMUTATION;
-		PermutationMRRR* permu;
+		Permutation* permu;
 
 };
 }

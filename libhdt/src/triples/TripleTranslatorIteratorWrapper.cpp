@@ -1,13 +1,13 @@
 #include "TripleTranslatorIteratorWrapper.hpp"
 #include "SingleQuad.hpp"
-#include "BitmapTriples.hpp"
+#include "Triples.hpp"
 
 using namespace hdt;
 
 TripleTranslatorIteratorWrapper::TripleTranslatorIteratorWrapper(IteratorTripleID* it_tid):iterator_tid(it_tid){}
 TripleTranslatorIteratorWrapper::TripleTranslatorIteratorWrapper(IteratorTripleID* it_tid, std::function<unsigned int (unsigned int,TripleComponentRole)> toGlobId):iterator_tid(it_tid){toGlobalID = toGlobId;}
 
-TripleTranslatorIteratorWrapper::TripleTranslatorIteratorWrapper(BitmapTriples* triples, IteratorTripleID* it_tid):iterator_tid(it_tid){toGlobalID = triples->getToGlobalIDFunction();}
+TripleTranslatorIteratorWrapper::TripleTranslatorIteratorWrapper(Triples* triples, IteratorTripleID* it_tid):iterator_tid(it_tid){toGlobalID = triples->getToGlobalIDFunction();}
 
 
 void TripleTranslatorIteratorWrapper::convertToRoleIDs(TripleID& tid){

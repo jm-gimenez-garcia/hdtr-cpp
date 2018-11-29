@@ -103,8 +103,12 @@ public:
 	 */
 	unsigned int getGraph() const {
 		if (!hasGraph())
+		{
 			throw std::runtime_error("This QuadID is a TripleID (no graph)");
-		return graph;
+			return 0;
+		}
+		else
+			return graph;
 	}
 
 
@@ -137,20 +141,27 @@ public:
 		has_graph=false;
 	}
 
+	unsigned int getSizeof()const{
+		return sizeof(*this);
+	}
+
+	void print(std::ostream& os)const{
+		if(!hasGraph())
+			os << getSubject() << " "<< getPredicate() <<" "<< getObject();
+		else
+			os << getSubject() << " "<< getPredicate() <<" "<< getObject() <<" "<< getGraph();
+	}
+
 	/**
 	 * Serialize this QuadID to a stream.
 	 * @param stream Stream to serialize
 	 * @param ti QuadID
 	 * @return
 	 */
-	friend std::ostream &operator<<(std::ostream &stream, const QuadID &qi) {
-		if(qi.hasGraph())
-			stream << qi.subject << " "<< qi.predicate <<" "<< qi.object <<" "<< qi.graph;
-		else
-			stream << qi.subject << " "<< qi.predicate <<" "<< qi.object <<" "<< (unsigned int)0;
-
+	/*friend std::ostream &operator<<(std::ostream &stream, const QuadID &qi) {
+		stream << qi->print(stream);
 		return stream;
-	}
+	}*/
 
 	/**
 	 * Compares two quads
@@ -201,10 +212,22 @@ public:
 			{
 				result = object - other.object;
 				if(result==0)
-					if (!(has_graph || other.has_graph))
-						return 0;
+				{
+					if (!has_graph)
+					{
+						if(!other.graph)
+							return 0;
+						else
+							return (other.graph !=0) ? -other.graph : -1;
+					}
 					else
-						return graph - other.graph;
+					{
+						if(!other.graph)
+							return (graph !=0) ? graph : 1;
+						else
+							return graph - other.graph;
+					}
+				}
 				else 
 					return result;
 			}
@@ -231,7 +254,7 @@ public:
 		return (patt.subject == 0 || patt.subject == subject)
 			&& (patt.predicate == 0 || patt.predicate == predicate)
 			&& (patt.object == 0 || patt.object == object)
-			&& ((patt.hasGraph() && hasGraph() && (patt.graph==0 || patt.graph == graph)) || !patt.hasGraph());
+			&& ((patt.hasGraph() && hasGraph() && (patt.graph==0 || patt.graph == graph)) || (!patt.hasGraph() && !hasGraph()));
 	}
 
 	/**
@@ -269,7 +292,7 @@ public:
 	 * @return boolean
 	 */
 	bool isValid() const {
-            return TripleID::isValid() && (!hasGraph() || (hasGraph() && graph==0));
+            return TripleID::isValid() && (!hasGraph() || (hasGraph() && graph!=0));
 	}
 
 	/**
@@ -363,7 +386,13 @@ public:
 	 * @return
 	 */
 	std::string getGraph() const{
-		return hasGraph() ? graph : 0;
+		if (!hasGraph())
+		{
+			throw std::runtime_error("This QuadID is a TripleID (no graph)");
+			return std::string("");
+		}
+		else
+			return graph;
 	}
 
 	/**
@@ -375,16 +404,25 @@ public:
 		has_graph = true;
 	}
 
+
+	void print(std::ostream& os)const{
+		if(!hasGraph())
+			os << getSubject() << " "<< getPredicate() <<" "<< getObject();
+		else
+			os << getSubject() << " "<< getPredicate() <<" "<< getObject() <<" "<< getGraph();
+	}
+
+
 	/**
 	 * Serialize QuadString to a stream.
 	 * @param stream
 	 * @param ts
 	 * @return
 	 */
-	friend std::ostream &operator<<(std::ostream &stream, const QuadString &ts) {
-		stream << ts.subject << " "<< ts.predicate <<" "<< ts.object <<" "<< ts.graph;
-		return stream;
-	}
+	//friend std::ostream &operator<<(std::ostream &stream, const QuadString &ts) {
+	//	stream << ts.subject << " "<< ts.predicate <<" "<< ts.object <<" "<< ts.graph;
+	//	return stream;
+	//}
 
     bool operator==(const QuadString& qs) const	{
 		return (subject==qs.subject) && (object==qs.object) && (predicate==qs.predicate) && ((has_graph && qs.has_graph && graph == qs.graph) || !(has_graph||qs.has_graph));
@@ -406,7 +444,7 @@ public:
 		return ((subject==patt.subject || patt.subject=="")
 		  	&& (predicate==patt.predicate || patt.predicate=="")
 			&& (object==patt.object || patt.object=="")
-			&& ((patt.hasGraph() && hasGraph() && (patt.graph=="" || patt.graph == graph)) || !patt.hasGraph()));
+			&& ((patt.hasGraph() && hasGraph() && (patt.graph=="" || patt.graph == graph)) || (!patt.hasGraph() && !hasGraph())));
     }
 
 	/**
@@ -415,6 +453,9 @@ public:
 	void clear() 
 	{subject = predicate = object = graph = ""; has_graph=false;}
 
+	unsigned int getSizeof()const{
+		return sizeof(*this);
+	}
 	/**
 	 * Check wether all components of the QuadString are empty.
 	 * @return

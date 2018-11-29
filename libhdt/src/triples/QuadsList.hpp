@@ -33,180 +33,92 @@
 #define QUADSLIST_H_
 
 #include <Triples.hpp>
-#include <HDTSpecification.hpp>
 #include "TripleIterators.hpp"
+#include <HDTSpecification.hpp>
+#include "SingleQuad.hpp"
 
 namespace hdt {
 
 class QuadsList : public ModifiableTriples {
 private:
-	ControlInformation controlInformation;
-	HDTSpecification spec;
-
-	std::vector<QuadID> arrayOfTriples;
-    QuadID *ptr;
-	TripleComponentOrder order;
-    size_t numValidTriples;
+	std::vector<QuadID> arrayOfQuads;
+    QuadID *ptrQ;
+	TripleComponentOrder orderQ;
+    size_t numValidQuads;
 
 public:
 	QuadsList();
+	QuadsList(const std::vector<QuadID>& quadArray, const TripleComponentOrder& ord);
 	QuadsList(HDTSpecification &specification);
-	virtual ~QuadsList();
+	~QuadsList();
 
-    bool isIndexed() const {
-        return false;
-    }
 
 	// From Triples
-
-	/**
-	 * Returns a vector of triples matching the pattern
-	 *
-	 * @param pattern
-	 * @return
-	 */
 	IteratorTripleID *search(TripleID &pattern);
-
-	IteratorTripleID *searchJoin(TripleID &a, TripleID &b, unsigned short conditions);
-
-	/**
-	 * Calculates the cost to retrieve a specific pattern
-	 *
-	 * @param triple
-	 * @return
-	 */
-	float cost(TripleID &triple) const;
-
-	/**
-	 * Returns the number of triples contained
-	 *
-	 * @return
-	 */
+	IteratorTripleID *searchJoin(TripleID &a, TripleID &b, unsigned short conditions){throw std::logic_error("Not Implemented"); return NULL;}
+	float cost(TripleID &triple) const {throw std::logic_error("Not Implemented");return 0.0f;}
     size_t getNumberOfElements() const;
-
-	/**
-	 * Returns size in bytes
-	 */
     size_t size() const;
-
-	/**
-	 * Saves the triples
-	 *
-	 * @param output
-	 * @return
-	 */
-	void save(std::ostream &output, ControlInformation &controlInformation, ProgressListener *listener = NULL);
-
-	/**
-	 * Loads triples from a file
-	 *
-	 * @param input
-	 * @return
-	 */
-	void load(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener = NULL);
-
-	size_t load(unsigned char *uchar_ptr, unsigned char *ptrMax, ProgressListener *listener=NULL);
-
+	void save(std::ostream &output, ControlInformation &controlInfo, ProgressListener *listener = NULL);
+	void load(std::istream &input, ControlInformation &controlInfo, ProgressListener *listener);
+	size_t load(unsigned char *char_ptr, unsigned char *ptrMax, ProgressListener *listener=NULL);
 	void load(ModifiableTriples &input, ProgressListener *listener = NULL);
-
-	void generateIndex(ProgressListener *listener);
-
-	void saveIndex(std::ostream &output, ControlInformation &controlInformation, ProgressListener *listener);
-
-    void loadIndex(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener);
-
-    size_t loadIndex(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener);
-
-	/**
-	 * Populates the header
-	 *
-	 * @param header
-	 * @return
-	 */
+	void generateIndex(ProgressListener *listener){}
+	void saveIndex(std::ostream &output, ControlInformation &controlInfo, ProgressListener *listener){}
+    void loadIndex(std::istream &input, ControlInformation &controlInfo, ProgressListener *listener){}
+    size_t loadIndex(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener){return 0;}
+    bool isIndexed() const {return false;}
 	void populateHeader(Header &header, string rootNode);
-
-	void startProcessing(ProgressListener *listener=NULL);
-
-	void stopProcessing(ProgressListener *listener=NULL);
-
+	void startProcessing(ProgressListener *listener=NULL){}
+	void stopProcessing(ProgressListener *listener=NULL){}
 	string getType() const;
-
 	TripleComponentOrder getOrder() const;
 
 	// From ModifiableTriples
-
-	/**
-	 * Adds one or more triples
-	 *
-	 * @param triples The triples to be inserted
-	 * @return boolean
-	 */
 	void insert(TripleID &triple);
-
 	void insert(IteratorTripleID *triples);
-
-	/**
-	 * Deletes one or more triples according to a pattern
-	 *
-	 * @param pattern
-	 *            The pattern to match against
-	 * @return boolean
-	 */
 	bool remove(TripleID &pattern);
-
 	bool remove(IteratorTripleID *pattern);
-
-	/**
-	 * Sorts the triples based on an order(TripleComponentOrder)
-	 *
-	 * @param order The order to sort the triples with
-	 */
-	void sort(TripleComponentOrder order, ProgressListener *listener = NULL);
-
+	void sort(TripleComponentOrder ord, ProgressListener *listener = NULL);
 	void removeDuplicates(ProgressListener *listener = NULL);
-
-	/**
-	 * Sets a type of order(TripleComponentOrder)
-	 *
-	 * @param order The order to set
-	 */
 	void setOrder(TripleComponentOrder order);
 
-	 void calculateDegree(string path, unsigned int numPredicates,unsigned int maxID=0);
-	 void calculateMinStats(string path, unsigned int numPredicates);
-	 void calculateDegreeType(string path, unsigned int rdftypeID);
-     void calculateDegrees(string path,unsigned int maxSOID=0,unsigned int numPredicates=0,unsigned int rdftypeID=0,bool allStats=false);
-
-	// Others
-
+	
+	
 	/**
 	 *
 	 * @param i
 	 * @return
 	 */
-	TripleID *getTripleID(unsigned int i);
+	QuadID *getQuadID(unsigned int i);
 
-	friend class TriplesListIterator;
+	friend class QuadsListIterator;
 };
 
-
-class TriplesListIterator : public IteratorTripleID {
+class QuadsListIterator : public IteratorTripleID {
 private:
-	const TripleID& pattern;
-	TripleID* returnTriple;
-	QuadsList *triples;
+	QuadID pattern, returnQuad;
+	QuadsList* quads;
 	uint64_t pos;
 
 public:
-	TriplesListIterator(QuadsList *triples, TripleID &pattern);
+	QuadsListIterator(QuadsList *quad_list, TripleID& patt);
+	// IteratorTripleID methods
 	bool hasNext();
-	TripleID *next();
+	TripleID* next();
 	bool hasPrevious();
-	TripleID *previous();
+	TripleID* previous();
 	void goToStart();
+
+	//new methods
+	size_t getNumberOfElements()const;
 };
+
+
 
 } // namespace hdt
 
-#endif /* TRIPLESLIST_H_ */
+
+
+#endif /* QUADSLIST_H_ */
 

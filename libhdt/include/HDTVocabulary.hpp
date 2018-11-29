@@ -105,6 +105,7 @@ namespace HDTVocabulary {
 	// Triples
 	const std::string TRIPLES_TYPE = DUBLIN_CORE+"format>";
 	const std::string TRIPLES_NUM_TRIPLES = HDT_TRIPLES_BASE+"numTriples>";
+	const std::string TRIPLES_NUM_QUADS = HDT_TRIPLES_BASE+"numQuads>";
 	const std::string TRIPLES_ORDER = HDT_TRIPLES_BASE+"Order>";
 	const std::string TRIPLES_SEQX_TYPE = HDT_TRIPLES_BASE+"seqX>";
 	const std::string TRIPLES_SEQY_TYPE = HDT_TRIPLES_BASE+"seqY>";

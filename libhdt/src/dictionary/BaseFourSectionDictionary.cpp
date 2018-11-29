@@ -100,7 +100,9 @@ unsigned int BaseFourSectionDictionary::stringToId(const string &key, const Trip
 	if(position==SUBJECT) {
 		ret = shared->locate((const unsigned char *)key.c_str(), key.length());
 		if( ret != 0) 
+		{
 			return getGlobalId(ret,SHARED_SUBJECT);
+		}
 		ret = subjects->locate((const unsigned char *)key.c_str(), key.length());
 		if(ret != 0) 
 			return getGlobalId(ret,NOT_SHARED_SUBJECT);
@@ -109,11 +111,15 @@ unsigned int BaseFourSectionDictionary::stringToId(const string &key, const Trip
 	else if (position==OBJECT){
 		ret = shared->locate((const unsigned char *)key.c_str(), key.length());
 		if( ret != 0) 
+		{
 			return getGlobalId(ret,SHARED_OBJECT);
+		}
 		ret = objects->locate((const unsigned char *)key.c_str(), key.length());
 		if(ret != 0) 
+		{
 			return getGlobalId(ret,NOT_SHARED_OBJECT);
-        	return 0;
+		}
+        return 0;
 	}
 	else
 		return 0;

@@ -93,6 +93,7 @@ public:
 	virtual TripleID to_TripleID() const ;
 	QuadID to_QuadID_pattern() const ;
 
+	virtual bool hasGraph()const{return false;}
 	/**
 	 * Get the Subject component of this tripleID.
 	 * @return
@@ -158,6 +159,13 @@ public:
 		this->object = 0;
 	}
 
+	virtual unsigned int getSizeof()const{
+		return sizeof(*this);
+	}
+
+	virtual void print(std::ostream& os)const{
+		os << getSubject() << " "<< getPredicate() <<" "<< getObject();
+	}
 	/**
 	 * Serialize this TripleID to a stream.
 	 * @param stream Stream to serialize
@@ -165,7 +173,8 @@ public:
 	 * @return
 	 */
 	friend std::ostream &operator<<(std::ostream &stream, const TripleID &ti) {
-		stream << ti.subject << " "<< ti.predicate <<" "<< ti.object;
+		//stream << ti.subject << " "<< ti.predicate <<" "<< ti.object;
+		ti.print(stream);
 
 		return stream;
 	}
@@ -342,6 +351,7 @@ public:
 	virtual TripleString to_TripleString()const;
 	QuadString to_QuadString_pattern()const;
 
+	virtual bool hasGraph()const{return false;}
 
 
 	/**
@@ -398,6 +408,10 @@ public:
 		this->object = object;
 	}
 
+	virtual void print(std::ostream& os)const{
+		os << getSubject() << " "<< getPredicate() <<" "<< getObject();
+	}
+
 	/**
 	 * Serialize TripleString to a stream.
 	 * @param stream
@@ -405,7 +419,8 @@ public:
 	 * @return
 	 */
 	friend std::ostream &operator<<(std::ostream &stream, const TripleString &ts) {
-		stream << ts.subject << " "<< ts.predicate <<" "<< ts.object;
+		//stream << ts.subject << " "<< ts.predicate <<" "<< ts.object;
+		ts.print(stream);
 
 		return stream;
 	}
@@ -463,6 +478,9 @@ public:
 		return subject == "" && predicate == "" && object == "";
 	}
 
+	virtual unsigned int getSizeof()const{
+		return sizeof(*this);
+	}
 	/**
 	 * Check wether any of the components of the TripleString is empty.
 	 * @return

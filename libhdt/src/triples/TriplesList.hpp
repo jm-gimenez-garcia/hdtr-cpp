@@ -33,8 +33,9 @@
 #define TRIPLESLIST_H_
 
 #include <Triples.hpp>
-#include <HDTSpecification.hpp>
 #include "TripleIterators.hpp"
+#include <HDTSpecification.hpp>
+#include "SingleTriple.hpp"
 
 namespace hdt {
 
@@ -50,8 +51,9 @@ private:
 
 public:
 	TriplesList();
+	TriplesList(const std::vector<TripleID>& tripleArray, const TripleComponentOrder& ord);
 	TriplesList(HDTSpecification &specification);
-	virtual ~TriplesList();
+	~TriplesList();
 
     bool isIndexed() const {
         return false;
@@ -95,7 +97,7 @@ public:
 	 * @param output
 	 * @return
 	 */
-	void save(std::ostream &output, ControlInformation &controlInformation, ProgressListener *listener = NULL);
+	void save(std::ostream &output, ControlInformation &controlInfo, ProgressListener *listener = NULL);
 
 	/**
 	 * Loads triples from a file
@@ -103,17 +105,17 @@ public:
 	 * @param input
 	 * @return
 	 */
-	void load(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener = NULL);
+	void load(std::istream &input, ControlInformation &controlInfo, ProgressListener *listener = NULL);
 
-	size_t load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener=NULL);
+	size_t load(unsigned char *char_ptr, unsigned char *ptrMax, ProgressListener *listener=NULL);
 
 	void load(ModifiableTriples &input, ProgressListener *listener = NULL);
 
 	void generateIndex(ProgressListener *listener);
 
-	void saveIndex(std::ostream &output, ControlInformation &controlInformation, ProgressListener *listener);
+	void saveIndex(std::ostream &output, ControlInformation &controlInfo, ProgressListener *listener);
 
-    void loadIndex(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener);
+    void loadIndex(std::istream &input, ControlInformation &controlInfo, ProgressListener *listener);
 
     size_t loadIndex(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener);
 
@@ -161,7 +163,7 @@ public:
 	 *
 	 * @param order The order to sort the triples with
 	 */
-	void sort(TripleComponentOrder order, ProgressListener *listener = NULL);
+	void sort(TripleComponentOrder ord, ProgressListener *listener = NULL);
 
 	void removeDuplicates(ProgressListener *listener = NULL);
 
@@ -198,11 +200,15 @@ private:
 
 public:
 	TriplesListIterator(TriplesList *triples, TripleID &pattern);
+	// IteratorTripleID methods
 	bool hasNext();
 	TripleID *next();
 	bool hasPrevious();
 	TripleID *previous();
 	void goToStart();
+
+	//new methods
+	size_t getNumberOfElements()const;
 };
 
 } // namespace hdt

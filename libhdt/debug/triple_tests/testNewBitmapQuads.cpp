@@ -2,10 +2,12 @@
 #include <exception>
 #include "PlainHeader.hpp"
 #include "BitmapTriples.hpp"
+#include "BitmapQuads.hpp"
 #include "PlainTriples.hpp"
 #include "HDTVocabulary.hpp"
 #include "TripleListDisk.hpp"
 #include "TriplesList.hpp"
+#include "TriplesQuadsList.hpp"
 #include "TriplesLoader.hpp"
 #include "DictionaryLoader.hpp"
 #include "QueryableReificationDictionary.hpp"
@@ -31,14 +33,16 @@ int main(int argc, char* argv[])
 	HDTSpecification spec(configFile);
 	string options="";
 	spec.setOptions(options);
-	QueryableReificationDictionary* reif_dict_fs_init = new QueryableReificationDictionary();
 	
 // ++++ HDTManager::generateHDT (HDTManager.cpp)
 // ++++ ++++ BasicHDT::BasicHDT (BasicHDT.cpp)
 	Triples* triples;
 // ++++ ++++ ++++ BasicHDT::createComponents (BasicHDT.cpp)
 	Header* header = new PlainHeader();
-	triples = new BitmapTriples(spec);
+	triples = new BitmapQuads(spec);
+	QueryableReificationDictionary* reif_dict_fs_init = new QueryableReificationDictionary();
+	triples->setToGlobalIDFunction(reif_dict_fs_init->getToGlobalIDFunction());
+	triples->setToRoleIDFunction(reif_dict_fs_init->getToRoleIDFunction());
 // ---- ---- ----
 // ---- ----
 
@@ -86,7 +90,10 @@ int main(int argc, char* argv[])
 
 // ++++ ++++ ++++ BasicHDT::loadTriples (BasicHDT.cpp)
 
-	ModifiableTriples* triplesList = new TriplesList(spec);
+
+	ModifiableTriples* triplesList = new TriplesQuadsList(spec);
+	triplesList->setToGlobalIDFunction(reif_dict_fs_init->getToGlobalIDFunction());
+	triplesList->setToRoleIDFunction(reif_dict_fs_init->getToRoleIDFunction());
 	try {
 		NOTIFY(listener, "Loading Triples", 0, 100);
 		iListener.setRange(0, 60);
@@ -94,9 +101,11 @@ int main(int argc, char* argv[])
 		triplesList->startProcessing(&iListener);
 
 		TriplesLoader tripLoader(reif_dict_fs_init, triplesList, &iListener);
+	
+
 
 		RDFParserCallback *pars = RDFParserCallback::getParserCallback(notation);
-		pars->doParse(fileName.c_str(), "", NQUAD, true, &tripLoader);
+		pars->doParse(fileName.c_str(), baseUri.c_str(), NQUAD, true, &tripLoader);
 		delete pars;
 		header->insert("_:statistics", HDTVocabulary::ORIGINAL_SIZE, tripLoader.getSize());
 		triplesList->stopProcessing(&iListener);
@@ -117,8 +126,22 @@ int main(int argc, char* argv[])
 
 		iListener.setRange(85, 90);
 		triplesList->removeDuplicates(&iListener);
-		
 
+
+
+
+TripleID pattern = TripleID(0,0,0);
+IteratorTripleID* itTID = new TriplesQuadsListIterator(dynamic_cast<TriplesQuadsList*>(triplesList), pattern);
+
+cout << "itTID = " << itTID <<endl;
+while(itTID->hasNext())
+{
+	TripleID* tid = itTID->next();
+	cout << "tid->next = " << tid->getSubject() << " " << tid->getPredicate() << " " << tid->getObject() << endl;
+}
+
+itTID->goToStart();
+		
 	} catch (...) {
 		cout << "Catch exception triples"  << endl;
 	}
@@ -138,8 +161,6 @@ int main(int argc, char* argv[])
 
 // ---- ---- ---- 
 
-		triples->setToGlobalIDFunction(reif_dict_fs_init->getToGlobalIDFunction());
-		triples->setToRoleIDFunction(reif_dict_fs_init->getToRoleIDFunction());
 	}
 
 

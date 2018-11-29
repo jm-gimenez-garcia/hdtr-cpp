@@ -45,6 +45,16 @@ TriplesList::TriplesList() : ptr(NULL), order(Unknown), numValidTriples(0)
 {
 }
 
+TriplesList::TriplesList(const std::vector<TripleID>& tripleArray, const TripleComponentOrder& ord) : order(ord) {
+	arrayOfTriples.reserve(tripleArray.size());
+	for (unsigned int i=0 ; i<tripleArray.size() ; i++)
+		if(tripleArray[i].isValid())
+			arrayOfTriples.push_back(tripleArray[i]);
+
+	ptr = &arrayOfTriples[0];
+	numValidTriples = arrayOfTriples.size();
+}
+
 TriplesList::TriplesList(HDTSpecification &specification) : spec(specification), ptr(NULL), order(Unknown), numValidTriples(0) {
 }
 
@@ -83,13 +93,13 @@ size_t TriplesList::size() const
 	return numValidTriples*sizeof(TripleID);
 }
 
-void TriplesList::save(std::ostream &output, ControlInformation &controlInformation, ProgressListener *listener)
+void TriplesList::save(std::ostream &output, ControlInformation &controlInfo, ProgressListener *listener)
 {
-	controlInformation.clear();
-	controlInformation.setUint("numTriples", numValidTriples);
-	controlInformation.setFormat(HDTVocabulary::TRIPLES_TYPE_TRIPLESLIST);
-	controlInformation.setUint("order", order);
-	controlInformation.save(output);
+	controlInfo.clear();
+	controlInfo.setUint("numTriples", numValidTriples);
+	controlInfo.setFormat(HDTVocabulary::TRIPLES_TYPE_TRIPLESLIST);
+	controlInfo.setUint("order", order);
+	controlInfo.save(output);
 
 	for( unsigned int i = 0; i < arrayOfTriples.size(); i++ ) {
 		if ( arrayOfTriples[i].isValid() ) {
@@ -99,15 +109,15 @@ void TriplesList::save(std::ostream &output, ControlInformation &controlInformat
 	}
 }
 
-void TriplesList::load(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener)
+void TriplesList::load(std::istream &input, ControlInformation &controlInfo, ProgressListener *listener)
 {
-	std::string format = controlInformation.getFormat();
-	if(format!=getType()) {
+	std::string format = controlInfo.getFormat();
+	if(format!=TriplesList::getType()) {
 		throw std::runtime_error("Trying to read a TriplesList but the data is not TriplesList");
 	}
 
-	order = (TripleComponentOrder) controlInformation.getUint("order");
-	unsigned int totalTriples = controlInformation.getUint("numTriples");
+	order = (TripleComponentOrder) controlInfo.getUint("order");
+	unsigned int totalTriples = controlInfo.getUint("numTriples");
 
 	unsigned int numRead=0;
 	TripleID readTriple;
@@ -124,26 +134,28 @@ void TriplesList::load(std::istream &input, ControlInformation &controlInformati
 
 #define CHECKPTR(base, max, size) if(((base)+(size))>(max)) throw std::runtime_error("Could not read completely the HDT from the file.");
 
-size_t TriplesList::load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener)
+size_t TriplesList::load(unsigned char *char_ptr, unsigned char *ptrMax, ProgressListener *listener)
 {
     size_t count=0;
 
-    ControlInformation controlInformation;
-    count+=controlInformation.load(&ptr[count], ptrMax);
+    ControlInformation controlInfo;
+    count+=controlInfo.load(&char_ptr[count], ptrMax);
 
-    std::string format = controlInformation.getFormat();
-    if(format!=getType()) {
+    std::string format = controlInfo.getFormat();
+    if(format!=TriplesList::getType()) {
         throw std::runtime_error("Trying to read a TriplesList but the data is not TriplesList");
     }
 
-    order = (TripleComponentOrder) controlInformation.getUint("order");
-    //unsigned long long totalTriples = controlInformation.getUint("numTriples");
+    order = (TripleComponentOrder) controlInfo.getUint("order");
+    unsigned long long totalTriples = controlInfo.getUint("numTriples");
     this->numValidTriples = 100000000;
 
-    //CHECKPTR(&ptr[count],ptrMax,numValidTriples*12);
+    //CHECKPTR(&char_ptr[count],ptrMax,numValidTriples*12);
 
-    this->ptr = (TripleID*)&ptr[count];
+    ptr = (TripleID*)&char_ptr[count];
+	arrayOfTriples.assign(ptr, ptr+totalTriples);
 
+	count += size();
     return count;
 }
 #undef CHECKPTR
@@ -165,11 +177,11 @@ void TriplesList::generateIndex(ProgressListener *listener) {
 
 }
 
-void TriplesList::saveIndex(std::ostream &output, ControlInformation &controlInformation, ProgressListener *listener) {
+void TriplesList::saveIndex(std::ostream &output, ControlInformation &controlInfo, ProgressListener *listener) {
 
 }
 
-void TriplesList::loadIndex(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener) {
+void TriplesList::loadIndex(std::istream &input, ControlInformation &controlInfo, ProgressListener *listener) {
 
 }
 
@@ -235,7 +247,7 @@ bool TriplesList::remove(TripleID &pattern)
 	for(unsigned int i=0; i< arrayOfTriples.size(); i++) {
 		TripleID *tid = &arrayOfTriples[i];
 		if (tid->match(pattern)) {
-			tid->clear();
+			tid->clear(); // why don't we remove it from the vector ? Must the number of TripleIDs in the vector remain constant 
 			numValidTriples--;
 			removed=true;
 		}
@@ -246,16 +258,16 @@ bool TriplesList::remove(TripleID &pattern)
 bool TriplesList::remove(IteratorTripleID *pattern)
 {
 	bool removed = false;
-	vector<TripleID> allPat;
+	vector<TripleID*> allPat;
 
 	while(pattern->hasNext()) {
-		allPat.push_back(*pattern->next());
+		allPat.push_back(pattern->next());
 	}
 
 	for(unsigned int i=0; i< arrayOfTriples.size(); i++) {
 		TripleID *tid = &arrayOfTriples[i];
         for(size_t j=0; j<allPat.size(); j++) {
-			if (tid->match(allPat[i])) {
+			if (tid->match(*(allPat[i]))) {
 				tid->clear();
 				numValidTriples--;
 				removed = true;
@@ -266,14 +278,14 @@ bool TriplesList::remove(IteratorTripleID *pattern)
 	return removed;
 }
 
-void TriplesList::sort(TripleComponentOrder order, ProgressListener *listener)
+void TriplesList::sort(TripleComponentOrder ord, ProgressListener *listener)
 {
-	if(this->order != order) {
+	if(order != ord) {
 		//StopWatch st;
 		NOTIFY(listener, "Sorting triples", 0, 100);
-		std::sort(arrayOfTriples.begin(), arrayOfTriples.end(), TriplesComparator(order));
+		std::sort(arrayOfTriples.begin(), arrayOfTriples.end(), TriplesComparator(ord));
 		//cout << "Sorted in " << st << endl;
-		this->order = order;
+		order = ord;
 	}
 }
 
@@ -281,8 +293,6 @@ void TriplesList::sort(TripleComponentOrder order, ProgressListener *listener)
 void TriplesList::setOrder(TripleComponentOrder order)
 {
 	this->order = order;
-
-
 }
 
 TripleID* TriplesList::getTripleID(unsigned int i)
@@ -371,9 +381,9 @@ void TriplesList::calculateDegree(string path, unsigned int numPredicates,unsign
 	numberofYs++;
 
 	//cout << arrayOfTriples[0].getSubject() << " " << arrayOfTriples[0].getPredicate() << " " << arrayOfTriples[0].getObject() << endl;
-	cout << "Numberof Elements:" << getNumberOfElements() << endl;
+	cout << "Numberof Elements:" << TriplesList::getNumberOfElements() << endl;
 	fflush(stdout);
-	unsigned long numiterations = getNumberOfElements();
+	unsigned long numiterations = TriplesList::getNumberOfElements();
 	//size_t numiterations = 4953033043;
 	bool stopSO = false;
 	for (size_t i = 1; i < numiterations; i++) {
@@ -777,9 +787,9 @@ void TriplesList::calculateMinStats(string path, unsigned int numPredicates) {
 	numberofYs++;
 
 	//cout << arrayOfTriples[0].getSubject() << " " << arrayOfTriples[0].getPredicate() << " " << arrayOfTriples[0].getObject() << endl;
-	cout << "Numberof Elements:" << getNumberOfElements() << endl;
+	cout << "Numberof Elements:" << TriplesList::getNumberOfElements() << endl;
 	fflush(stdout);
-	unsigned long numiterations = getNumberOfElements();
+	unsigned long numiterations = TriplesList::getNumberOfElements();
 	//size_t numiterations = 4953033043;
 	bool stopSO = false;
 	for (size_t i = 1; i < numiterations; i++) {
@@ -1014,10 +1024,10 @@ void TriplesList::calculateDegreeType(string path, unsigned int rdftypeID) {
 	numberofYs++;
 
 	//cout << arrayOfTriples[0].getSubject() << " " << arrayOfTriples[0].getPredicate() << " " << arrayOfTriples[0].getObject() << endl;
-	cout << "Number of Elements:" << getNumberOfElements() << endl;
+	cout << "Number of Elements:" << TriplesList::getNumberOfElements() << endl;
 //	cout << "Predicate rdf:type ID:" << rdftypeID << endl;
 	fflush(stdout);
-	for (unsigned int i = 1; i < getNumberOfElements(); i++) {
+	for (unsigned int i = 1; i < TriplesList::getNumberOfElements(); i++) {
 		if (i % 1000000 == 0) {
 			cout << i << " triples" << endl;
 		}
@@ -1418,5 +1428,8 @@ void TriplesListIterator::goToStart()
 {
 	pos=0;
 }
+
+size_t TriplesListIterator::getNumberOfElements()const
+{return triples->getNumberOfElements();}
 
 } // namespace hdt

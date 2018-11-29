@@ -62,8 +62,10 @@ public:
 	//IteratorUCharString* getGraphs();
 
 	void saveFourthSection(std::ostream & output, IntermediateListener& iListener);
+	
 	unsigned int getNpredicates()const;
 	//unsigned int getNgraphs()const;
+
 
 	unsigned int getMaxPredicateID()const;
 	//unsigned int getMaxGraphID()const;

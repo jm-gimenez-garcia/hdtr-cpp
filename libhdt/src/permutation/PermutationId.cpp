@@ -5,7 +5,7 @@
 #include <string.h>
 
 #include "PermutationId.hpp"
-#include "PermutationMRRR.h"
+#include "PermutationMRRR.hpp"
 #include "HDTListener.hpp"
 
 

@@ -136,6 +136,7 @@ void BitmapTriples::load(ModifiableTriples &triples, ProgressListener *listener)
 		swapComponentOrder(triple, SPO, order);
 
 		x = triple->getSubject();
+	
 		y = triple->getPredicate();
 		z = triple->getObject();
 		if(x==0 || y==0 || z==0) {

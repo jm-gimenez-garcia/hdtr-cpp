@@ -61,7 +61,8 @@ public:
 
 	unsigned int getNunused()const;
 
-	
+	unsigned int getMaxID()const;
+
 	uint64_t size()const;
 	size_t getNumberOfElements()const;
 	void getSuggestions(const char *base, TripleComponentRole role, std::vector<std::string> &out, int maxResults);

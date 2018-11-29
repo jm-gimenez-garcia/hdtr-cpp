@@ -45,16 +45,27 @@ size_t GraphsFourSectionDictionary::getNumberOfElements()const{
 
 unsigned int GraphsFourSectionDictionary::stringToId(const string &key, const TripleComponentRole position)const
 {
+	unsigned int ret;
+	if(key.length()==0)
+		return 0;
+
 	if (position!=GRAPH)
+	{
 		return BaseFourSectionDictionary::stringToId(key, position);
+	}
 	else
 	{
-		unsigned int ret;
-        if(key.length()==0)
-			return 0;
+		ret = BaseFourSectionDictionary::stringToId(key, SUBJECT);
+		if (ret!=0)
+			return ret;
+		ret = BaseFourSectionDictionary::stringToId(key, OBJECT);
+		if (ret!=0)
+			return ret;
 		ret = graphs->locate((const unsigned char *)key.c_str(), key.length());
 		if(ret!=0) 
-			return BaseFourSectionDictionary::getGlobalId(ret, UNUSED_GRAPH);
+		{
+			return GraphsFourSectionDictionary::getGlobalId(ret, UNUSED_GRAPH);
+		}
         return 0;
 	}
 }
@@ -120,7 +131,8 @@ void GraphsFourSectionDictionary::saveFourthSection(ostream& output, Intermediat
 unsigned int GraphsFourSectionDictionary::getNunused()const
 {return graphs->getLength();}
 
-
+unsigned int GraphsFourSectionDictionary::getMaxID()const
+{return BaseFourSectionDictionary::getMaxID() + GraphsFourSectionDictionary::getNunused();}
 
 
 
@@ -147,10 +159,10 @@ unsigned int GraphsFourSectionDictionary::getGlobalId(unsigned int mapping, unsi
 				throw runtime_error("Unknown mapping");
 			return shared->getLength()+max_s_o+id;
 			break;
-		case NOT_SHARED_SUBJECT_GRAPH:
-		case NOT_SHARED_OBJECT_GRAPH:
-		case SHARED_OBJECT_GRAPH:
-		case SHARED_SUBJECT_GRAPH:
+		case NOT_SHARED_SUBJECT:
+		case NOT_SHARED_OBJECT:
+		case SHARED_OBJECT:
+		case SHARED_SUBJECT:
 			return BaseFourSectionDictionary::getGlobalId(mapping, id, position);
 		default:
 			throw runtime_error("Invalid DictionarySection in GraphsDictionary");
@@ -162,6 +174,7 @@ unsigned int GraphsFourSectionDictionary::getLocalId(unsigned int mapping, unsig
 
 	if(position==GRAPH)
 	{
+
 		const unsigned int sh_length = shared->getLength();
 		const unsigned int sub_length = subjects->getLength();
 		const unsigned int obj_length = objects->getLength();
@@ -171,13 +184,29 @@ unsigned int GraphsFourSectionDictionary::getLocalId(unsigned int mapping, unsig
 
 		if(mapping==MAPPING1)
 		{
+			if(id>0 && id<=sh_length+sub_length)
+				return GraphsFourSectionDictionary::getLocalId(mapping, id, SUBJECT);
+			if(id>sh_length+sub_length && id<=sh_length+sub_length+obj_length)
+				return GraphsFourSectionDictionary::getLocalId(mapping, id, OBJECT);
+
 			locid_shift = 2;
-			last_obj_sub_glob_id = sh_length + sub_length+obj_length;
+			last_obj_sub_glob_id = sh_length + sub_length + obj_length;
 		}
 		else if (mapping==MAPPING2)
 		{
+			if(id>0 && id<=sh_length)
+				return GraphsFourSectionDictionary::getLocalId(mapping, id, SUBJECT);
+
 			const unsigned int max_sub_obj_length = (obj_length>sub_length) ? obj_length : sub_length;
 			last_obj_sub_glob_id = sh_length + max_sub_obj_length ;
+			
+			if(id>sh_length+obj_length && id<=sh_length+sub_length)
+				return GraphsFourSectionDictionary::getLocalId(mapping, id, SUBJECT);
+			else if(id>sh_length+sub_length && id<=sh_length+obj_length)
+				return GraphsFourSectionDictionary::getLocalId(mapping, id, OBJECT);
+			else if(id>sh_length && id <=last_obj_sub_glob_id)
+				throw runtime_error("Error: This globalID matches both a non-shared subject graph and a non-shared object graph. Try to call directly BaseReificationDictionary::getLocalId(...)");
+
 		}
 		else
 			throw runtime_error("Unknown mapping");

@@ -165,6 +165,137 @@ unsigned int BaseReificationDictionary::getGlobalIdFromTrGrGlobalId(unsigned int
 
 	return 0;
 }
+
+
+unsigned int BaseReificationDictionary::getGlobalIdFromTrGrGlobalId(unsigned int tr_gr_globid, TripleComponentRole role, const Dictionary* sub_dictionary)const
+{
+	const unsigned int Tsh = getTriplesDictionaryPtr()->getNshared();
+	const unsigned int Gsh = getGraphsDictionaryPtr()->getNshared();
+	const unsigned int Tsubj = getTriplesDictionaryPtr()->getNsubjects() - getTriplesDictionaryPtr()->getNshared();
+	const unsigned int Gsubj = getGraphsDictionaryPtr()->getNsubjects() - getGraphsDictionaryPtr()->getNshared();
+	const unsigned int Tobj = getTriplesDictionaryPtr()->getNobjects() - getTriplesDictionaryPtr()->getNshared();
+	const unsigned int Gobj = getGraphsDictionaryPtr()->getNobjects() - getGraphsDictionaryPtr()->getNshared();
+	const unsigned int Gun = getGraphsDictionaryPtr()->getNunused();
+	const unsigned int first_unused_gr = (sub_dictionary->getMapping()==MAPPING1) ? Gsh+Gsubj+Gobj+1 : ((Gsubj>Gobj)?Gsh+Gsubj+1:Gsh+Gobj+1);
+
+
+	DictionarySection sec;
+
+	const unsigned int first_non_sh_obj_id = (sub_dictionary->getMapping()==MAPPING1) ? sub_dictionary->getMaxSubjectID()+1 : sub_dictionary->getNshared()+1;
+	const unsigned int min_sub_obj_length = (Gobj>Gsubj) ? Gsubj : Gobj;
+	const unsigned int max_sub_obj_length = (Gobj>Gsubj) ? Gobj : Gsubj;
+	const unsigned int last_common_obj_sub_id = Gsh + min_sub_obj_length ;
+
+	switch(role){
+		case PREDICATE:
+			sec = NOT_SHARED_PREDICATE;
+			break;
+		case SUBJECT:
+			if (sub_dictionary==getTriplesDictionaryPtr())
+			{
+				if(tr_gr_globid>=1 && tr_gr_globid <= Tsh)
+					sec = SHARED_SUBJECT;
+				else if (tr_gr_globid>Tsh && tr_gr_globid<=getTriplesDictionaryPtr()->getMaxSubjectID() )
+					sec = NOT_SHARED_SUBJECT;
+				else
+					throw std::logic_error("This TriplesDictionary global id doesn't correspond to a subject");
+			}
+			else if (sub_dictionary==getGraphsDictionaryPtr())
+			{
+				if(tr_gr_globid>=1 && tr_gr_globid <= Gsh)
+					sec = SHARED_SUBJECT_GRAPH;
+				else if (tr_gr_globid>Gsh && tr_gr_globid<=getGraphsDictionaryPtr()->getMaxSubjectID() )
+					sec = NOT_SHARED_SUBJECT_GRAPH;
+				else
+					throw std::logic_error("This GraphsDictionary global id doesn't correspond to a subject");
+			}
+			else
+				throw std::logic_error("The sub_dictionary doesn't correspond to a TriplesDictionary or a GraphsDictionary");
+			break;
+		case OBJECT:
+
+			if (sub_dictionary==getTriplesDictionaryPtr())
+			{
+				if(tr_gr_globid>=1 && tr_gr_globid <= Tsh)
+				{
+					sec = SHARED_OBJECT;
+				}
+				else if (tr_gr_globid>=first_non_sh_obj_id && tr_gr_globid<=sub_dictionary->getMaxObjectID() )
+				{
+					sec = NOT_SHARED_OBJECT;
+				}
+				else
+				{
+					throw std::logic_error("This TriplesDictionary global id doesn't correspond to an object");
+				}
+			}
+			else if (sub_dictionary==getGraphsDictionaryPtr())
+			{
+				if(tr_gr_globid>=1 && tr_gr_globid <= Gsh)
+					sec = SHARED_OBJECT_GRAPH;
+				else if (tr_gr_globid>=first_non_sh_obj_id && tr_gr_globid<=sub_dictionary->getMaxObjectID() )
+					sec = NOT_SHARED_OBJECT_GRAPH;
+				else
+					throw std::logic_error("This GraphsDictionary global id doesn't correspond to an object");
+			}
+			else
+				throw std::logic_error("The sub_dictionary doesn't correspond to a TriplesDictionary or a GraphsDictionary");
+			break;
+		case GRAPH:
+			if (sub_dictionary==getGraphsDictionaryPtr())
+			{
+				
+				if(tr_gr_globid>=1 && tr_gr_globid <= Gsh)
+				{
+					sec = SHARED_SUBJECT_GRAPH;
+				}
+				else if (tr_gr_globid>=Gsh+1 && tr_gr_globid<first_unused_gr)
+				{
+					if(getGraphsDictionaryPtr()->getMapping()==MAPPING1)
+					{
+						if (tr_gr_globid<=Gsh+Gsubj)
+						{
+							sec = NOT_SHARED_SUBJECT_GRAPH;
+						}
+						else if (tr_gr_globid<=Gsh+Gsubj+Gobj)
+						{
+							sec = NOT_SHARED_OBJECT_GRAPH;
+						}
+					}
+					else if(getGraphsDictionaryPtr()->getMapping()==MAPPING2)
+					{
+						if (tr_gr_globid<=last_common_obj_sub_id)
+						{
+							cerr << "Cannot determine in which GrpahsDictionnary section (NOT_SHARED_SUBJECT_GRAPH or NOT_SHARED_OBJECT_GRAPH) to search" << endl;
+						}
+						else if(tr_gr_globid<=Gsh+max_sub_obj_length)
+						{
+							sec =(Gobj>Gsubj) ? NOT_SHARED_OBJECT_GRAPH : NOT_SHARED_SUBJECT_GRAPH;
+						}
+					}
+					else
+						throw runtime_error("Unknown type of mapping");
+						
+				}
+				else if(tr_gr_globid>=first_unused_gr && tr_gr_globid<first_unused_gr+Gun)
+				{
+					sec = UNUSED_GRAPH;
+				}
+				else
+				{
+					throw std::logic_error("This GraphsDictionary global id doesn't correspond to a graph");
+				}
+			}
+			else
+				throw std::logic_error("The sub_dictionary doesn't correspond to a GraphsDictionary");
+
+			break;
+	}
+
+	return getGlobalIdFromTrGrGlobalId(tr_gr_globid,sec);
+}
+
+
 // id is the global ID in the ReificationDictionary and the return value is the local id in the Triples/Graphs Dictionary
 unsigned int BaseReificationDictionary::getLocalId(unsigned int id, TripleComponentRole position)const
 {
@@ -178,7 +309,7 @@ unsigned int BaseReificationDictionary::getLocalId(unsigned int id, TripleCompon
 
 	switch(position){
 		case SUBJECT:
-			if(id <= Tsh)
+			if(id > 0 && id <= Tsh)
 				return getTriplesDictionaryPtr()->getLocalId(id, position);
 			else if (id <= Tsh + Gsh)
 				return getGraphsDictionaryPtr()->getLocalId(id-Tsh, position);
@@ -229,23 +360,30 @@ unsigned int BaseReificationDictionary::getLocalId(unsigned int id, TripleCompon
 				throw std::logic_error("Id too high to be a predicate");
 			break;
 		case GRAPH:
-			const unsigned int Gu = getGraphsDictionaryPtr()->getNunused();
-			if(id <= Tsh + Gsh + Tsubj + Gsubj +Tobj + Gobj || id > Tsh + Gsh + Tsubj + Gsubj +Tobj + Gobj + Gu)
+			const unsigned int Gun = getGraphsDictionaryPtr()->getNunused();
+			if ( (id>Tsh && id<=Tsh+Gsh) || (id>Tsh+Gsh+Tsubj && id<=Tsh+Gsh+Tsubj+Gsubj) )
+				return getLocalId(id, SUBJECT);
+			else if (id>Tsh+Gsh+Tsubj+Gsubj+Tobj && id<=Tsh+Gsh+Tsubj+Gsubj+Tobj+Gobj)
+				return getLocalId(id, OBJECT);
+			else if (id>Tsh+Gsh+Tsubj+Gsubj+Tobj+Gobj && id<=Tsh+Gsh+Tsubj+Gsubj+Tobj+Gobj+Gun)
+			{	
+				if (getGraphsDictionaryPtr()->getMapping() == MAPPING1)
+				{
+						return getGraphsDictionaryPtr()->getLocalId(MAPPING1, id - Tsh - Tsubj - Tobj, position);
+				}
+				else if  (getGraphsDictionaryPtr()->getMapping() == MAPPING2)
+				{
+					const unsigned int lower_subj_obj_size = (Gobj < Gsubj) ? Gobj : Gsubj ;
+						return getGraphsDictionaryPtr()->getLocalId(MAPPING2,id - Tsh - Tsubj - Tobj - lower_subj_obj_size, position);
+				}
+				else
+					throw std::logic_error("Unkown type of mapping");
+			}
+			else if(id <= Tsh + Gsh + Tsubj + Gsubj +Tobj + Gobj || id > Tsh + Gsh + Tsubj + Gsubj +Tobj + Gobj + Gun)
 			{
-				cerr << "Id doesn't correspond to an unused graph" << endl;;
+				cerr << "Id doesn't correspond to a graph" << endl;
 				return 0;
 			}
-			if (getGraphsDictionaryPtr()->getMapping() == MAPPING1)
-			{
-					return getGraphsDictionaryPtr()->getLocalId(MAPPING1, id - Tsh - Tsubj - Tobj, position);
-			}
-			else if  (getGraphsDictionaryPtr()->getMapping() == MAPPING2)
-			{
-				const unsigned int lower_subj_obj_size = (Gobj < Gsubj) ? Gobj : Gsubj ;
-					return getGraphsDictionaryPtr()->getLocalId(MAPPING2,id - Tsh - Tsubj - Tobj - lower_subj_obj_size, position);
-			}
-			else
-				throw std::logic_error("Unkown type of mapping");
 			break;
 	}
 	return 0;
@@ -316,8 +454,8 @@ unsigned int BaseReificationDictionary::getTrGrGlobalIdFromGlobalId(unsigned int
 				throw std::logic_error("Id too high to be a predicate");
 			break;
 		case GRAPH:
-			const unsigned int Gu = getGraphsDictionaryPtr()->getNunused();
-			if(globid <= Tsh + Gsh + Tsubj + Gsubj +Tobj + Gobj || globid > Tsh + Gsh + Tsubj + Gsubj +Tobj + Gobj + Gu)
+			const unsigned int Gun = getGraphsDictionaryPtr()->getNunused();
+			if(globid <= Tsh + Gsh + Tsubj + Gsubj +Tobj + Gobj || globid > Tsh + Gsh + Tsubj + Gsubj +Tobj + Gobj + Gun)
 			{
 				throw std::logic_error("Id doesn't correspond to an unused graph");
 				return 0;
@@ -362,21 +500,63 @@ unsigned int BaseReificationDictionary::stringToId(const std::string &key, Tripl
         if(key.length()==0) {
 			return 0;
         }
-
+		bool sub_dict_is_triples;
+		
         switch (position) {
 			case PREDICATE:
+				sub_dict_is_triples = true;
                 ret = getTriplesDictionaryPtr()->stringToId(key, position);
 				break;
 			case GRAPH:
+				sub_dict_is_triples = false;
                 ret = getGraphsDictionaryPtr()->stringToId(key, position);
 				break;
 			default:
+				sub_dict_is_triples = true;
                 ret = getTriplesDictionaryPtr()->stringToId(key, position);
                 if( ret == 0) 
-                	ret = getGraphsDictionaryPtr()->stringToId(key,position );
+				{
+					sub_dict_is_triples = false;
+                	ret = getGraphsDictionaryPtr()->stringToId(key,position);
+				}
 				break;
         }
-	return ret;	
+
+		
+		const Dictionary* sub_dict = sub_dict_is_triples ? static_cast<const Dictionary*>(getTriplesDictionaryPtr()) :static_cast<const Dictionary*>(getGraphsDictionaryPtr());
+
+		if(sub_dict==getGraphsDictionaryPtr() && position==GRAPH && getGraphsDictionaryPtr()->getMapping()==MAPPING2)
+		{
+
+			const unsigned int max_subj_id=getGraphsDictionaryPtr()->getNsubjects();
+			const unsigned int max_obj_id=getGraphsDictionaryPtr()->getNobjects();
+
+			const unsigned int Tsh = getTriplesDictionaryPtr()->getNshared();
+			const unsigned int Tsubj = getTriplesDictionaryPtr()->getNsubjects()-Tsh;
+			const unsigned int Tobj = getTriplesDictionaryPtr()->getNobjects()-Tsh;
+
+			const unsigned int Gsh = getGraphsDictionaryPtr()->getNshared();
+			const unsigned int Gsubj = getGraphsDictionaryPtr()->getNsubjects()-Gsh;
+			const unsigned int last_comm_subj_obj_id = (max_subj_id>max_obj_id)?max_obj_id:max_subj_id;
+
+			if(ret>=Gsh+1 && ret<=last_comm_subj_obj_id)
+			{
+				if(getGraphsDictionaryPtr()->idToString(ret,SUBJECT)==key)
+				{
+					return Tsh + Tsubj + ret;
+				}
+				if(getGraphsDictionaryPtr()->idToString(ret,OBJECT)==key)
+				{
+					return Tsh + Tsubj + Gsubj + Tobj + ret;
+				}
+				cerr << "IT SHOULDN'T COME HERE" << endl;
+			}
+				
+		}
+
+
+
+	return getGlobalIdFromTrGrGlobalId(ret, position, sub_dict);	
 }
 
 
@@ -384,12 +564,14 @@ unsigned int BaseReificationDictionary::stringToId(const std::string &key, Tripl
 
 std::string BaseReificationDictionary::idToString(const unsigned int id, const TripleComponentRole pos)const
 {       
+	
 	const unsigned int Tsh = getTriplesDictionaryPtr()->getNshared();
 	const unsigned int Gsh = getGraphsDictionaryPtr()->getNshared();
 	const unsigned int Tsubj = getTriplesDictionaryPtr()->getNsubjects() - getTriplesDictionaryPtr()->getNshared();
 	const unsigned int Gsubj = getGraphsDictionaryPtr()->getNsubjects() - getGraphsDictionaryPtr()->getNshared();
 	const unsigned int Tobj = getTriplesDictionaryPtr()->getNobjects() - getTriplesDictionaryPtr()->getNshared();
 	const unsigned int Gobj = getGraphsDictionaryPtr()->getNobjects() - getGraphsDictionaryPtr()->getNshared();
+	const unsigned int Gun = getGraphsDictionaryPtr()->getNunused();
 
 	if(pos==SUBJECT || pos==OBJECT)
 	{
@@ -413,7 +595,15 @@ std::string BaseReificationDictionary::idToString(const unsigned int id, const T
 	else if (pos==PREDICATE)
 		return getTriplesDictionaryPtr()->getPredicates()->getStr(getLocalId(id, pos));
 	else if (pos==GRAPH)
-		return getGraphsDictionaryPtr()->getGraphs()->getStr(getLocalId(id, pos));
+	{
+		if ( (id>Tsh && id<=Tsh+Gsh) || (id>Tsh+Gsh+Tsubj && id<=Tsh+Gsh+Tsubj+Gsubj) )
+			return idToString(id, SUBJECT);
+		else if (id>Tsh+Gsh+Tsubj+Gsubj+Tobj && id<=Tsh+Gsh+Tsubj+Gsubj+Tobj+Gobj)
+			return idToString(id, OBJECT);
+		else if (id>Tsh+Gsh+Tsubj+Gsubj+Tobj+Gobj && id<=Tsh+Gsh+Tsubj+Gsubj+Tobj+Gobj+Gun)
+			return getGraphsDictionaryPtr()->getGraphs()->getStr(getLocalId(id, pos));
+		//return getGraphsDictionaryPtr()->getGraphs()->getStr(getLocalId(id, pos));
+	}
 
 	return string("");
 

@@ -88,6 +88,18 @@ void BitmapQuadIteratorSingle::goTo(unsigned int pos){
 	goToStart();
 }
 
+void BitmapQuadIteratorSingle::skip(unsigned int pos){
+		throw std::runtime_error("BitmapQuadIteratorSingle::skip NOT IMPLEMENTED");
+}
+
+bool BitmapQuadIteratorSingle::findNextOccurrence(unsigned int value, unsigned char component){
+		throw std::runtime_error("BitmapQuadIteratorSingle::findNextOccurrence NOT IMPLEMENTED");
+}
+
+bool BitmapQuadIteratorSingle::isSorted(TripleComponentRole role){
+		throw std::runtime_error("BitmapQuadIteratorSingle::isSorted NOT IMPLEMENTED");
+}
+
 
 
 }

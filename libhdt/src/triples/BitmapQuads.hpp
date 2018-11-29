@@ -16,6 +16,8 @@ class IteratorTripleID;
 
 class BitmapQuads : public BitmapTriples {
 public:
+	BitmapQuads();
+	BitmapQuads(HDTSpecification &specification);
 	~BitmapQuads(){}
 	void load(ModifiableTriples &triples, ProgressListener *listener = NULL);
 	void save(std::ostream &output, ControlInformation &controlInformation, ProgressListener *listener = NULL);

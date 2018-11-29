@@ -136,11 +136,17 @@ public:
 					throw std::logic_error("Incorrect dict_id for SUBJECT");
 			case OBJECT:
 				if (dict_id>=1 && dict_id <= Tsh+Gsh)
+				{
 					return dict_id; 
+				}
 				else if (dict_id>getNsubjects() && dict_id<=getMaxObjectID())
+				{
 					return dict_id - Tsubj - Gsubj;
+				}
 				else
+				{
 					throw std::logic_error("Incorrect dict_id for OBJECT");
+				}
 			case GRAPH:
 				if (dict_id > Tsh && dict_id <= Tsh+Gsh)
 					return  dict_id - Tsh;
@@ -161,6 +167,7 @@ protected:
 	virtual GraphsDictionary* getGraphsDictionaryPtr()=0;
 	unsigned int getTrGrGlobalIdFromGlobalId(unsigned int globid, TripleComponentRole position)const;
 	unsigned int getGlobalIdFromTrGrGlobalId(unsigned int tr_gr_globid, DictionarySection pos)const;
+	unsigned int getGlobalIdFromTrGrGlobalId(unsigned int tr_gr_globid, TripleComponentRole role, const Dictionary* sub_dictionary)const;
 
 };
 

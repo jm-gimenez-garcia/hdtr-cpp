@@ -7,7 +7,7 @@
 
 namespace hdt{
 class TripleID;
-class BitmapTriples;
+class Triples;
 
 class TripleTranslatorIteratorWrapper : public TripleTranslator, public IteratorTripleID{
 
@@ -17,8 +17,10 @@ class TripleTranslatorIteratorWrapper : public TripleTranslator, public Iterator
 	public:
 		TripleTranslatorIteratorWrapper(IteratorTripleID* it_tid);
 		TripleTranslatorIteratorWrapper(IteratorTripleID* it_tid, std::function<unsigned int (unsigned int,TripleComponentRole)> toGlobId);
-		TripleTranslatorIteratorWrapper(BitmapTriples* triples, IteratorTripleID* it_tid);
+		TripleTranslatorIteratorWrapper(Triples* triples, IteratorTripleID* it_tid);
 
+	// virtual methods inherited from IteratorTripleID
+	public:
 		bool hasNext();
 		TripleID *next();
 		bool hasPrevious();
@@ -33,6 +35,8 @@ class TripleTranslatorIteratorWrapper : public TripleTranslator, public Iterator
 		TripleComponentOrder getOrder();
 		bool isSorted(TripleComponentRole role);
 
+	// new methods
+	private:
 		void convertToRoleIDs(TripleID& tid);
 		void convertToGlobalIDs(TripleID& tid);
 

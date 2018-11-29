@@ -116,7 +116,7 @@ public:
 	//virtual unsigned int getNpredicates()const=0;
 	//virtual unsigned int getNgraphs()const=0;
 
-	unsigned int getMaxID()const;
+	virtual unsigned int getMaxID()const;
 	unsigned int getMaxSubjectID()const;
 	unsigned int getMaxObjectID()const;
 	//virtual unsigned int getMaxPredicateID()const=0;

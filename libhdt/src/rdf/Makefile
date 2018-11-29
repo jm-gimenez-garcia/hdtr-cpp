@@ -1,6 +1,6 @@
 CXX=g++
 
-CXXFLAGS := $(CXXFLAGS) -std=c++11 -I. -I../../include 
+CXXFLAGS := $(CXXFLAGS) -std=c++11 -I. -I../../include -I../../../extern_libraries/include/serd-0 
 
 SRC :=  $(wildcard ./*.cpp)
 OBJ := $(patsubst %.cpp,%.o,$(SRC)) 

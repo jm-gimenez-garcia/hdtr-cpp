@@ -38,6 +38,8 @@
 
 #include "IntSequence.hpp"
 
+#include "../util/bitutil.h"
+
 namespace hdt {
 
 class LogSequence2 : public IntSequence {
@@ -219,11 +221,14 @@ public:
 };
 
 
+/*
 inline unsigned int bits(size_t n) {
 	size_t b = 0;
 	while (n) { b++; n >>= 1; }
 	return b;
 }
+*/
+
 
 inline size_t maxVal(unsigned int numbits) {
     // The << operator is undefined for the number of bits of the word,
