@@ -21,19 +21,21 @@
 
 
 namespace hdt {
-	class Dictionary;
+	class TriplesDictionary;
 	class ModifiableTriples;
 	class Triples;
 	class Header;
 	class ProgressListener;
+	class TripleTranslator;
 
 class BasicModifiableHDT : public ModifiableHDT {
 private:
 	Header *header;
-	Dictionary *dictionary;
+	TriplesDictionary *dictionary;
 	ModifiableTriples *triples;
 	HDTSpecification spec;
 	string fileName;
+	TripleTranslator* trTrans;
 
 	void createComponents();
 
@@ -46,7 +48,7 @@ public:
 
 	Header *getHeader();
 
-	Dictionary *getDictionary();
+	TriplesDictionary *getDictionary();
 
 	Triples *getTriples();
 

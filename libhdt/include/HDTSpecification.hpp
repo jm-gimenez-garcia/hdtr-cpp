@@ -74,6 +74,9 @@ public:
 
 	/** Set the value of a property */
 	void set(const std::string& key, const std::string& value);
+
+	/* */
+	bool exist(const std::string& key)const;
 };
 
 }

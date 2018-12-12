@@ -1,6 +1,6 @@
 include ../Makefile.inc
 
-SRC = testNewBitmapQuads.cpp
+SRC = testNewBitmapQuadsBasic.cpp
 #SRC = testNewTriple.cpp
 OBJ = $(patsubst %.cpp,%.o,$(SRC))
 EXE = $(patsubst %.cpp,%,$(SRC))

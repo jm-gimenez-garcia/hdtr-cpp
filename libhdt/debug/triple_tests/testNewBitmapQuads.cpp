@@ -12,6 +12,7 @@
 #include "DictionaryLoader.hpp"
 #include "QueryableReificationDictionary.hpp"
 #include "ModifiableReificationDictionary.hpp"
+#include "ReificationDictionaryLoader.hpp"
 
 
 using namespace std;
@@ -37,12 +38,16 @@ int main(int argc, char* argv[])
 // ++++ HDTManager::generateHDT (HDTManager.cpp)
 // ++++ ++++ BasicHDT::BasicHDT (BasicHDT.cpp)
 	Triples* triples;
+	Dictionary* dictionary;
+	TripleTranslator* trTrans = NULL;
 // ++++ ++++ ++++ BasicHDT::createComponents (BasicHDT.cpp)
 	Header* header = new PlainHeader();
 	triples = new BitmapQuads(spec);
-	QueryableReificationDictionary* reif_dict_fs_init = new QueryableReificationDictionary();
-	triples->setToGlobalIDFunction(reif_dict_fs_init->getToGlobalIDFunction());
-	triples->setToRoleIDFunction(reif_dict_fs_init->getToRoleIDFunction());
+	QueryableReificationDictionary* qrDict = new QueryableReificationDictionary();
+	trTrans = qrDict;
+	dictionary = qrDict;
+	triples->setToGlobalIDFunction(trTrans->getToGlobalIDFunction());
+	triples->setToRoleIDFunction(trTrans->getToRoleIDFunction());
 // ---- ---- ----
 // ---- ----
 
@@ -58,23 +63,24 @@ int main(int argc, char* argv[])
 
 // ++++ ++++ ++++ BasicHDT::loadDictionary (BasicHDT.cpp)
 
-
+	ModifiableTriplesDictionary* dict = NULL;
 	try {
+		DictionaryLoader* dictLoader;
 		ModifiableReificationDictionary* reif_dict_plain_process = new ModifiableReificationDictionary();
 		reif_dict_plain_process->startProcessing();	
 
-		DictionaryLoader dictLoader(reif_dict_plain_process, &iListener);
+		dictLoader = new ReificationDictionaryLoader(reif_dict_plain_process, &iListener);
 
 		RDFParserCallback *parser = RDFParserCallback::getParserCallback(notation);
-        	parser->doParse(fileName.c_str(), baseUri.c_str(), notation, true, &dictLoader);
+        	parser->doParse(fileName.c_str(), baseUri.c_str(), notation, true, dictLoader);
 		delete parser;
 
 		reif_dict_plain_process->stopProcessing(&iListener);
 
 		// Convert to final format
-		if (reif_dict_fs_init->getType()!=reif_dict_plain_process->getType()){
+		if (dictionary->getType()!=reif_dict_plain_process->getType()){
 			cout << "import reif_dict_fs from reif_dict_plain" << endl;
-			reif_dict_fs_init->import(reif_dict_plain_process);
+			dictionary->import(reif_dict_plain_process);
 			//delete reif_dict_plain;
 		}
 		else{
@@ -92,15 +98,15 @@ int main(int argc, char* argv[])
 
 
 	ModifiableTriples* triplesList = new TriplesQuadsList(spec);
-	triplesList->setToGlobalIDFunction(reif_dict_fs_init->getToGlobalIDFunction());
-	triplesList->setToRoleIDFunction(reif_dict_fs_init->getToRoleIDFunction());
+	triplesList->setToGlobalIDFunction(trTrans->getToGlobalIDFunction());
+	triplesList->setToRoleIDFunction(trTrans->getToRoleIDFunction());
 	try {
 		NOTIFY(listener, "Loading Triples", 0, 100);
 		iListener.setRange(0, 60);
 
 		triplesList->startProcessing(&iListener);
 
-		TriplesLoader tripLoader(reif_dict_fs_init, triplesList, &iListener);
+		TriplesLoader tripLoader(dictionary, triplesList, &iListener);
 	
 
 
@@ -129,18 +135,6 @@ int main(int argc, char* argv[])
 
 
 
-
-TripleID pattern = TripleID(0,0,0);
-IteratorTripleID* itTID = new TriplesQuadsListIterator(dynamic_cast<TriplesQuadsList*>(triplesList), pattern);
-
-cout << "itTID = " << itTID <<endl;
-while(itTID->hasNext())
-{
-	TripleID* tid = itTID->next();
-	cout << "tid->next = " << tid->getSubject() << " " << tid->getPredicate() << " " << tid->getObject() << endl;
-}
-
-itTID->goToStart();
 		
 	} catch (...) {
 		cout << "Catch exception triples"  << endl;
@@ -182,9 +176,9 @@ itTID->goToStart();
 	// VOID
 	header->insert(baseUri, HDTVocabulary::RDF_TYPE, HDTVocabulary::VOID_DATASET);
 	header->insert(baseUri, HDTVocabulary::VOID_TRIPLES, triples->getNumberOfElements());
-	header->insert(baseUri, HDTVocabulary::VOID_PROPERTIES, reif_dict_fs_init->getNpredicates());
-	header->insert(baseUri, HDTVocabulary::VOID_DISTINCT_SUBJECTS, reif_dict_fs_init->getNsubjects());
-	header->insert(baseUri, HDTVocabulary::VOID_DISTINCT_OBJECTS, reif_dict_fs_init->getNobjects());
+	//header->insert(baseUri, HDTVocabulary::VOID_PROPERTIES, dictionary->getNpredicates());
+	header->insert(baseUri, HDTVocabulary::VOID_DISTINCT_SUBJECTS, dictionary->getNsubjects());
+	header->insert(baseUri, HDTVocabulary::VOID_DISTINCT_OBJECTS, dictionary->getNobjects());
 	// TODO: Add more VOID Properties. E.g. void:classes
 
 	// Structure
@@ -195,14 +189,14 @@ itTID->goToStart();
 	header->insert(formatNode, HDTVocabulary::HDT_TRIPLES, triplesNode);
 
 	// Dictionary
-	reif_dict_fs_init->populateHeader(*header, dictNode);
+	dictionary->populateHeader(*header, dictNode);
 
 	// Triples
 	triples->populateHeader(*header, triplesNode);
 
 	// Sizes
 	header->insert(statisticsNode, HDTVocabulary::ORIGINAL_SIZE, origSize);
-	header->insert(statisticsNode, HDTVocabulary::HDT_SIZE, reif_dict_fs_init->size() + triples->size());
+	header->insert(statisticsNode, HDTVocabulary::HDT_SIZE, dictionary->size() + triples->size());
 
 	// Current time
 	time_t now;

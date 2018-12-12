@@ -2,6 +2,8 @@
 #define __HDT_MODIFIABLE_REIFICATION_DICTIONARY_HPP__
 
 #include "BaseReificationDictionary.hpp"
+#include "ModifiableTriplesDictionary.hpp"
+#include "ModifiableGraphsDictionary.hpp"
 
 #include "DictionaryEntry.hpp"
 
@@ -9,10 +11,10 @@ namespace hdt{
 	class TriplesPlainDictionary;
 	class GraphsPlainDictionary;
 
-class ModifiableReificationDictionary : public BaseReificationDictionary, public ModifiableDictionary{
+class ModifiableReificationDictionary : public BaseReificationDictionary, public ModifiableTriplesDictionary, public ModifiableGraphsDictionary{
 	private:
-		TriplesPlainDictionary* triplesModifDict;
-		GraphsPlainDictionary* graphsModifDict;
+		ModifiableTriplesDictionary* triplesModifDict;
+		ModifiableGraphsDictionary* graphsModifDict;
 		DictEntryHash hashSubject;
 		DictEntryHash hashObject;
 		DictEntryHash hashPredicate;
@@ -30,6 +32,7 @@ class ModifiableReificationDictionary : public BaseReificationDictionary, public
 		void insert(const string& str, const DictionarySection& pos);
 		std::string getType()const;
 		void populateHeader(Header &header, std::string rootNode);
+		void push_back(DictionaryEntry* entry, DictionarySection pos);
 	
 		const TriplesDictionary* getTriplesDictionaryPtr()const;
 		const GraphsDictionary* getGraphsDictionaryPtr()const;

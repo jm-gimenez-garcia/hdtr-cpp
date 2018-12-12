@@ -13,6 +13,7 @@
 
 namespace hdt {
 GraphsLiteralDictionary::GraphsLiteralDictionary() : graphs(new csd::CSD_PFC()){}
+GraphsLiteralDictionary::GraphsLiteralDictionary(HDTSpecification & spec) : BaseLiteralDictionary(spec), graphs(new csd::CSD_PFC()){}
 
 GraphsLiteralDictionary::~GraphsLiteralDictionary(){
 	clear_loc();

@@ -73,6 +73,8 @@ void BitmapQuads::load(ModifiableTriples &triples, ProgressListener *listener/*=
 		if(numTriples==0){
 			vectorY->push_back(y);
 			vectorZ->push_back(z);
+cout << __FILE__ << ":" << __LINE__ << " : Y = " << y << "(" << triple->getPredicate() << ")" << endl;
+cout << __FILE__ << ":" << __LINE__ << " : Z = " << z << "(" << triple->getObject() << ")" << endl;
 
 		} else if(x!=lastX) {
             if(x!=lastX+1) {
@@ -82,6 +84,11 @@ void BitmapQuads::load(ModifiableTriples &triples, ProgressListener *listener/*=
 			vectorY->push_back(y);
 			bitmapZ->append(true);
 			vectorZ->push_back(z);
+cout << __FILE__ << ":" << __LINE__ << " : Y = " << y << "(" << triple->getPredicate() << ")" << endl;
+cout << __FILE__ << ":" << __LINE__ << " : By = " << true << endl;
+cout << __FILE__ << ":" << __LINE__ << " : Z = " << z << "(" << triple->getObject() << ")" << endl;
+cout << __FILE__ << ":" << __LINE__ << " : Bz = " << true << endl;
+
 		} else if(y!=lastY) {
             if(y<lastY) {
                 throw std::runtime_error("Error: The predicates must be in increasing order.");
@@ -91,29 +98,40 @@ void BitmapQuads::load(ModifiableTriples &triples, ProgressListener *listener/*=
 
 			bitmapZ->append(true);
 			vectorZ->push_back(z);
+
+cout << __FILE__ << ":" << __LINE__ << " : Y = " << y << "(" << triple->getPredicate() << ")" << endl;
+cout << __FILE__ << ":" << __LINE__ << " : By = " << false << endl;
+cout << __FILE__ << ":" << __LINE__ << " : Z = " << z << "(" << triple->getObject() << ")" << endl;
+cout << __FILE__ << ":" << __LINE__ << " : Bz = " << true << endl;
 		} else {
             if(z<lastZ) {
                 throw std::runtime_error("Error, The objects must be in increasing order.");
             }
             bitmapZ->append(false);
 			vectorZ->push_back(z);
+
+cout << __FILE__ << ":" << __LINE__ << " : Z = " << z << "(" << triple->getObject() << ")" << endl;
+cout << __FILE__ << ":" << __LINE__ << " : Bz = " << false << endl;
 		}
 		
 		if (gr == 0)
 		{
 			bitmapG->append(false);
+cout << __FILE__ << ":" << __LINE__ << " : Bg = " << false << endl;
 		}
 		else
 		{
 			bitmapG->append(true);
 			permId_tmp.push_back(gr);
+cout << __FILE__ << ":" << __LINE__ << " : gr = " << gr << "(" << triple->to_QuadID().getGraph() << ")" << endl;
+cout << __FILE__ << ":" << __LINE__ << " : Bg = " << true << endl;
 		}
 
 		lastX = x;
 		lastY = y;
 		lastZ = z;
 
-
+cout << endl;
 
         NOTIFYCOND(listener, "Converting to BitmapTriples", numTriples, triples.getNumberOfElements());
 		numTriples++;

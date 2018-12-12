@@ -189,5 +189,4 @@ void TriplesPlainDictionary::updateID(unsigned int oldid, unsigned int newid, Di
 }
 
 
-
 }

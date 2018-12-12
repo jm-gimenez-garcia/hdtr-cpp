@@ -17,7 +17,7 @@ class HDTSpecification;
 class IteratorUCharString;
 class IteratorUInt;
 
-class BaseReificationDictionary : public TriplesDictionary, public GraphsDictionary, public TripleTranslator{
+class BaseReificationDictionary : virtual public TriplesDictionary, virtual public GraphsDictionary, public TripleTranslator{
 protected:
 	unsigned int maxTriplesDictID; 
 	uint64_t sizeStrings;

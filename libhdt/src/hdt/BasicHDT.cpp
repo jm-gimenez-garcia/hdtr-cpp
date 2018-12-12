@@ -24,6 +24,7 @@
  *   Miguel A. Martinez-Prieto: migumar2@infor.uva.es
  *
  */
+#include "TriplesQuadsList.hpp"
 
 #include <iomanip>
 #include <algorithm>
@@ -37,20 +38,33 @@
 
 #include "../util/StopWatch.hpp"
 #include "../util/fileUtil.hpp"
+#include "filemap.h"
 
 #include "ControlInformation.hpp"
 #include "HDTFactory.hpp"
 #include "BasicHDT.hpp"
-#include "../header/PlainHeader.hpp"
-#include "../dictionary/PlainDictionary.hpp"
-#include "../dictionary/KyotoDictionary.hpp"
-#include "../dictionary/FourSectionDictionary.hpp"
+
+#include "PlainHeader.hpp"
+
+#include "TriplesDictionary.hpp"
+#include "TriplesPlainDictionary.hpp"
+#include "TriplesKyotoDictionary.hpp"
+#include "TriplesFourSectionDictionary.hpp"
+#include "QueryableReificationDictionary.hpp"
+#include "DictionaryEntry.hpp"
+#include "ReificationDictionaryLoader.hpp"
+#include "TriplesDictionaryLoader.hpp"
+#include "ModifiableTriplesDictionary.hpp"
+#include "ModifiableReificationDictionary.hpp"
+#include "TriplesLoader.hpp"
+#include "TripleTranslator.hpp"
 
 #ifdef HAVE_CDS
-#include "../dictionary/LiteralDictionary.hpp"
+#include "../dictionary/TriplesLiteralDictionary.hpp"
 #endif
 
 #include "../triples/TriplesList.hpp"
+#include "../triples/QuadsList.hpp"
 #include "../triples/TriplesKyoto.hpp"
 
 #ifndef WIN32
@@ -59,6 +73,7 @@
 
 #include "../triples/PlainTriples.hpp"
 #include "../triples/BitmapTriples.hpp"
+#include "../triples/BitmapQuads.hpp"
 #include "../triples/TripleOrderConvert.hpp"
 
 #include "../third/gzstream.h"
@@ -70,11 +85,11 @@ using namespace std;
 namespace hdt {
 
 
-BasicHDT::BasicHDT() : mappedHDT(NULL), mappedIndex(NULL) {
+BasicHDT::BasicHDT() : trTrans(NULL), mappedHDT(NULL), mappedIndex(NULL) {
 	createComponents();
 }
 
-BasicHDT::BasicHDT(HDTSpecification &spec) : mappedHDT(NULL), mappedIndex(NULL) {
+BasicHDT::BasicHDT(HDTSpecification &spec) : trTrans(NULL), mappedHDT(NULL), mappedIndex(NULL) {
 	this->spec = spec;
 	createComponents();
 }
@@ -94,37 +109,36 @@ void BasicHDT::createComponents() {
 	// HEADER
 	header = new PlainHeader();
 
+
 	// DICTIONARY
 
-	std::string dictType = "";
-	try{
-		spec.get("dictionary.type");
-	}
-	catch (std::exception& e){
-	}
+	std::string dictType = spec.exist("dictionary.type") ? spec.get("dictionary.type") : "";
 	
 
 	if(dictType==HDTVocabulary::DICTIONARY_TYPE_FOUR) {
-		dictionary = new FourSectionDictionary(spec);
+		dictionary = new TriplesFourSectionDictionary(spec);
 	} else if(dictType==HDTVocabulary::DICTIONARY_TYPE_PLAIN) {
-		dictionary = new PlainDictionary(spec);
+		dictionary = new TriplesPlainDictionary(spec);
 	} else if(dictType==HDTVocabulary::DICTIONARY_TYPE_LITERAL) {
 #ifdef HAVE_CDS
-		dictionary = new LiteralDictionary(spec);
+		dictionary = new TriplesLiteralDictionary(spec);
 #else
 		throw std::runtime_error("This version has been compiled without support for this dictionary");
 #endif
+	} else if(dictType==HDTVocabulary::DICTIONARY_TYPE_QUERYABLEREIFICATION) {
+		QueryableReificationDictionary* qrDict = new QueryableReificationDictionary(spec);
+		trTrans =  qrDict;
+		dictionary = qrDict;
 	} else {
-		//dictionary = new FourSectionDictionary(spec);
-		dictionary = new ReificationDictionary(spec);
+		//dictionary = new TriplesFourSectionDictionary(spec);
+		QueryableReificationDictionary* qrDict = new QueryableReificationDictionary(spec);
+		trTrans =  qrDict;
+		dictionary = qrDict;
 	}
 
 	// TRIPLES
-	std::string triplesType = "";
-	try{
-		triplesType = spec.get("triples.type");
-	}catch (std::exception& e) {
-	}
+	std::string triplesType = spec.exist("triples.type") ? spec.get("triples.type") : "";
+
 	if(triplesType==HDTVocabulary::TRIPLES_TYPE_BITMAP) {
 		triples = new BitmapTriples(spec);
 	} else if(triplesType==HDTVocabulary::TRIPLES_TYPE_PLAIN) {
@@ -135,11 +149,17 @@ void BasicHDT::createComponents() {
     } else if (triplesType == HDTVocabulary::TRIPLES_TYPE_TRIPLESLISTDISK) {
 		triples = new TripleListDisk();
 #endif
+	} else if(triplesType==HDTVocabulary::TRIPLES_TYPE_BITMAPQUADS) {
+		triples = new BitmapQuads(spec);
 	} else {
-		triples = new BitmapTriples(spec);
+		triples = new BitmapQuads(spec);
 	}
-	triples->setToGlobalIDFunction(dictionary->getToGlobalIDFunction());
-	triples->setToRoleIDFunction(dictionary->getToRoleIDFunction());
+	if(trTrans)
+	{
+		triples->setToGlobalIDFunction(trTrans->getToGlobalIDFunction());
+		triples->setToRoleIDFunction(trTrans->getToRoleIDFunction());
+	}
+
 }
 
 void BasicHDT::deleteComponents() {
@@ -157,7 +177,7 @@ Header *BasicHDT::getHeader() {
     return header;
 }
 
-Dictionary *BasicHDT::getDictionary() {
+TriplesDictionary *BasicHDT::getDictionary() {
     return dictionary;
 }
 
@@ -188,9 +208,14 @@ IteratorTripleString* BasicHDT::search(const char* subject,	const char* predicat
 }
 
 
-ModifiableDictionary* BasicHDT::getLoadDictionary() {
-	return new PlainDictionary(spec);
-	//return new KyotoDictionary(spec);
+ModifiableTriplesDictionary* BasicHDT::getLoadTrModifDictionary() {
+	return new TriplesPlainDictionary(spec);
+	//return new TriplesKyotoDictionary(spec);
+}
+
+ModifiableReificationDictionary* BasicHDT::getLoadReifModifDictionary() {
+	return new ModifiableReificationDictionary(spec);
+	//return new TriplesKyotoDictionary(spec);
 }
 
 ModifiableTriples* BasicHDT::getLoadTriples() {
@@ -205,19 +230,32 @@ void BasicHDT::loadDictionary(const char* fileName, const char* baseUri, RDFNota
 	StopWatch st;
 	IntermediateListener iListener(listener);
 
-	// Create temporary dictionary
-	ModifiableDictionary *dict = getLoadDictionary();
-	dict->startProcessing();
 
+	ModifiableTriplesDictionary* dict = NULL;
 	try {
 		NOTIFY(listener, "Loading Dictionary", 0, 100);
 		iListener.setRange(0, 80);
+		// Create temporary dictionary
 
 		// Load data
-		DictionaryLoader dictLoader(dict, &iListener);
+		DictionaryLoader* dictLoader;
+		if(trTrans)
+		{
+			ModifiableReificationDictionary* reif_dict = getLoadReifModifDictionary();
+			dict = reif_dict;
+			dict->startProcessing();	
+			dictLoader = new ReificationDictionaryLoader(reif_dict, &iListener);
+		}
+		else
+		{
+			ModifiableTriplesDictionary* tr_dict = getLoadTrModifDictionary();
+			dict = tr_dict;
+			dict->startProcessing();	
+			dictLoader = new TriplesDictionaryLoader(tr_dict, &iListener);
+		}
 
 		RDFParserCallback *parser = RDFParserCallback::getParserCallback(notation);
-        	parser->doParse(fileName, baseUri, notation, true, &dictLoader);
+        	parser->doParse(fileName, baseUri, notation, true, dictLoader);
 		delete parser;
 
 		iListener.setRange(80, 90);
@@ -251,7 +289,16 @@ void BasicHDT::loadDictionary(const char* fileName, const char* baseUri, RDFNota
 void BasicHDT::loadTriples(const char* fileName, const char* baseUri, RDFNotation notation, ProgressListener* listener) {
 
 	// Generate Triples
-	ModifiableTriples* triplesList = new TriplesList(spec);
+	ModifiableTriples* triplesList = NULL;
+	if(trTrans)
+	{
+		triplesList = new TriplesQuadsList(spec);
+		triplesList->setToGlobalIDFunction(trTrans->getToGlobalIDFunction());
+		triplesList->setToRoleIDFunction(trTrans->getToRoleIDFunction());
+	}
+	else
+		triplesList = new TriplesList(spec);
+
 	//ModifiableTriples *triplesList = new TriplesKyoto(spec);
 	//ModifiableTriples *triplesList = new TripleListDisk();
 	StopWatch st;
@@ -271,6 +318,7 @@ void BasicHDT::loadTriples(const char* fileName, const char* baseUri, RDFNotatio
 		header->insert("_:statistics", HDTVocabulary::ORIGINAL_SIZE, tripLoader.getSize());
 		triplesList->stopProcessing(&iListener);
 
+
 		// SORT & Duplicates
 		string ord = "";
 		try{
@@ -287,6 +335,7 @@ void BasicHDT::loadTriples(const char* fileName, const char* baseUri, RDFNotatio
 		triplesList->sort(order, &iListener);
 
 		iListener.setRange(85, 90);
+
 		triplesList->removeDuplicates(&iListener);
 	} catch (const char *e) {
 		cout << "Catch exception triples" << e << endl;
@@ -389,8 +438,11 @@ void BasicHDT::loadFromRDF(const char *fileName, string baseUri, RDFNotation not
 		iListener.setRange(50,99);
 		loadTriples(fileName, baseUri.c_str(), notation, &iListener);
 
-		triples->setToGlobalIDFunction(dictionary->getToGlobalIDFunction());
-		triples->setToRoleIDFunction(dictionary->getToRoleIDFunction());
+		if(trTrans)
+		{
+			triples->setToGlobalIDFunction(trTrans->getToGlobalIDFunction());
+			triples->setToRoleIDFunction(trTrans->getToRoleIDFunction());
+		}
 		fillHeader(baseUri);
 
 	}catch (std::exception& e) {
@@ -413,7 +465,7 @@ void BasicHDT::addDictionaryFromHDT(const char *fileName, ModifiableDictionary *
         BasicHDT hdt;
         hdt.mapHDT(fileName, listener);
 
-        Dictionary *otherDict = hdt.getDictionary();
+        TriplesDictionary *otherDict = hdt.getDictionary();
 
         char str[100];
 
@@ -448,7 +500,7 @@ void BasicHDT::loadDictionaryFromHDTs(const char** fileName, size_t numFiles, co
         IntermediateListener iListener(listener);
 
         // Create temporary dictionary
-       	ModifiableDictionary *dict = getLoadDictionary();
+       	ModifiableDictionary *dict = getLoadTrModifDictionary();
        	dict->startProcessing();
         try {
         	NOTIFY(listener, "Loading Dictionary", 0, 100);
@@ -502,7 +554,7 @@ void BasicHDT::loadTriplesFromHDTs(const char** fileNames, size_t numFiles, cons
 			const char *fileName = fileNames[i];
 	        cerr << endl << "Load triples from " << fileName << endl;
 	        hdt.mapHDT(fileName);
-	        Dictionary *dict = hdt.getDictionary();
+	        TriplesDictionary *dict = hdt.getDictionary();
 
 	        // Create mapping arrays
 	        unsigned int nsubjects = dict->getNsubjects();
@@ -629,8 +681,11 @@ void BasicHDT::loadFromSeveralHDT(const char **fileNames, size_t numFiles, strin
 		iListener.setRange(50,99);
 		loadTriplesFromHDTs(fileNames, numFiles, baseUri.c_str(), &iListener);
 		
-		triples->setToGlobalIDFunction(dictionary->getToGlobalIDFunction());
-		triples->setToRoleIDFunction(dictionary->getToRoleIDFunction());
+		if(trTrans)
+		{
+			triples->setToGlobalIDFunction(trTrans->getToGlobalIDFunction());
+			triples->setToRoleIDFunction(trTrans->getToRoleIDFunction());
+		}
 
 		fillHeader(baseUri);
 
@@ -729,7 +784,7 @@ void BasicHDT::loadFromHDT(std::istream & input, ProgressListener *listener)
 	iListener.setRange(5, 60);
 	controlInformation.load(input);
 	delete dictionary;
-	dictionary = HDTFactory::readDictionary(controlInformation);
+	dictionary = HDTFactory::readTriplesDictionary(controlInformation);
 	dictionary->load(input, controlInformation, &iListener);
 
 	// Load Triples
@@ -738,8 +793,11 @@ void BasicHDT::loadFromHDT(std::istream & input, ProgressListener *listener)
 	delete triples;
 	triples = HDTFactory::readTriples(controlInformation);
 	triples->load(input, controlInformation, &iListener);
-	triples->setToGlobalIDFunction(dictionary->getToGlobalIDFunction());
-	triples->setToRoleIDFunction(dictionary->getToRoleIDFunction());
+	if(trTrans)
+	{
+		triples->setToGlobalIDFunction(trTrans->getToGlobalIDFunction());
+		triples->setToRoleIDFunction(trTrans->getToRoleIDFunction());
+	}
     } catch (std::exception& e) {
         // cerr << "Exception loading HDT: " << ex;
         deleteComponents();
@@ -824,7 +882,7 @@ size_t BasicHDT::loadMMap(unsigned char *ptr, unsigned char *ptrMax, ProgressLis
     iListener.setRange(5, 60);
     controlInformation.load(&ptr[count], ptrMax);
     delete dictionary;
-    dictionary = HDTFactory::readDictionary(controlInformation);
+    dictionary = HDTFactory::readTriplesDictionary(controlInformation);
     count += dictionary->load(&ptr[count], ptrMax, &iListener);
 
 	// Load triples
@@ -833,8 +891,11 @@ size_t BasicHDT::loadMMap(unsigned char *ptr, unsigned char *ptrMax, ProgressLis
     delete triples;
     triples = HDTFactory::readTriples(controlInformation);
     count += triples->load(&ptr[count], ptrMax,  &iListener);
-	triples->setToGlobalIDFunction(dictionary->getToGlobalIDFunction());
-	triples->setToRoleIDFunction(dictionary->getToRoleIDFunction());
+	if(trTrans)
+	{
+		triples->setToGlobalIDFunction(trTrans->getToGlobalIDFunction());
+		triples->setToRoleIDFunction(trTrans->getToRoleIDFunction());
+	}
 
 	return count;
 }

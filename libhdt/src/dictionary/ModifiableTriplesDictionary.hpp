@@ -5,7 +5,7 @@
 #include "TriplesDictionary.hpp"
 
 namespace hdt{
-class ModifiableTriplesDictionary : public ModifiableDictionary, public TriplesDictionary{
+class ModifiableTriplesDictionary : virtual public ModifiableDictionary, virtual public TriplesDictionary{
 };
 }
 

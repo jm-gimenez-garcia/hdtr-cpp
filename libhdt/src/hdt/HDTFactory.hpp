@@ -43,6 +43,7 @@ namespace hdt {
 	class Header;
 	class ControlInformation;
 	class Dictionary;
+	class TriplesDictionary;
 	class Triples;
 
 /**
@@ -89,6 +90,7 @@ public:
 	 * @return
 	 */
 	static Dictionary *readDictionary(ControlInformation &controlInformation);
+	static TriplesDictionary *readTriplesDictionary(ControlInformation &controlInformation);
 
 	/** Returns the instance of Triples as specified in the ControlInformation
 	 *

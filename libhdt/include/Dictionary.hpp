@@ -55,6 +55,7 @@ class ControlInformation;
 class ProgressListener;
 class IteratorUCharString;
 class IteratorUInt;
+class DictionaryEntry;
 
 /**
  * Interface representing the Dictionary part of the HDT representation.
@@ -229,6 +230,8 @@ public:
     * Function to be called right after we are done inserting entries, to perform any possible final cleanup.
     */
     virtual void stopProcessing(ProgressListener *listener = NULL)=0;
+
+	virtual void push_back(DictionaryEntry* entry, DictionarySection pos)=0; 
 
 };
 

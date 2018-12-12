@@ -37,10 +37,12 @@ IteratorTripleID* QuadsList::search(TripleID &pattern)
 }
 
 size_t QuadsList::getNumberOfElements() const
-{return numValidQuads;}
+{
+	return numValidQuads;}
 
 size_t QuadsList::size() const
-{return getNumberOfElements()*sizeof(QuadID);}
+{
+	return getNumberOfElements()*sizeof(QuadID);}
 
 void QuadsList::save(ostream &output, ControlInformation &controlInfo, ProgressListener *listener/*=NULL*/){
 	controlInfo.clear();

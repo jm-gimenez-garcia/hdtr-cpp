@@ -67,4 +67,7 @@ void HDTSpecification::set(const std::string& key, const std::string& value) {
 	map[key] = value;
 }
 
+bool HDTSpecification::exist(const std::string& key)const
+{return map.count(key)>0;}
+
 } // namespace hdt

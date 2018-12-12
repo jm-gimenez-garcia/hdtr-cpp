@@ -273,4 +273,10 @@ std::string ModifiableReificationDictionary::getType()const
 void ModifiableReificationDictionary::populateHeader(Header &header, std::string rootNode){
 	header.insert(rootNode, HDTVocabulary::DICTIONARY_TYPE, HDTVocabulary::DICTIONARY_TYPE_MODIFIABLEREIFICATION);
 }
+
+void ModifiableReificationDictionary::push_back(DictionaryEntry* entry, DictionarySection pos){
+    throw std::logic_error("push_back not implemented for ModifiableReificationDictionary");
+}
+
+
 }

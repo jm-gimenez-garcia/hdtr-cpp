@@ -14,6 +14,7 @@
 namespace hdt {
 
 TriplesLiteralDictionary::TriplesLiteralDictionary() : predicates(new csd::CSD_PFC()){}
+TriplesLiteralDictionary::TriplesLiteralDictionary(HDTSpecification & spec) : BaseLiteralDictionary(spec), predicates(new csd::CSD_PFC()){}
 	
 
 TriplesLiteralDictionary::~TriplesLiteralDictionary(){

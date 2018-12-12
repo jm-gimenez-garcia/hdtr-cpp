@@ -3,11 +3,11 @@
 
 #ifdef HAVE_KYOTO
 #include "BaseKyotoDictionary.hpp"
-#include "TriplesDictionary.hpp"
+#include "ModifiableTriplesDictionary.hpp"
 
 namespace hdt {
 
-class TriplesKyotoDictionary: public BaseKyotoDictionary, public TriplesDictionary {
+class TriplesKyotoDictionary: public BaseKyotoDictionary, public ModifiableTriplesDictionary {
 public:
 	//very unsafe due to non-const kyotocabinet::TreeDB::count() and kyotocabinet::TreeDB::get() methods
 	mutable kyotocabinet::TreeDB predicates;

@@ -25,7 +25,7 @@ class ProgressListener;
 class IntermediateListener;
 class Header;
 
-class BasePlainDictionary : public ModifiableDictionary {
+class BasePlainDictionary : virtual public ModifiableDictionary {
 protected:
 	std::vector<DictionaryEntry*> shared;
 	std::vector<DictionaryEntry*> subjects;

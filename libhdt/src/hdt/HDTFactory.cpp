@@ -35,6 +35,8 @@
 
 #include "../header/PlainHeader.hpp"
 
+#include "Dictionary.hpp"
+#include "TriplesDictionary.hpp"
 #include "../dictionary/TriplesPlainDictionary.hpp"
 #include "../dictionary/GraphsPlainDictionary.hpp"
 #include "../dictionary/TriplesFourSectionDictionary.hpp"
@@ -122,6 +124,29 @@ Dictionary *HDTFactory::readDictionary(ControlInformation &controlInformation) {
 	} else if(type==HDTVocabulary::DICTIONARY_TYPE_LITERAL_GRAPH) {
 #ifdef HAVE_CDS
 		return new GraphsLiteralDictionary();
+#else
+		throw std::runtime_error("This version has been compiled without support for this dictionary");
+#endif
+	} else if(type==HDTVocabulary::DICTIONARY_TYPE_QUERYABLEREIFICATION) {
+		return new QueryableReificationDictionary();
+	} else if(type==HDTVocabulary::DICTIONARY_TYPE_MODIFIABLEREIFICATION) {
+		return new ModifiableReificationDictionary();
+	}
+
+	throw std::runtime_error("Dictionary Implementation not available");
+}
+
+TriplesDictionary *HDTFactory::readTriplesDictionary(ControlInformation &controlInformation) {
+	std::string type = controlInformation.getFormat();
+
+	if(type==HDTVocabulary::DICTIONARY_TYPE_PLAIN) {
+		return new TriplesPlainDictionary();
+	} else if(type==HDTVocabulary::DICTIONARY_TYPE_FOUR) {
+		return new TriplesFourSectionDictionary();
+
+	} else if(type==HDTVocabulary::DICTIONARY_TYPE_LITERAL) {
+#ifdef HAVE_CDS
+		return new TriplesLiteralDictionary();
 #else
 		throw std::runtime_error("This version has been compiled without support for this dictionary");
 #endif

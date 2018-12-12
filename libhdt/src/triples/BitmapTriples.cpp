@@ -135,10 +135,10 @@ void BitmapTriples::load(ModifiableTriples &triples, ProgressListener *listener)
 
 		swapComponentOrder(triple, SPO, order);
 
-		x = triple->getSubject();
-	
-		y = triple->getPredicate();
-		z = triple->getObject();
+		x = toRoleID(triple->getSubject(), SUBJECT);
+		y = toRoleID(triple->getPredicate(), PREDICATE);
+		z = toRoleID(triple->getObject(), OBJECT);
+
 		if(x==0 || y==0 || z==0) {
 			cerr << "ERROR: Triple with at least one component zero." << endl;
 			continue;
@@ -147,6 +147,8 @@ void BitmapTriples::load(ModifiableTriples &triples, ProgressListener *listener)
 		if(numTriples==0){
 			vectorY->push_back(y);
 			vectorZ->push_back(z);
+cout << __FILE__ << ":" << __LINE__ << " : Y = " << y << "(" << triple->getPredicate() << ")" << endl;
+cout << __FILE__ << ":" << __LINE__ << " : Z = " << z << "(" << triple->getObject() << ")" << endl;
 		} else if(x!=lastX) {
             if(x!=lastX+1) {
                 throw std::runtime_error("Error: The subjects must be correlative.");
@@ -156,6 +158,11 @@ void BitmapTriples::load(ModifiableTriples &triples, ProgressListener *listener)
 
 			bitmapZ->append(true);
 			vectorZ->push_back(z);
+
+cout << __FILE__ << ":" << __LINE__ << " : Y = " << y << "(" << triple->getPredicate() << ")" << endl;
+cout << __FILE__ << ":" << __LINE__ << " : By = " << true << endl;
+cout << __FILE__ << ":" << __LINE__ << " : Z = " << z << "(" << triple->getObject() << ")" << endl;
+cout << __FILE__ << ":" << __LINE__ << " : Bz = " << true << endl;
 		} else if(y!=lastY) {
             if(y<lastY) {
                 throw std::runtime_error("Error: The predicates must be in increasing order.");
@@ -165,17 +172,26 @@ void BitmapTriples::load(ModifiableTriples &triples, ProgressListener *listener)
 
 			bitmapZ->append(true);
 			vectorZ->push_back(z);
+
+cout << __FILE__ << ":" << __LINE__ << " : Y = " << y << "(" << triple->getPredicate() << ")" << endl;
+cout << __FILE__ << ":" << __LINE__ << " : By = " << false << endl;
+cout << __FILE__ << ":" << __LINE__ << " : Z = " << z << "(" << triple->getObject() << ")" << endl;
+cout << __FILE__ << ":" << __LINE__ << " : Bz = " << true << endl;
 		} else {
-            if(z<=lastZ) {
+            if(z<lastZ) {
                 throw std::runtime_error("Error, The objects must be in increasing order.");
             }
             bitmapZ->append(false);
 			vectorZ->push_back(z);
+cout << __FILE__ << ":" << __LINE__ << " : Z = " << z << "(" << triple->getObject() << ")" << endl;
+cout << __FILE__ << ":" << __LINE__ << " : Bz = " << false << endl;
 		}
 
 		lastX = x;
 		lastY = y;
 		lastZ = z;
+
+cout << endl;
 
         NOTIFYCOND(listener, "Converting to BitmapTriples", numTriples, triples.getNumberOfElements());
 		numTriples++;

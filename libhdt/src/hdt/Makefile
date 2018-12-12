@@ -1,8 +1,9 @@
 CXX=g++
 
-CXXFLAGS := $(CXXFLAGS) -std=c++11 -I. -I../../include -I../dictionary 
+CXXFLAGS := $(CXXFLAGS) -std=c++11 -I. -I../../include -I../dictionary -I../header -I../triples -I../util 
 
-SRC := ./ControlInformation.cpp ./HDTSpecification.cpp ./DictionaryLoader.cpp 
+SRC :=  $(wildcard ./*.cpp)
+#SRC := ./ControlInformation.cpp ./HDTSpecification.cpp ./DictionaryLoader.cpp 
 OBJ := $(patsubst %.cpp,%.o,$(SRC)) 
 
 STATIC_LIB := libhdt.a

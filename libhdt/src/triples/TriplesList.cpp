@@ -1430,6 +1430,7 @@ void TriplesListIterator::goToStart()
 }
 
 size_t TriplesListIterator::getNumberOfElements()const
-{return triples->getNumberOfElements();}
+{
+	return triples->getNumberOfElements();}
 
 } // namespace hdt

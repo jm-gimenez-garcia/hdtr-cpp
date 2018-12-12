@@ -3,10 +3,10 @@
 #define GRAPHS_PLAIN_DICTIONARY_H__
 
 #include "BasePlainDictionary.hpp"
-#include "GraphsDictionary.hpp"
+#include "ModifiableGraphsDictionary.hpp"
 
 namespace hdt {
-class GraphsPlainDictionary : public BasePlainDictionary, public GraphsDictionary {
+class GraphsPlainDictionary : public BasePlainDictionary, public ModifiableGraphsDictionary {
 
 private:
 	std::vector<DictionaryEntry*> graphs;

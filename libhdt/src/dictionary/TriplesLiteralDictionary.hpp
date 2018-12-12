@@ -13,6 +13,7 @@ private:
 
 public:
 	TriplesLiteralDictionary();
+	TriplesLiteralDictionary(HDTSpecification &spec);
 	~TriplesLiteralDictionary();
 
 	protected:

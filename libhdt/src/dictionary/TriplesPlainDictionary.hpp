@@ -2,12 +2,12 @@
 #define TRIPLES_PLAIN_DICTIONARY_H__
 
 #include "BasePlainDictionary.hpp"
-#include "TriplesDictionary.hpp"
+#include "ModifiableTriplesDictionary.hpp"
 #include "HDTEnums.hpp"
 
 namespace hdt {
 
-class TriplesPlainDictionary : public BasePlainDictionary, public TriplesDictionary {
+class TriplesPlainDictionary : public BasePlainDictionary, public ModifiableTriplesDictionary {
 
 private:
 	std::vector<DictionaryEntry*> predicates;

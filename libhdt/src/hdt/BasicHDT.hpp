@@ -34,22 +34,33 @@
 #include "../util/filemap.h"
 
 namespace hdt {
-
+class TriplesDictionary;
+class ModifiableTriplesDictionary;
+class ModifiableReificationDictionary;
+class ModifiableTriples;
+class ProgressListener;
+class Header;
+class Dictionary;
+class Triples;
+class TripleTranslator;
+class FileMap;
 
 class BasicHDT : public HDT {
 private:
 	Header *header;
-	Dictionary *dictionary;
+	TriplesDictionary *dictionary;
 	Triples *triples;
 	HDTSpecification spec;
 	string fileName;
+	TripleTranslator* trTrans;
 
 	FileMap *mappedHDT, *mappedIndex;
 
 	void createComponents();
 	void deleteComponents();
 
-	ModifiableDictionary *getLoadDictionary();
+	ModifiableTriplesDictionary *getLoadTrModifDictionary();
+	ModifiableReificationDictionary *getLoadReifModifDictionary();
 	ModifiableTriples *getLoadTriples();
 
 	void loadDictionary(const char *fileName, const char *baseUri, RDFNotation notation, ProgressListener *listener);
@@ -79,7 +90,7 @@ public:
 	/**
 	 *
 	 */
-	Dictionary *getDictionary();
+	TriplesDictionary *getDictionary();
 
 	/**
 	 *

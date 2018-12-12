@@ -46,6 +46,7 @@
 #include <set>
 
 namespace hdt {
+	class TriplesDictionary;
 
 /**
  * Main HDT class. Represents an abstract access to a HDT object.
@@ -65,7 +66,7 @@ public:
 	/**
 	 * Obtain the Dictionary part of this HDT
 	 */
-	virtual Dictionary *getDictionary() = 0;
+	virtual TriplesDictionary *getDictionary() = 0;
 
 	/**
 	 * Obtain the Triples of this HDT.

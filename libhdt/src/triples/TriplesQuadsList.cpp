@@ -31,7 +31,8 @@ IteratorTripleID* TriplesQuadsList::search(TripleID &pattern)
 }
 
 size_t TriplesQuadsList::getNumberOfElements() const
-{return tList.getNumberOfElements() + qList.getNumberOfElements();}
+{
+	return tList.getNumberOfElements() + qList.getNumberOfElements();}
 
 
 size_t TriplesQuadsList::size() const
@@ -320,7 +321,6 @@ TripleID* TriplesQuadsListIterator::next(){
 			throw runtime_error("Error : Unable to increment TriplesQuadsListIterator");
 		}
 	}
-	cout << "*tid_return  = " << *tid_return << endl;
 	return tid_return;
 }
 

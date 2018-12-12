@@ -420,6 +420,10 @@ unsigned int BaseKyotoDictionary::getMaxID()const {
 	return (mapping==MAPPING2) ? sh+max : sh+s+o;
 }
 
+void BaseKyotoDictionary::push_back(DictionaryEntry* entry, DictionarySection pos){
+    throw std::logic_error("push_back not implemented for Kyoto dictionary");
+}
+
 unsigned int BaseKyotoDictionary::getMaxSubjectID()const {
 	unsigned int sh = shared.count();
 	unsigned int s = subjects.count();

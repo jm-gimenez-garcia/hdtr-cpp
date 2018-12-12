@@ -14,6 +14,7 @@ private:
 
 public:
 	GraphsLiteralDictionary();
+	GraphsLiteralDictionary(HDTSpecification & spec);
 	~GraphsLiteralDictionary();
 
 	protected:

@@ -6,27 +6,29 @@
  */
 #include <stdexcept>
 #include "BasicModifiableHDT.hpp"
-
+#include "ModifiableReificationDictionary.hpp"
 #include "TripleIDStringIterator.hpp"
 #include "../util/StopWatch.hpp"
 
+#include "TriplesDictionary.hpp"
 #include "TriplesPlainDictionary.hpp"
 #include "GraphsPlainDictionary.hpp"
 
 #include "PlainHeader.hpp"
 
 #include "TriplesList.hpp"
+#include "QuadsList.hpp"
 #include "TriplesKyoto.hpp"
 #ifndef WIN32
 #include "../triples/TripleListDisk.hpp"
 #endif
 namespace hdt {
 
-BasicModifiableHDT::BasicModifiableHDT() {
+BasicModifiableHDT::BasicModifiableHDT() : trTrans(NULL) {
 	createComponents();
 }
 
-BasicModifiableHDT::BasicModifiableHDT(HDTSpecification &spec) {
+BasicModifiableHDT::BasicModifiableHDT(HDTSpecification &spec) : trTrans(NULL) {
 	this->spec = spec;
 	createComponents();
 }
@@ -48,10 +50,16 @@ void BasicModifiableHDT::createComponents() {
 
 	// FIXME: SELECT
 	header = new PlainHeader();
-	dictionary = new TriplesPlainDictionary();
-	triples = new TriplesList();
-	triples->setToGlobalIDFunction(dictionary->getToGlobalIDFunction());
-	triples->setToRoleIDFunction(dictionary->getToRoleIDFunction());
+	ModifiableReificationDictionary* mrDict = new ModifiableReificationDictionary();
+	dictionary = mrDict;
+	trTrans = mrDict;
+	//triples = new TriplesList();
+	triples = new QuadsList();
+	if(trTrans)
+	{
+		triples->setToGlobalIDFunction(trTrans->getToGlobalIDFunction());
+		triples->setToRoleIDFunction(trTrans->getToRoleIDFunction());
+	}
 }
 
 
@@ -61,7 +69,7 @@ Header *BasicModifiableHDT::getHeader()
     return header;
 }
 
-Dictionary *BasicModifiableHDT::getDictionary()
+TriplesDictionary *BasicModifiableHDT::getDictionary()
 {
     return dictionary;
 }

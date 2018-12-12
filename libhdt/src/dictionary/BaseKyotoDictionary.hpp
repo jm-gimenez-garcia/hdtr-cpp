@@ -54,7 +54,7 @@ class ControlInformation;
 class ProgressListener;
 class Header;
 
-class BaseKyotoDictionary : public ModifiableDictionary {
+class BaseKyotoDictionary : virtual public ModifiableDictionary {
 // Private attributes
 public:
 
@@ -106,6 +106,7 @@ public:
 	virtual unsigned int getLocalId(unsigned int id, TripleComponentRole position)const {return BaseKyotoDictionary::getLocalId(mapping,id,position);}
 
 	unsigned int getMaxID()const;
+	void push_back(DictionaryEntry* entry, DictionarySection pos);
 
     uint64_t size()const;
 

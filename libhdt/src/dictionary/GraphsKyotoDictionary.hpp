@@ -6,11 +6,11 @@
 
 
 #include "BaseKyotoDictionary.hpp"
-#include "GraphsDictionary.hpp"
+#include "ModifiableGraphsDictionary.hpp"
 
 namespace hdt {
 
-class GraphsKyotoDictionary: public BaseKyotoDictionary, public GraphsDictionary {
+class GraphsKyotoDictionary: public BaseKyotoDictionary, public ModifiableGraphsDictionary {
 public:
 	//unsafe due to non-const kyotocabinet::TreeDB::count() and kyotocabinet::TreeDB::get() methods
 	mutable kyotocabinet::TreeDB graphs;

@@ -123,6 +123,7 @@ namespace HDTVocabulary {
 	const std::string TRIPLES_TYPE_TRIPLESLISTDISK = HDT_TRIPLES_BASE+"ListDisk>";
 	const std::string TRIPLES_TYPE_PLAIN = HDT_TRIPLES_BASE+"Plain>";
 	const std::string TRIPLES_TYPE_BITMAP = HDT_TRIPLES_BASE+"Bitmap>";
+	const std::string TRIPLES_TYPE_BITMAPQUADS = HDT_QUADS_BASE+"Bitmap>";
 	const std::string TRIPLES_TYPE_KYOTO = HDT_TRIPLES_BASE+"KYOTO>";
 
 	// Index types
