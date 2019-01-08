@@ -93,7 +93,7 @@ VarBindingString* QueryProcessor::searchJoin(vector<TripleString>& patterns, set
 		for (vector<TripleString>::iterator itPat = patterns.begin();
 				itPat != patterns.end(); ++itPat) {
 			TripleID triplePatID;
-            hdt->getDictionary()->tripleStringtoTripleID(*itPat, triplePatID);
+            hdt->getDictionary()->tripleStringtoTripleID(itPat, &triplePatID);
 			//cout << "PatternString: " << *itPat << " PatternID: " << triplePatID << endl;
 
 			vector<unsigned char> vars; // each position means: 1 Subject, 2 Predicate, 3 Object.

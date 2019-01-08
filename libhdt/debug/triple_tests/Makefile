@@ -1,17 +1,28 @@
 include ../Makefile.inc
 
-SRC = testNewBitmapQuadsBasic.cpp
+SRC = testHdt2rdf.cpp
+#SRC = testRdf2hdt.cpp
+#SRC = testNewBitmapQuadsBasic.cpp
 #SRC = testNewTriple.cpp
 OBJ = $(patsubst %.cpp,%.o,$(SRC))
 EXE = $(patsubst %.cpp,%,$(SRC))
 
+LIBS=$(LIBUTIL) $(LIBCDS) $(LIBCSD) $(LIBHDT)  $(LIBRDF) $(LIBDICT) $(LIBTRIPLES) $(LIBPERMUTATION) $(LIBHEADER) $(LIBSEQUENCE) $(LIBBITSEQUENCE) $(LIBHUFFMAN)
 
 all: $(EXE) 
 
-
-
-$(EXE) : $(OBJ) $(LIBUTIL) $(LIBCDS) $(LIBCSD) $(LIBHDT)  $(LIBRDF) $(LIBDICT) $(LIBTRIPLES) $(LIBPERMUTATION) $(LIBHEADER) $(LIBSEQUENCE) $(LIBBITSEQUENCE) $(LIBHUFFMAN)
+hdt2rdf: testHdt2rdf.o $(LIBS) 
 	$(CXX) $<  $(LDFLAGS)  -o $@ 
+rdf2hdt: testRdf2hdt.o $(LIBS) 
+	$(CXX) $<  $(LDFLAGS)  -o $@ 
+quads: testNewBitmapQuads.o $(LIBS)
+	$(CXX) $<  $(LDFLAGS)  -o $@ 
+quadsbasic: testNewBitmapQuadsBasic.o $(LIBS)
+	$(CXX) $<  $(LDFLAGS)  -o $@ 
+
+$(EXE) : $(OBJ) $(LIBS)
+	$(CXX) $<  $(LDFLAGS)  -o $@ 
+
 %.o: %.cpp 
 	$(CXX) -c $^ $(CXXFLAGS)  -o $@ 
 

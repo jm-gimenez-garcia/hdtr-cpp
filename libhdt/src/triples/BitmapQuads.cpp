@@ -7,6 +7,7 @@
 #include "BitmapQuadIteratorWrapper.hpp"
 #include "BitmapQuadIteratorSingle.hpp"
 #include "TripleTranslatorIteratorWrapper.hpp"
+#include "HDTVocabulary.hpp"
 
 using namespace std;
 
@@ -73,8 +74,6 @@ void BitmapQuads::load(ModifiableTriples &triples, ProgressListener *listener/*=
 		if(numTriples==0){
 			vectorY->push_back(y);
 			vectorZ->push_back(z);
-cout << __FILE__ << ":" << __LINE__ << " : Y = " << y << "(" << triple->getPredicate() << ")" << endl;
-cout << __FILE__ << ":" << __LINE__ << " : Z = " << z << "(" << triple->getObject() << ")" << endl;
 
 		} else if(x!=lastX) {
             if(x!=lastX+1) {
@@ -84,10 +83,6 @@ cout << __FILE__ << ":" << __LINE__ << " : Z = " << z << "(" << triple->getObjec
 			vectorY->push_back(y);
 			bitmapZ->append(true);
 			vectorZ->push_back(z);
-cout << __FILE__ << ":" << __LINE__ << " : Y = " << y << "(" << triple->getPredicate() << ")" << endl;
-cout << __FILE__ << ":" << __LINE__ << " : By = " << true << endl;
-cout << __FILE__ << ":" << __LINE__ << " : Z = " << z << "(" << triple->getObject() << ")" << endl;
-cout << __FILE__ << ":" << __LINE__ << " : Bz = " << true << endl;
 
 		} else if(y!=lastY) {
             if(y<lastY) {
@@ -99,10 +94,6 @@ cout << __FILE__ << ":" << __LINE__ << " : Bz = " << true << endl;
 			bitmapZ->append(true);
 			vectorZ->push_back(z);
 
-cout << __FILE__ << ":" << __LINE__ << " : Y = " << y << "(" << triple->getPredicate() << ")" << endl;
-cout << __FILE__ << ":" << __LINE__ << " : By = " << false << endl;
-cout << __FILE__ << ":" << __LINE__ << " : Z = " << z << "(" << triple->getObject() << ")" << endl;
-cout << __FILE__ << ":" << __LINE__ << " : Bz = " << true << endl;
 		} else {
             if(z<lastZ) {
                 throw std::runtime_error("Error, The objects must be in increasing order.");
@@ -110,21 +101,16 @@ cout << __FILE__ << ":" << __LINE__ << " : Bz = " << true << endl;
             bitmapZ->append(false);
 			vectorZ->push_back(z);
 
-cout << __FILE__ << ":" << __LINE__ << " : Z = " << z << "(" << triple->getObject() << ")" << endl;
-cout << __FILE__ << ":" << __LINE__ << " : Bz = " << false << endl;
 		}
 		
 		if (gr == 0)
 		{
 			bitmapG->append(false);
-cout << __FILE__ << ":" << __LINE__ << " : Bg = " << false << endl;
 		}
 		else
 		{
 			bitmapG->append(true);
 			permId_tmp.push_back(gr);
-cout << __FILE__ << ":" << __LINE__ << " : gr = " << gr << "(" << triple->to_QuadID().getGraph() << ")" << endl;
-cout << __FILE__ << ":" << __LINE__ << " : Bg = " << true << endl;
 		}
 
 		lastX = x;
@@ -255,35 +241,51 @@ void BitmapQuads::load(std::istream &input, ControlInformation &controlInformati
 	}
 
 }
+size_t BitmapQuads::load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener)
+{
+	size_t count=BitmapTriples::load(ptr, ptrMax, listener);
 
+	if(bitmapG)
+		delete bitmapG;
+    bitmapG = new BitSequence375();
+    count += bitmapG->load(&ptr[count], ptrMax, listener);
+
+	if(permutation)
+		delete permutation;
+	permutation = new PermutationMRRR();
+	count += permutation->load(&ptr[count], ptrMax, listener);
+
+	return count;
+}
 
 IteratorTripleID *BitmapQuads::search(TripleID& pattern)
 {
 	IteratorTripleID* tid_it;
-	QuadID patt = pattern.to_QuadID();
-	if(!patt.hasGraph())
+	QuadID qpatt = pattern.to_QuadID();
+	if(!qpatt.hasGraph())
 		tid_it = BitmapTriples::search(pattern);
 	else
 	{
-		if(patt.getGraph()==0)
-		{
-			tid_it = new BitmapQuadIteratorWrapper(this, BitmapTriples::search(pattern));
-		}
+
+		if(qpatt.getGraph()==0)
+			tid_it = new BitmapQuadIteratorWrapper(this, BitmapTriples::search(pattern),qpatt.getGraph());
 		else
-		{
-			tid_it = new BitmapQuadIteratorSingle(this, patt); 
-		}
+			tid_it = new BitmapQuadIteratorSingle(this, pattern.to_QuadID()); 
 	}
-	return new TripleTranslatorIteratorWrapper(this, tid_it);
+	IteratorTripleID* tid_ttiw = new TripleTranslatorIteratorWrapper(this, tid_it);
+	return tid_ttiw;
 }
 
 //equivalent of get method in java
-void BitmapQuads::initTripleIDFromPos(TripleID* tid_ptr, const unsigned int pos)const{
+void BitmapQuads::initTripleIDFromPos(TripleID*& tid_ptr, const unsigned int pos)const{
 	const unsigned int g = bitmapG->access(pos) ? permutation->pi(bitmapG->rank1(pos)) : 0;
-	TripleID* tid_ptr_tmp;
+
+	TripleID* tid_ptr_tmp=NULL;
 	BitmapTriples::initTripleIDFromPos(tid_ptr_tmp,pos);
+
 	if(tid_ptr)
 		delete tid_ptr;
+
 	if(g==0)
 		tid_ptr = new TripleID(*tid_ptr_tmp);
 	else
@@ -291,6 +293,10 @@ void BitmapQuads::initTripleIDFromPos(TripleID* tid_ptr, const unsigned int pos)
 	delete tid_ptr_tmp;
 }
 
+string BitmapQuads::getType() const
+{
+    return HDTVocabulary::TRIPLES_TYPE_BITMAPQUADS;
+}
 
 }
 

@@ -74,6 +74,7 @@ void TriplesFourSectionDictionary::loadFourthSection(unsigned char *ptr, unsigne
 {
     iListener.setRange(50,75);
     iListener.notifyProgress(0, "Dictionary read predicates.");
+	predicates = csd::CSD::create(ptr[count]);
     if(predicates==NULL){
         predicates = new csd::CSD_PFC();
         throw runtime_error("Could not read predicates.");

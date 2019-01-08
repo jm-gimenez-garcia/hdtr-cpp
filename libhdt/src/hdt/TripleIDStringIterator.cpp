@@ -11,7 +11,6 @@
 namespace hdt {
 
 TripleIDStringIterator::TripleIDStringIterator(Dictionary *dict, IteratorTripleID *iterator) : dict(dict), iterator(iterator){
-
 }
 
 TripleIDStringIterator::~TripleIDStringIterator() {
@@ -23,9 +22,18 @@ bool TripleIDStringIterator::hasNext() {
 }
 
 TripleString *TripleIDStringIterator::next() {
-	TripleID *tid = iterator->next();
-	dict->tripleIDtoTripleString(*tid, result);
-	return &result;
+	const TripleID *tid = iterator->next();
+	if(tid->hasGraph())
+	{
+		const QuadID qid = tid->to_QuadID();
+		dict->quadIDtoQuadString(&qid, &result_qs);
+		return &result_qs;
+	}
+	else
+	{
+		dict->tripleIDtoTripleString(tid, &result_ts);
+		return &result_ts;
+	}
 }
 
 bool TripleIDStringIterator::hasPrevious() {
@@ -33,9 +41,18 @@ bool TripleIDStringIterator::hasPrevious() {
 }
 
 TripleString *TripleIDStringIterator::previous() {
-	TripleID *tid = iterator->previous();
-	dict->tripleIDtoTripleString(*tid, result);
-	return &result;
+	const TripleID *tid = iterator->previous();
+	if(tid->hasGraph())
+	{
+		const QuadID qid = tid->to_QuadID();
+		dict->quadIDtoQuadString(&qid, &result_qs);
+		return &result_qs;
+	}
+	else
+	{
+		dict->tripleIDtoTripleString(tid, &result_ts);
+		return &result_ts;
+	}
 }
 
 void TripleIDStringIterator::goToStart() {

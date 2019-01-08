@@ -91,10 +91,10 @@ public:
     * @param tripleString TripleString to be converted.
     * @return resulting TripleID
     */
-    void tripleStringtoTripleID(const TripleString &tripleString, TripleID &tid) const{
-    	tid.setSubject(stringToId(tripleString.getSubject(), SUBJECT));
-    	tid.setPredicate(stringToId(tripleString.getPredicate(), PREDICATE));
-    	tid.setObject(stringToId(tripleString.getObject(), OBJECT));
+    void tripleStringtoTripleID(const TripleString* tripleString, TripleID* tid) const{
+    	tid->setSubject(stringToId(tripleString->getSubject(), SUBJECT));
+    	tid->setPredicate(stringToId(tripleString->getPredicate(), PREDICATE));
+    	tid->setObject(stringToId(tripleString->getObject(), OBJECT));
     }
 
     /**
@@ -103,10 +103,11 @@ public:
     * @param tripleID TripleID to be converted.
     * @return resultant TripleSTring
     */
-    void tripleIDtoTripleString(TripleID &tripleID, TripleString &ts) {
-	    ts.setSubject(idToString(tripleID.getSubject(), SUBJECT));
-    	ts.setPredicate(idToString(tripleID.getPredicate(), PREDICATE));
-    	ts.setObject(idToString(tripleID.getObject(), OBJECT));
+    void tripleIDtoTripleString(const TripleID* tripleID, TripleString* ts) {
+		const std::string subj = idToString(tripleID->getSubject(), SUBJECT);
+		const std::string pred = idToString(tripleID->getPredicate(), PREDICATE);
+		const std::string obj = idToString(tripleID->getObject(), OBJECT);
+		ts->setAll(subj, pred, obj);
     }
 
     /**
@@ -115,12 +116,18 @@ public:
     * @param quadString QuadString to be converted.
     * @return resulting QuadID
     */
-    void quadStringtoQuadID(const QuadString &quadString, QuadID &qid) const{
-    	qid.setSubject(stringToId(quadString.getSubject(), SUBJECT));
-    	qid.setPredicate(stringToId(quadString.getPredicate(), PREDICATE));
-    	qid.setObject(stringToId(quadString.getObject(), OBJECT));
-
-    	qid.setGraph(stringToId(quadString.getGraph(), GRAPH));
+    void quadStringtoQuadID(const QuadString* quadString, QuadID* qid) const{
+		std::cout << "string.subj=" << quadString->getSubject() << std::endl;
+		const unsigned int subj = stringToId(quadString->getSubject(), SUBJECT);
+		const unsigned int pred = stringToId(quadString->getPredicate(), PREDICATE);
+		const unsigned int obj = stringToId(quadString->getObject(), OBJECT);
+		if (quadString->hasGraph())
+		{
+			const unsigned int gr = stringToId(quadString->getGraph(), GRAPH);
+			qid->setAll(subj, pred, obj, gr);
+		}
+		else
+			qid->setAll(subj, pred, obj);
     }
 
     /**
@@ -129,11 +136,18 @@ public:
     * @param tripleID TripleID to be converted.
     * @return resultant TripleSTring
     */
-    void quadIDtoQuadString(QuadID& qid, QuadString& qs) {
-	    qs.setSubject(idToString(qid.getSubject(), SUBJECT));
-    	qs.setPredicate(idToString(qid.getPredicate(), PREDICATE));
-    	qs.setObject(idToString(qid.getObject(), OBJECT));
-    	qs.setGraph(idToString(qid.getGraph(), GRAPH));
+    void quadIDtoQuadString(const QuadID* qid, QuadString* qs) {
+		const std::string subj = idToString(qid->getSubject(), SUBJECT);
+		const std::string pred = idToString(qid->getPredicate(), PREDICATE);
+		const std::string obj = idToString(qid->getObject(), OBJECT);
+
+		if (qid->hasGraph())
+		{
+			const std::string gr = idToString(qid->getGraph(), GRAPH);
+			qs->setAll(subj, pred, obj, gr);
+		}
+		else
+			qs->setAll(subj, pred, obj);
     }
 
     /** Number of total elements of the dictionary

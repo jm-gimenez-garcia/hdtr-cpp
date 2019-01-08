@@ -6,7 +6,7 @@
  */
 
 #include "PermutationMRRR.hpp"
-#include <HDTVocabulary.hpp>
+#include "HDTVocabulary.hpp"
 #include "../util/crc8.h"
 #include <map>
 
@@ -275,7 +275,54 @@ void PermutationMRRR::load(std::istream &input){
 
 }
 
-//   virtual size_t load(const unsigned char *ptr, const unsigned char *ptrMax, ProgressListener *listener=NULL)=0;
+#define CHECKPTR(base, max, size) if(((base)+(size))>(max)) throw std::runtime_error("Could not read completely the HDT from the file.");
+size_t PermutationMRRR::load(const unsigned char *ptr, const unsigned char *ptrMax, ProgressListener *listener/*=NULL*/){
+	size_t count=0;
+
+//cout << __FILE__ << ":" << __LINE__ <<" : values to read: "
+//for(unsigned int i=0; i<5;i++)
+//	cout << static_cast<unsigned int>(ptr[i]) << " ";
+//cout << endl;
+
+    // Check type
+	CHECKPTR(&ptr[count], ptrMax, 1);
+    if(ptr[count++]!=TYPE_PERMUTATION_MRRR) 
+        throw std::runtime_error("Trying to read a PermutationMRRR but the type does not match");
+
+	uint8_t step_u8;
+	// Read Step
+	CHECKPTR(&ptr[count], ptrMax, sizeof(uint8_t));
+	memcpy((void*)&step_u8,(void*)(ptr+count), sizeof(uint8_t));
+	count += sizeof(uint8_t);
+	step = static_cast<size_t>(step_u8);
+
+    // Validate Checksum Header
+    CRC8 crch;
+    crch.update(&ptr[0], count);
+    CHECKPTR(&ptr[count], ptrMax, 1);
+	/*unsigned int check_val_m1 = static_cast<unsigned int>(ptr[count]);
+	unsigned int check_val = static_cast<unsigned int>(ptr[count++]);
+	unsigned int check_val_p1 = static_cast<unsigned int>(ptr[count++]);
+	cout << __FILE__ << ":" << __LINE__ << " : crch.getValue()=" << static_cast<unsigned int>(crch.getValue()) << endl;
+	cout << __FILE__ << ":" << __LINE__ << " : check_val_m1=" <<  check_val_m1 << endl;
+	cout << __FILE__ << ":" << __LINE__ << " : check_val=" <<  check_val << endl;
+	cout << __FILE__ << ":" << __LINE__ << " : check_val_p1=" <<  check_val_p1 << endl;*/
+    if(crch.getValue()!=ptr[count++])
+        throw std::runtime_error("Checksum error while reading PermutationMRRR header.");
+
+	//Read sequence
+	count += sequence->load(&ptr[count], ptrMax, listener);
+
+	//Read bitmap
+	count += bitmap->load(&ptr[count], ptrMax, listener);
+
+	//Read backwardPointers
+	count += backwardPointers->load(&ptr[count], ptrMax, listener);
+
+	return count;
+
+}
+#undef CHECKPTR
 
 std::string PermutationMRRR::getType(){
 	return HDTVocabulary::PERM_TYPE_MRRR;

@@ -108,6 +108,7 @@ FileMap::FileMap(const char *fileName) : fd(0), ptr(NULL) {
 	if(stat(fileName,&statbuf)!=0) {
 		throw std::runtime_error("Error trying to guess the file size");
 	}
+	
 	mappedSize = statbuf.st_size;
 
 	// Do mmap

@@ -41,6 +41,7 @@
 #include "Triples.hpp"
 #include "RDFParser.hpp"
 #include "RDFSerializer.hpp"
+#include "SingleQuad.hpp"
 
 #include <iostream>
 #include <set>
@@ -104,9 +105,18 @@ public:
 	 * @return
 	 */
 	virtual IteratorTripleString *search(const char *subject, const char *predicate, const char *object) = 0;
+	virtual IteratorTripleString *search(const char *subject, const char *predicate, const char *object, const char* graph) = 0;
 
     IteratorTripleString *search(TripleString &pattern) {
-        return search(pattern.getSubject().c_str(), pattern.getPredicate().c_str(), pattern.getObject().c_str());
+		if (pattern.hasGraph())
+		{
+			QuadString qpatt = pattern.to_QuadString();
+
+
+			return search(qpatt.getSubject().c_str(), qpatt.getPredicate().c_str(), qpatt.getObject().c_str(), qpatt.getGraph().c_str());
+		}
+		else
+			return search(pattern.getSubject().c_str(), pattern.getPredicate().c_str(), pattern.getObject().c_str());
     }
 
     virtual bool isIndexed() const = 0;

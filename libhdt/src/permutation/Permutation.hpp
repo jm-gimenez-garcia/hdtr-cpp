@@ -72,7 +72,7 @@ public:
 	 */
 	virtual void load(std::istream &input)=0;
 
-	//   virtual size_t load(const unsigned char *ptr, const unsigned char *ptrMax, ProgressListener *listener=NULL)=0;
+	virtual size_t load(const unsigned char *ptr, const unsigned char *ptrMax, ProgressListener *listener=NULL)=0;
 
 	virtual std::string getType()=0;
 

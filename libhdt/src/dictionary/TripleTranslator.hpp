@@ -4,7 +4,7 @@
 #include "HDTEnums.hpp"
 
 namespace hdt{
-
+class TripleID;
 class TripleTranslator{
 	protected:
 		std::function<unsigned int(unsigned int,TripleComponentRole)> toGlobalID;
@@ -15,8 +15,10 @@ class TripleTranslator{
 		std::function<unsigned int(unsigned int,TripleComponentRole)> getToRoleIDFunction(){return toRoleID;}
 		void setToGlobalIDFunction(std::function<unsigned int(unsigned int,TripleComponentRole)> fcn){toGlobalID=fcn;}
 		void setToRoleIDFunction(std::function<unsigned int(unsigned int,TripleComponentRole)> fcn){toRoleID=fcn;}
+		void toRoleIDs(TripleID*& role_tid, const TripleID& glob_tid);
 		virtual ~TripleTranslator(){}
 };
+
 
 }
 #endif

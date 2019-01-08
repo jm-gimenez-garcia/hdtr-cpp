@@ -17,9 +17,13 @@ class BitmapQuadIteratorWrapper : public IteratorTripleID{
 		BitSequence375* bitmapPerm;
 		TripleID* previousTriple;
 		unsigned int previousPosition;
+		TripleID* returnTriple;
+		unsigned int pattG;
+		bool hasNext_called;
+		bool hasPrevious_called;
 
 	public:
-		BitmapQuadIteratorWrapper(BitmapQuads* bmq, IteratorTripleID* it_tid);
+		BitmapQuadIteratorWrapper(BitmapQuads* bmq, IteratorTripleID* it_tid, unsigned int patternG);
 		~BitmapQuadIteratorWrapper();
 		bool hasNext();
 		TripleID* next();
@@ -42,15 +46,6 @@ class BitmapQuadIteratorWrapper : public IteratorTripleID{
 
 
 };
-
-inline bool BitmapQuadIteratorWrapper::hasNext()
-{return it->hasNext();}
-
-inline bool BitmapQuadIteratorWrapper::hasPrevious()
-{return it->hasPrevious();}
-
-inline void BitmapQuadIteratorWrapper::goToStart()
-{it->goToStart();}
 
 inline size_t BitmapQuadIteratorWrapper::estimatedNumResults()
 {return it->estimatedNumResults();}

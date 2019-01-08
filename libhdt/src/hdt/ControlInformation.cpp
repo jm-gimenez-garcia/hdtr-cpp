@@ -97,6 +97,7 @@ void ControlInformation::load(std::istream &in) {
 	crc.readData(in, hdt, 4);
 	hdt[4]=0;
     if(strncmp((char*)hdt,"$HDT",4)!=0) {
+		cerr << hdt << " instead of " << "$HDT" << endl;
 		throw std::runtime_error("Non-HDT Section");
 	}
 

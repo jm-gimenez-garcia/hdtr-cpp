@@ -91,6 +91,8 @@ public:
 
 	~QuadID() {}
 
+	TripleID* new_copy()const{return new QuadID(*this);}
+
 	QuadID to_QuadID() const;
 
 	TripleID to_TripleID() const;
@@ -104,6 +106,7 @@ public:
 	unsigned int getGraph() const {
 		if (!hasGraph())
 		{
+		std::cerr << "This QuadID is a TripleID (no graph)" << endl;
 			throw std::runtime_error("This QuadID is a TripleID (no graph)");
 			return 0;
 		}
@@ -120,7 +123,16 @@ public:
 		graph = gr;
 		has_graph = true;
 	}
+	void unsetGraph() {
+		graph = 0;
+		has_graph = false;
+	}
 
+	void setAll(const unsigned int subject, const unsigned int predicate, const unsigned int object) {
+		TripleID::setAll(subject, predicate, object);
+		graph = 0;
+		has_graph=false;
+	}
 	void setAll(const unsigned int subj, const unsigned int pred, const unsigned int obj, const unsigned int ident) {
 		subject = subj;
 		predicate = pred;
@@ -257,6 +269,7 @@ public:
 			&& ((patt.hasGraph() && hasGraph() && (patt.graph==0 || patt.graph == graph)) || (!patt.hasGraph() && !hasGraph()));
 	}
 
+
 	/**
 	 * Replaces the contents of a quad with the provided replacement
 	 *
@@ -369,8 +382,14 @@ public:
 
 	TripleString to_TripleString()const;
 
-	virtual bool hasGraph()const{return has_graph;}
+	bool hasGraph()const{return has_graph;}
 
+
+	void setAll(const std::string &subject, const std::string &predicate, const std::string &object) {
+		TripleString::setAll(subject, predicate,object );
+		graph.clear();
+		has_graph = false;
+	}
 
 	void setAll(const std:: string &subj, const std:: string &pred, const std:: string &obj, const std:: string& ident) 
 	{
@@ -403,7 +422,10 @@ public:
 		graph = gr;
 		has_graph = true;
 	}
-
+	void unsetGraph() {
+		graph.clear();
+		has_graph = false;
+	}
 
 	void print(std::ostream& os)const{
 		if(!hasGraph())

@@ -83,7 +83,7 @@ int main(int argc, char **argv) {
 
 			cout<<"Query: subj->"<<subj<< " pred->"<<pred<<" "<<"obj->"<<obj<<endl;
 			TripleID tid;
-			hdt->getDictionary()->tripleStringtoTripleID(tripleString, tid);
+			hdt->getDictionary()->tripleStringtoTripleID(&tripleString, &tid);
 			cout<<"Query: subj->"<<tid.getSubject()<< " pred->"<<tid.getPredicate()<<" "<<"obj->"<<tid.getObject()<<endl;
 
 			IteratorTripleID *it = hdt->getTriples()->search(tid);
@@ -94,10 +94,10 @@ int main(int argc, char **argv) {
 			cout << "We pick the random solution #" << randNumber << " out of " << numResults << " results"<< endl;
 
 			it->skip(randNumber);
-			TripleID* result=it->next();
+			const TripleID* result=it->next();
 			cout<<"The selected random triple ID is: "<<result->getSubject()<<" "<<result->getPredicate()<<" "<<result->getObject()<<endl;
 			TripleString resString;
-			hdt->getDictionary()->tripleIDtoTripleString(*result,resString);
+			hdt->getDictionary()->tripleIDtoTripleString(&result,&resString);
 			cout<<"The selected random triple String is: "<<resString.getSubject()<<" "<<resString.getPredicate()<<" "<<resString.getObject()<<endl;
 			cout<<endl;
 

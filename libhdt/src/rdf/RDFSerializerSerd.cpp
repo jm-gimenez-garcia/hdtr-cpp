@@ -4,7 +4,7 @@
 #include <cstdio>
 #include <cstring>
 #include <stdexcept>
-
+#include "SingleQuad.hpp"
 #include "RDFSerializerSerd.hpp"
 
 namespace hdt {
@@ -71,6 +71,10 @@ SerdNode getTerm(const string &str, SerdNode* datatype, SerdNode* lang)
 		throw std::runtime_error("Empty Value on triple!");
 	}
 
+	//uint8_t* buf_cpy = new uint8_t[str.length()+1];
+	//memcpy(buf_cpy, str.c_str(), (str.length()+1)*sizeof(uint8_t));
+	//buf_cpy[str.length()]='\0';
+
 	const uint8_t *const buf = (const uint8_t*)str.c_str();
 	const size_t         len = str.length();
 	if (str.at(0) == '"') {
@@ -109,6 +113,7 @@ void RDFSerializerSerd::serialize(IteratorTripleString *it,
                                   ProgressListener     *listener,
                                   unsigned int          totalTriples)
 {
+it->goToStart();
 	for (unsigned n = 0; it->hasNext(); ++n) {
 		const TripleString *ts = it->next();
 		if (!ts->isEmpty()) {
@@ -117,10 +122,23 @@ void RDFSerializerSerd::serialize(IteratorTripleString *it,
 			SerdNode datatype  = SERD_NODE_NULL;
 			SerdNode lang      = SERD_NODE_NULL;
 			SerdNode object    = getTerm(ts->getObject(), &datatype, &lang);
+			SerdNode graph;
+			SerdNode* graph_ptr = NULL;
+			string graph_str;
+
+			if(ts->hasGraph())
+			{
+				graph_str = ts->to_QuadString().getGraph();
+				SerdNode graph = getTerm(graph_str, &datatype, &lang);
+				graph_ptr = &graph;
+
+			}
 
 			serd_writer_write_statement(
-				writer, 0, NULL,
+				writer, 0, graph_ptr,
 				&subject, &predicate, &object, &datatype, &lang);
+
+
 
 			NOTIFYCOND(listener, "Exporting HDT to RDF", n, totalTriples);
 		}

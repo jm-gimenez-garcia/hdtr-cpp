@@ -150,7 +150,14 @@ size_t AdjacencyList::binSearch(unsigned int element, size_t begin, size_t end) 
 		else if (element < read)
 			end = mid - 1;
 		else
-			return mid;
+		{
+			do
+			{
+				mid--;
+			}while(elements->get(mid)==read);
+
+			return mid+1;
+		}
 	}
 	throw std::runtime_error("Not found");
 }

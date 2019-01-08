@@ -18,7 +18,8 @@ class TripleIDStringIterator : public IteratorTripleString {
 private:
 	Dictionary *dict;
 	IteratorTripleID *iterator;
-	TripleString result;
+	TripleString result_ts;
+	QuadString result_qs;
 public:
 	TripleIDStringIterator(Dictionary *dict, IteratorTripleID *iterator);
 	virtual ~TripleIDStringIterator();

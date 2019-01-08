@@ -79,17 +79,31 @@ Triples *BasicModifiableHDT::getTriples()
     return triples;
 }
 
-
 IteratorTripleString *BasicModifiableHDT::search(const char *subject, const char *predicate, const char *object)
 {
 	TripleString ts(subject, predicate, object);
 
 	TripleID tid;
-	dictionary->tripleStringtoTripleID(ts, tid);
+	dictionary->tripleStringtoTripleID(&ts, &tid);
 
 //	cerr << "TID: "<< tid.getSubject() << "," << tid.getPredicate() << "," << tid.getObject() << endl;
 
 	IteratorTripleID *iterID = triples->search(tid);
+
+	TripleIDStringIterator *iterator = new TripleIDStringIterator(dictionary, iterID);
+	return iterator;
+}
+
+IteratorTripleString *BasicModifiableHDT::search(const char *subject, const char *predicate, const char *object, const char* graph)
+{
+	const QuadString qs(subject, predicate, object, graph);
+
+	QuadID qid;
+	dictionary->quadStringtoQuadID(&qs, &qid);
+
+//	cerr << "TID: "<< tid.getSubject() << "," << tid.getPredicate() << "," << tid.getObject() << endl;
+
+	IteratorTripleID *iterID = triples->search(qid);
 
 	TripleIDStringIterator *iterator = new TripleIDStringIterator(dictionary, iterID);
 	return iterator;
@@ -180,7 +194,7 @@ void BasicModifiableHDT::saveToHDT(std::ostream & output, ProgressListener *list
 void BasicModifiableHDT::insert(TripleString & triple)
 {
 	TripleID tid;
-	dictionary->tripleStringtoTripleID(triple, tid);
+	dictionary->tripleStringtoTripleID(&triple, &tid);
 	triples->insert(tid);
 }
 
@@ -193,7 +207,7 @@ void BasicModifiableHDT::insert(IteratorTripleString *triples)
 void BasicModifiableHDT::remove(TripleString & triple)
 {
 	TripleID tid;
-	dictionary->tripleStringtoTripleID(triple, tid);
+	dictionary->tripleStringtoTripleID(&triple, &tid);
 	triples->remove(tid);
 
 	// Fixme: Need to remove from dictionary?

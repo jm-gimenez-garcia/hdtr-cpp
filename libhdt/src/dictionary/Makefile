@@ -2,7 +2,7 @@ CXX=g++
 
 CXXFLAGS:= $(CXXFLAGS) -std=c++11 -I. -I../../include -I../hdt -I../../../libcds/include
 
-SRC := $(wildcard ./Base*Dictionary.cpp ./Triples*Dictionary.cpp ./Graphs*Dictionary.cpp ./*ReificationDictionary.cpp) ../hdt/HDTFactory_dictionary.cpp 
+SRC := $(wildcard ./Base*Dictionary.cpp ./Triples*Dictionary.cpp ./Graphs*Dictionary.cpp ./*ReificationDictionary.cpp) ../hdt/HDTFactory_dictionary.cpp ./TripleTranslator.cpp 
 OBJ := $(patsubst %.cpp,%.o,$(SRC)) 
 
 STATIC_LIB := libdict.a

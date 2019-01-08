@@ -304,6 +304,8 @@ void LogSequence2::save(std::ostream & out)
 	uint8_t type = TYPE_SEQLOG;
 	crch.writeData(out, &type, sizeof(uint8_t));
 
+
+
 	// Write numbits
 	crch.writeData(out, &numbits, sizeof(numbits));
 

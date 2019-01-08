@@ -147,8 +147,6 @@ void BitmapTriples::load(ModifiableTriples &triples, ProgressListener *listener)
 		if(numTriples==0){
 			vectorY->push_back(y);
 			vectorZ->push_back(z);
-cout << __FILE__ << ":" << __LINE__ << " : Y = " << y << "(" << triple->getPredicate() << ")" << endl;
-cout << __FILE__ << ":" << __LINE__ << " : Z = " << z << "(" << triple->getObject() << ")" << endl;
 		} else if(x!=lastX) {
             if(x!=lastX+1) {
                 throw std::runtime_error("Error: The subjects must be correlative.");
@@ -159,10 +157,6 @@ cout << __FILE__ << ":" << __LINE__ << " : Z = " << z << "(" << triple->getObjec
 			bitmapZ->append(true);
 			vectorZ->push_back(z);
 
-cout << __FILE__ << ":" << __LINE__ << " : Y = " << y << "(" << triple->getPredicate() << ")" << endl;
-cout << __FILE__ << ":" << __LINE__ << " : By = " << true << endl;
-cout << __FILE__ << ":" << __LINE__ << " : Z = " << z << "(" << triple->getObject() << ")" << endl;
-cout << __FILE__ << ":" << __LINE__ << " : Bz = " << true << endl;
 		} else if(y!=lastY) {
             if(y<lastY) {
                 throw std::runtime_error("Error: The predicates must be in increasing order.");
@@ -173,18 +167,12 @@ cout << __FILE__ << ":" << __LINE__ << " : Bz = " << true << endl;
 			bitmapZ->append(true);
 			vectorZ->push_back(z);
 
-cout << __FILE__ << ":" << __LINE__ << " : Y = " << y << "(" << triple->getPredicate() << ")" << endl;
-cout << __FILE__ << ":" << __LINE__ << " : By = " << false << endl;
-cout << __FILE__ << ":" << __LINE__ << " : Z = " << z << "(" << triple->getObject() << ")" << endl;
-cout << __FILE__ << ":" << __LINE__ << " : Bz = " << true << endl;
 		} else {
             if(z<lastZ) {
                 throw std::runtime_error("Error, The objects must be in increasing order.");
             }
             bitmapZ->append(false);
 			vectorZ->push_back(z);
-cout << __FILE__ << ":" << __LINE__ << " : Z = " << z << "(" << triple->getObject() << ")" << endl;
-cout << __FILE__ << ":" << __LINE__ << " : Bz = " << false << endl;
 		}
 
 		lastX = x;
@@ -621,10 +609,11 @@ TripleComponentOrder BitmapTriples::getOrder() const
 IteratorTripleID *BitmapTriples::search(TripleID & pattern)
 {
 	CHECK_BITMAPTRIPLES_INITIALIZED
-
-	TripleID reorderedPat = pattern;
-	swapComponentOrder(&reorderedPat, SPO, this->order);
-	std::string patternString = reorderedPat.getPatternString();
+	
+	TripleID* reorderedPat = pattern.new_copy();
+	swapComponentOrder(reorderedPat, SPO, this->order);
+	std::string patternString = reorderedPat->getPatternString();
+	delete reorderedPat; reorderedPat=NULL;
 
 	if(patternString=="?P?") {
 		if(predicateIndex!=NULL) {
@@ -633,6 +622,7 @@ IteratorTripleID *BitmapTriples::search(TripleID & pattern)
 			return new IteratorY(this, pattern);
 		}
 	}
+
 
 	if(patternString=="S?O") {
 	    if(this->order == SPO) {
@@ -647,12 +637,13 @@ IteratorTripleID *BitmapTriples::search(TripleID & pattern)
     } else if( predicateIndex != NULL && patternString=="?P?") {
 		return new MiddleWaveletIterator(this, pattern);
 	} else {
-		if(patternString=="???" || patternString=="S??" || patternString=="SP?"|| patternString=="SPO" ) {
+		if(patternString=="???" || patternString=="S??" || patternString=="SP?"|| patternString=="SPO" || patternString=="SPO?") {
 			return new BitmapTriplesSearchIterator(this, pattern);
 		} else {
 			return new SequentialSearchIteratorTripleID(pattern, new BitmapTriplesSearchIterator(this, pattern));
 		}
 	}
+
 }
 
 void BitmapTriples::save(std::ostream & output, ControlInformation &controlInformation, ProgressListener *listener)
@@ -937,7 +928,7 @@ size_t BitmapTriples::size() const
 	return arrayY->size()+arrayZ->size()+bitmapY->getSizeBytes()+bitmapZ->getSizeBytes();
 }
 
-void BitmapTriples::initTripleIDFromPos(TripleID* tid_ptr, const unsigned int pos)const{
+void BitmapTriples::initTripleIDFromPos(TripleID*& tid_ptr, const unsigned int pos)const{
 	const unsigned int posY = getAdjZ().findListIndex(pos);
 
 	const unsigned int obj = getAdjZ().get(pos);
@@ -945,8 +936,7 @@ void BitmapTriples::initTripleIDFromPos(TripleID* tid_ptr, const unsigned int po
 	const unsigned int subj = getAdjY().findListIndex(posY) + 1;
 	if(tid_ptr)
 		delete tid_ptr;
-	tid_ptr = new TripleID();
-	tid_ptr->setAll(subj,pred,obj);
+	tid_ptr = new TripleID(subj,pred,obj);
 }
 
 

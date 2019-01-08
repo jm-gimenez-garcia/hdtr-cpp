@@ -88,6 +88,7 @@ public:
 	
 	virtual ~TripleID() {}
 
+	virtual TripleID* new_copy()const{return new TripleID(*this);}
 
 	virtual QuadID to_QuadID() const ;
 	virtual TripleID to_TripleID() const ;
@@ -144,7 +145,7 @@ public:
 	}
 
 
-	void setAll(const unsigned int subject, const unsigned int predicate, const unsigned int object) {
+	virtual void setAll(const unsigned int subject, const unsigned int predicate, const unsigned int object) {
 		this->subject = subject;
 		this->predicate = predicate;
 		this->object = object;
@@ -257,6 +258,15 @@ public:
 		return false;
 	}
 
+	bool isBasedOn(const TripleID& patt)const {
+		if(!patt.isValid() || !isValid())
+		{
+			throw std::runtime_error("Error in TripleID::isBasedOn : TripleID is not valid. Use 'match' method instead.");
+			return false;
+		}
+		else
+			return patt.subject==subject && patt.predicate==predicate && patt.object==object ;
+	}
 	/**
 	 * Replaces the contents of a triple with the provided replacement
 	 *
@@ -370,7 +380,7 @@ public:
 		this->subject = subject;
 	}
 
-	void setAll(const std::string &subject, const std::string &predicate, const std::string &object) {
+	virtual void setAll(const std::string &subject, const std::string &predicate, const std::string &object) {
 		this->subject = subject;
 		this->predicate = predicate;
 		this->object = object;

@@ -58,6 +58,7 @@
 #include "ModifiableReificationDictionary.hpp"
 #include "TriplesLoader.hpp"
 #include "TripleTranslator.hpp"
+#include "BitmapQuadIteratorWrapper.hpp"
 
 #ifdef HAVE_CDS
 #include "../dictionary/TriplesLiteralDictionary.hpp"
@@ -186,24 +187,96 @@ Triples *BasicHDT::getTriples() {
 }
 
 IteratorTripleString* BasicHDT::search(const char* subject,	const char* predicate, const char* object) {
-	TripleString ts(subject, predicate, object);
+	TripleID* role_tid_ptr=NULL;
+	TripleString glob_ts(subject, predicate, object);
 	try {
-		TripleID tid;
-		dictionary->tripleStringtoTripleID(ts, tid);
+		TripleID glob_tid;
+		dictionary->tripleStringtoTripleID(&glob_ts, &glob_tid);
 
 		// Make sure that all not-empty components arefound in dictionary.
-		if( (tid.getSubject()==0 && subject!=NULL && *subject!='\0') ||
-				(tid.getPredicate()==0 && predicate!=NULL && *predicate!='\0') ||
-				(tid.getObject()==0 && object!=NULL && *object!='\0') ) {
+		if( (glob_tid.getSubject()==0 && subject!=NULL && *subject!='\0') ||
+				(glob_tid.getPredicate()==0 && predicate!=NULL && *predicate!='\0') ||
+				(glob_tid.getObject()==0 && object!=NULL && *object!='\0') ) {
 			return new IteratorTripleString();
 		}
 
-		IteratorTripleID* iterID = triples->search(tid);
+		triples->toRoleIDs(role_tid_ptr, glob_tid);
+			
+		IteratorTripleID* iterID = triples->search(*role_tid_ptr);
+
+
+			iterID->goToStart();
+			while(iterID->hasNext())
+			{
+				cout << __FILE__ << ":" << __LINE__ << "00004a : hasNext() = true" <<endl;
+				const TripleID* tid = iterID->next();
+				cout << __FILE__ << ":" << __LINE__ << "00004a : next ="; tid->print(cout); cout <<endl;
+			}
+			iterID->goToStart();
+
+
+		if(role_tid_ptr)
+		{
+			delete role_tid_ptr;
+			role_tid_ptr = NULL;
+		}
+
 		TripleIDStringIterator* iterator = new TripleIDStringIterator(dictionary, iterID);
 		return iterator;
 	} catch (std::exception& e) {
 		cerr << "Exception: " << e.what() << endl;
 	}
+
+	if(role_tid_ptr)
+		delete role_tid_ptr;
+	return new IteratorTripleString();
+}
+
+IteratorTripleString* BasicHDT::search(const char* subject,	const char* predicate, const char* object, const char* graph) {
+	TripleID* role_tid_ptr=NULL;
+	const QuadString glob_qs(subject, predicate, object, graph);
+	try {
+		QuadID glob_qid;
+		dictionary->quadStringtoQuadID(&glob_qs, &glob_qid);
+
+		// Make sure that all not-empty components arefound in dictionary.
+		if( (glob_qid.getSubject()==0 && subject!=NULL && *subject!='\0') ||
+				(glob_qid.getPredicate()==0 && predicate!=NULL && *predicate!='\0') ||
+				(glob_qid.getObject()==0 && object!=NULL && *object!='\0') ||
+				(glob_qid.getGraph()==0 && graph!=NULL && *graph!='\0') ) {
+			return new IteratorTripleString();
+		}
+
+		triples->toRoleIDs(role_tid_ptr, glob_qid);
+		
+		IteratorTripleID* iterID = triples->search(*role_tid_ptr);
+
+
+iterID->goToStart();
+while(iterID->hasNext())
+{
+	cout << __FILE__ << ":" << __LINE__ << " : 00004b : hasNext() = true" <<endl;
+	const TripleID* tid = iterID->next();
+	cout << __FILE__ << ":" << __LINE__ << " : 00004b : next ="; tid->print(cout); cout <<endl;
+}
+iterID->goToStart();
+
+
+		if(role_tid_ptr)
+		{
+			delete role_tid_ptr;
+			role_tid_ptr = NULL;
+		}
+
+		TripleIDStringIterator* iterator = new TripleIDStringIterator(dictionary, iterID);
+
+
+		return iterator;
+	} catch (std::exception& e) {
+		cerr << "Exception: " << e.what() << endl;
+	}
+	if(role_tid_ptr)
+		delete role_tid_ptr;
 	return new IteratorTripleString();
 }
 
@@ -708,7 +781,9 @@ void BasicHDT::loadFromSeveralHDT(const char **fileNames, size_t numFiles, strin
 
 void BasicHDT::saveToRDF(RDFSerializer &serializer, ProgressListener *listener)
 {
-	IteratorTripleString *it = search("", "", "");
+QuadString patt("","","","");
+	//IteratorTripleString *it = search("", "", "", "");
+	IteratorTripleString *it = search("http://example.org/C3", "", "");
   serializer.serialize(it, listener, getTriples()->getNumberOfElements());
 	delete it;
 }
@@ -818,7 +893,6 @@ void BasicHDT::loadFromHDT(std::istream & input, ProgressListener *listener)
  * @param input
  */
 void BasicHDT::mapHDT(const char *fileNameChar, ProgressListener *listener) {
-
 	IntermediateListener iListener(listener);
 
     std::string fileStr(fileNameChar);

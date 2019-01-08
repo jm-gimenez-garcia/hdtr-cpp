@@ -49,6 +49,8 @@
 #endif
 
 #include "../triples/TriplesList.hpp"
+#include "../triples/QuadsList.hpp"
+#include "../triples/BitmapQuads.hpp"
 #ifndef WIN32
 #include "../triples/TripleListDisk.hpp"
 #endif
@@ -90,10 +92,14 @@ Triples *HDTFactory::readTriples(ControlInformation &controlInformation) {
 
 	if(triplesType==HDTVocabulary::TRIPLES_TYPE_BITMAP) {
 		return new BitmapTriples();
+	} else if(triplesType==HDTVocabulary::TRIPLES_TYPE_BITMAPQUADS) {
+		return new BitmapQuads();
 	} else if(triplesType==HDTVocabulary::TRIPLES_TYPE_PLAIN) {
 		return new PlainTriples();
 	} else if(triplesType==HDTVocabulary::TRIPLES_TYPE_TRIPLESLIST) {
 		return new TriplesList();
+	} else if(triplesType==HDTVocabulary::TRIPLES_TYPE_QUADSLIST) {
+		return new QuadsList();
 #ifndef WIN32
 	} else if(triplesType==HDTVocabulary::TRIPLES_TYPE_TRIPLESLISTDISK) {
 		return new TripleListDisk();

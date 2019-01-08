@@ -173,6 +173,9 @@ void BitSequence375::append(bool bit) {
 
 bool BitSequence375::access(const size_t i) const
 {
+	if(i>=getNumBits())
+		return false;
+
 	return bitget(array, i);
 }
 

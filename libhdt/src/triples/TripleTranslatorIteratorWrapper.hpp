@@ -4,6 +4,7 @@
 #include "TripleTranslator.hpp"
 #include "Iterator.hpp"
 #include "HDTEnums.hpp"
+#include "SingleQuad.hpp"
 
 namespace hdt{
 class TripleID;
@@ -37,8 +38,8 @@ class TripleTranslatorIteratorWrapper : public TripleTranslator, public Iterator
 
 	// new methods
 	private:
-		void convertToRoleIDs(TripleID& tid);
-		void convertToGlobalIDs(TripleID& tid);
+		void convertToRoleIDs(TripleID*& tid);
+		void convertToGlobalIDs(TripleID*& tid);
 
 };
 
@@ -46,13 +47,17 @@ inline bool TripleTranslatorIteratorWrapper::hasNext()
 {return iterator_tid->hasNext();}
 
 inline TripleID* TripleTranslatorIteratorWrapper::next()
-{TripleID* tid = iterator_tid->next();convertToGlobalIDs(*tid); return tid; }
+{
+	const TripleID* tid_orig = iterator_tid->next();
+	TripleID* tid = tid_orig->new_copy();
+	convertToGlobalIDs(tid);
+	return tid; }
 
 inline bool TripleTranslatorIteratorWrapper::hasPrevious()
 {return iterator_tid->hasPrevious();}
 
 inline TripleID* TripleTranslatorIteratorWrapper::previous()
-{TripleID* tid = iterator_tid->previous();convertToGlobalIDs(*tid); return tid; }
+{TripleID* tid = iterator_tid->previous();convertToGlobalIDs(tid); return tid; }
 
 inline void TripleTranslatorIteratorWrapper::goToStart()
 {return iterator_tid->goToStart();}

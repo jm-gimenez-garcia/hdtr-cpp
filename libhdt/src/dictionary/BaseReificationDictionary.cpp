@@ -631,7 +631,18 @@ void BaseReificationDictionary::import(BaseReificationDictionary *other, Progres
 
 
 size_t BaseReificationDictionary::load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener/*=NULL*/)
-{throw std::logic_error("Not implemented");}
+{
+    size_t count=0;
+    IntermediateListener iListener(listener);
+ 
+	ControlInformation ci;
+    count += ci.load(&ptr[count], ptrMax);
+
+	count += getTriplesDictionaryPtr()->load(&ptr[count], ptrMax);
+	count += getGraphsDictionaryPtr()->load(&ptr[count], ptrMax);
+
+	return count;
+}
 
 void BaseReificationDictionary::getSuggestions(const char *base, TripleComponentRole role, std::vector<std::string> &out, int maxResults)
 {throw std::logic_error("Not implemented");}

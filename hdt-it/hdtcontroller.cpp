@@ -225,7 +225,7 @@ void HDTController::setSearchPattern(hdt::TripleString &pattern)
         try {
             this->searchPatternString = pattern;
 
-            hdt->getDictionary()->tripleStringtoTripleID(pattern, searchPatternID);
+            hdt->getDictionary()->tripleStringtoTripleID(&pattern, &searchPatternID);
 
             // Reset iterator
             if(iteratorResults!=NULL) {

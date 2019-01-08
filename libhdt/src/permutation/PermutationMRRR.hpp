@@ -29,7 +29,7 @@ public:
 	/**
 	 * Destructor.
 	 */
-	virtual ~PermutationMRRR();
+	~PermutationMRRR();
 
 	/**
 	 * Compute the value at the given position
@@ -79,7 +79,7 @@ public:
 	 */
 	void load(std::istream &input);
 
-	//   virtual size_t load(const unsigned char *ptr, const unsigned char *ptrMax, ProgressListener *listener=NULL)=0;
+	size_t load(const unsigned char *ptr, const unsigned char *ptrMax, ProgressListener *listener=NULL);
 
 	std::string getType();
 

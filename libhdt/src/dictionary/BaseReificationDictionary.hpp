@@ -80,6 +80,7 @@ public:
 		const unsigned int Gsh = getGraphsDictionaryPtr()->getNshared();
 		const unsigned int Gsubj = getGraphsDictionaryPtr()->getNsubjects() - getGraphsDictionaryPtr()->getNshared();
 		const unsigned int Gobj = getGraphsDictionaryPtr()->getNobjects() - getGraphsDictionaryPtr()->getNshared();
+		const unsigned int Gun = getGraphsDictionaryPtr()->getNunused();
 	
 		switch(pos)
 		{
@@ -105,7 +106,7 @@ public:
 					return arr_id + Tsh;
 				else if (arr_id <= Gsh + Gsubj)
 					return arr_id + Tsh + Tsubj;
-				else if (arr_id <= Gsh + Gsubj + Gobj) 
+				else if (arr_id <= Gsh + Gsubj + Gobj + Gun) 
 					return arr_id + Tsh + Tsubj + Tobj;
 				else
 					throw std::logic_error("Incorrect array_id for GRAPH");

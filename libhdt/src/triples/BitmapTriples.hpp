@@ -116,9 +116,9 @@ public:
 	 */
 	virtual void load(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener = NULL);
 
-	virtual void initTripleIDFromPos(TripleID* tid_ptr, const unsigned int pos)const;
+	virtual void initTripleIDFromPos(TripleID*& tid_ptr, const unsigned int pos)const;
 
-	size_t load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener=NULL);
+	virtual size_t load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener=NULL);
 
 	virtual void load(ModifiableTriples &triples, ProgressListener *listener = NULL);
 
@@ -132,7 +132,7 @@ public:
 
 	void populateHeader(Header &header, string rootNode);
 
-	string getType() const;
+	virtual string getType() const;
 	TripleComponentOrder getOrder() const;
 
 

@@ -22,7 +22,8 @@ BitmapQuadIteratorSingle::BitmapQuadIteratorSingle(BitmapQuads* bmq, QuadID patt
 	pattern(patt),
 	subj(0), pred(0), obj(0),
 	has_next(false), has_previous(false)
-	{goToStart();}
+	{
+		goToStart();}
 
 
 
@@ -52,7 +53,8 @@ void BitmapQuadIteratorSingle::goToStart(){
 	const int patZ = pattern.getObject();
 	const int patG = pattern.getGraph();
 
-	const unsigned int numReifiedTriple = perm->revpi(patG);
+
+	const unsigned int numReifiedTriple = perm->revpi(patG)-1;
 	const unsigned int posZ = bitmapPerm->select1(numReifiedTriple+1);
 	obj = quads->getAdjZ().get(posZ);
 
@@ -75,7 +77,9 @@ void BitmapQuadIteratorSingle::goToStart(){
 				has_next = false;
 			}
 			else
+			{
 				has_next = true;
+			}
 		}
 	}
 }

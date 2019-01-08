@@ -19,10 +19,12 @@ public:
 	BitmapQuads();
 	BitmapQuads(HDTSpecification &specification);
 	~BitmapQuads(){}
+	string getType() const;
 	void load(ModifiableTriples &triples, ProgressListener *listener = NULL);
+	size_t load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener=NULL);
 	void save(std::ostream &output, ControlInformation &controlInformation, ProgressListener *listener = NULL);
 	void load(std::istream &input, ControlInformation &controlInformation, ProgressListener *listener = NULL);
-	void initTripleIDFromPos(TripleID* tid_ptr, const unsigned int pos)const;
+	void initTripleIDFromPos(TripleID*& tid_ptr, const unsigned int pos)const;
 	IteratorTripleID* search(TripleID & pattern);
 	Permutation* getPermutationPtr(){return permutation;}
 	const Permutation* getPermutationPtr()const{return static_cast<const Permutation*>(permutation);}

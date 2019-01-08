@@ -10,7 +10,7 @@ using namespace hdt;
 
 void TriplesLoader::processTriple(const hdt::TripleString& triple, unsigned long long pos) {
 	TripleID ti;
-	dictionary->tripleStringtoTripleID(triple, ti);
+	dictionary->tripleStringtoTripleID(&triple, &ti);
 	if (ti.isValid()) {
 		triples->insert(ti);
 	} else {
@@ -33,7 +33,7 @@ void TriplesLoader::processTriple(const hdt::TripleString& triple, unsigned long
 
 void TriplesLoader::processQuad(const hdt::QuadString& quad, unsigned long long pos) {
 	QuadID qi;
-	dictionary->quadStringtoQuadID(quad, qi);
+	dictionary->quadStringtoQuadID(&quad, &qi);
 	if (qi.isValid()) {
 		triples->insert(qi);
 	} else {

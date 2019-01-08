@@ -76,6 +76,13 @@ BitmapTriplesSearchIterator::BitmapTriplesSearchIterator(BitmapTriples *trip, Tr
 #endif
 
     findRange();
+cout << __FILE__ << ":" << __LINE__ << " : patX=" << patX << endl;
+cout << __FILE__ << ":" << __LINE__ << " : patY=" << patY<< endl;
+cout << __FILE__ << ":" << __LINE__ << " : patZ=" << patZ<< endl;
+cout << __FILE__ << ":" << __LINE__ << " : minY=" << minY<< endl;
+cout << __FILE__ << ":" << __LINE__ << " : maxY=" << maxY << endl;
+cout << __FILE__ << ":" << __LINE__ << " : minZ=" << minZ << endl;
+cout << __FILE__ << ":" << __LINE__ << " : maxZ=" << maxZ << endl;
 
     goToStart();
 }
@@ -99,7 +106,14 @@ void BitmapTriplesSearchIterator::findRange()
                 if(patZ!=0) {
                     // S P O
                     minZ = adjZ.find(minY,patZ);
-                    maxZ = minZ+1;
+                    maxZ = minZ;
+					for(unsigned int currPosZ=adjZ.find(minY) ; currPosZ<=adjZ.last(minY) ; currPosZ++)
+					{
+						if(patZ==adjZ.get(currPosZ))
+							maxZ++;
+cout << __FILE__ << ":" << __LINE__ << " : maxZ=" << maxZ <<endl;
+					}
+
                 } else {
                     // S P ?
                     minZ = adjZ.find(minY);
@@ -107,6 +121,7 @@ void BitmapTriplesSearchIterator::findRange()
                     //maxZ = adjZ.findNext(minZ);
                 }
             } catch (std::exception& e) {
+
                 // Item not found in list, no results.
                 minY = minZ = maxY = maxZ = 0;
             }
