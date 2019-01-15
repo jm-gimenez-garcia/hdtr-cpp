@@ -168,7 +168,7 @@ void PlainHeader::clear()
 	triples.clear();
 }
 
-IteratorTripleString *PlainHeader::search(const char *subject, const char *predicate, const char *object)
+IteratorTripleString *PlainHeader::search(const char *subject, const char *predicate, const char *object, const char *graph/*=NULL*/)
 {
     TripleString pattern(subject, predicate, object);
 

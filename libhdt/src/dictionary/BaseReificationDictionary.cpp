@@ -119,6 +119,9 @@ unsigned int BaseReificationDictionary::getGlobalIdFromTrGrGlobalId(unsigned int
 	const unsigned int Tobj = getTriplesDictionaryPtr()->getNobjects() - getTriplesDictionaryPtr()->getNshared();
 	const unsigned int Gobj = getGraphsDictionaryPtr()->getNobjects() - getGraphsDictionaryPtr()->getNshared();
 
+	if(tr_gr_globid==0)
+		return 0;
+
 	switch(pos){
 		case SHARED_OBJECT:
 		case SHARED_SUBJECT:
@@ -185,6 +188,9 @@ unsigned int BaseReificationDictionary::getGlobalIdFromTrGrGlobalId(unsigned int
 	const unsigned int min_sub_obj_length = (Gobj>Gsubj) ? Gsubj : Gobj;
 	const unsigned int max_sub_obj_length = (Gobj>Gsubj) ? Gobj : Gsubj;
 	const unsigned int last_common_obj_sub_id = Gsh + min_sub_obj_length ;
+
+	if(tr_gr_globid==0)
+		return 0;
 
 	switch(role){
 		case PREDICATE:
@@ -399,6 +405,9 @@ unsigned int BaseReificationDictionary::getTrGrGlobalIdFromGlobalId(unsigned int
 	const unsigned int Gsubj = getGraphsDictionaryPtr()->getNsubjects() - getGraphsDictionaryPtr()->getNshared();
 	const unsigned int Tobj = getTriplesDictionaryPtr()->getNobjects() - getTriplesDictionaryPtr()->getNshared();
 	const unsigned int Gobj = getGraphsDictionaryPtr()->getNobjects() - getGraphsDictionaryPtr()->getNshared();
+
+	if(globid==0)
+		return 0;
 
 
 	switch(position){

@@ -71,7 +71,7 @@ public:
 	 * @param object
 	 * @return
 	 */
-	IteratorTripleString *search(const char *subject, const char *predicate, const char *object);
+	IteratorTripleString *search(const char *subject, const char *predicate, const char *object, const char *graph=NULL);
 
 	/**
 	 *

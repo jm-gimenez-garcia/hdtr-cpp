@@ -79,31 +79,40 @@ Triples *BasicModifiableHDT::getTriples()
     return triples;
 }
 
-IteratorTripleString *BasicModifiableHDT::search(const char *subject, const char *predicate, const char *object)
+IteratorTripleString *BasicModifiableHDT::search(const char *subject, const char *predicate, const char *object, const char* graph/*=NULL*/)
 {
-	TripleString ts(subject, predicate, object);
+	TripleID* role_tid_ptr=NULL;
+	TripleID* glob_tid_ptr=NULL;
+	if(graph==NULL)
+	{
+		const TripleString ts(subject, predicate, object);
+		TripleID tid;
+		dictionary->tripleStringtoTripleID(&ts, &tid);
+		glob_tid_ptr = new TripleID(tid);
 
-	TripleID tid;
-	dictionary->tripleStringtoTripleID(&ts, &tid);
+	} else {
+		const QuadString qs(subject, predicate, object, graph);
+		QuadID qid;
+		dictionary->quadStringtoQuadID(&qs, &qid);
+		glob_tid_ptr = new QuadID(qid);
+	}
 
-//	cerr << "TID: "<< tid.getSubject() << "," << tid.getPredicate() << "," << tid.getObject() << endl;
+	triples->toRoleIDs(role_tid_ptr, *glob_tid_ptr);
 
-	IteratorTripleID *iterID = triples->search(tid);
+	delete glob_tid_ptr;
+	glob_tid_ptr = NULL;
 
-	TripleIDStringIterator *iterator = new TripleIDStringIterator(dictionary, iterID);
-	return iterator;
-}
+	IteratorTripleID* iterID = triples->search(*role_tid_ptr);
 
-IteratorTripleString *BasicModifiableHDT::search(const char *subject, const char *predicate, const char *object, const char* graph)
-{
-	const QuadString qs(subject, predicate, object, graph);
+	delete glob_tid_ptr;
+	glob_tid_ptr = NULL;
 
-	QuadID qid;
-	dictionary->quadStringtoQuadID(&qs, &qid);
 
-//	cerr << "TID: "<< tid.getSubject() << "," << tid.getPredicate() << "," << tid.getObject() << endl;
-
-	IteratorTripleID *iterID = triples->search(qid);
+	if(role_tid_ptr)
+	{
+		delete role_tid_ptr;
+		role_tid_ptr = NULL;
+	}
 
 	TripleIDStringIterator *iterator = new TripleIDStringIterator(dictionary, iterID);
 	return iterator;

@@ -41,3 +41,20 @@ void TripleTranslatorIteratorWrapper::convertToGlobalIDs(TripleID*& tid){
 
 }
 
+
+TripleID* TripleTranslatorIteratorWrapper::next()
+{
+	const TripleID* tid_orig = iterator_tid->next();
+	TripleID* tid = tid_orig->new_copy();
+	convertToGlobalIDs(tid);
+	return tid; 
+}
+
+
+TripleID* TripleTranslatorIteratorWrapper::previous()
+{
+	const TripleID* tid_orig = iterator_tid->previous();
+	TripleID* tid = tid_orig->new_copy();
+	convertToGlobalIDs(tid);
+	return tid; 
+}

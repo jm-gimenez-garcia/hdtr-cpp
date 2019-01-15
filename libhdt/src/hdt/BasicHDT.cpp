@@ -186,80 +186,50 @@ Triples *BasicHDT::getTriples() {
     return triples;
 }
 
-IteratorTripleString* BasicHDT::search(const char* subject,	const char* predicate, const char* object) {
+IteratorTripleString* BasicHDT::search(const char* subject,	const char* predicate, const char* object, const char* graph/*=NULL*/) {
 	TripleID* role_tid_ptr=NULL;
-	TripleString glob_ts(subject, predicate, object);
 	try {
-		TripleID glob_tid;
-		dictionary->tripleStringtoTripleID(&glob_ts, &glob_tid);
+		TripleID* glob_tid_ptr=NULL;
+		bool not_empty_not_found = false;
+
+		if(graph==NULL) { //if triple
+			const TripleString glob_ts(subject, predicate, object);
+			TripleID glob_tid;
+			dictionary->tripleStringtoTripleID(&glob_ts, &glob_tid);
+			glob_tid_ptr = new TripleID(glob_tid);
+		} else { // if quad
+			const QuadString glob_qs(subject, predicate, object, graph);
+			QuadID glob_qid;
+			dictionary->quadStringtoQuadID(&glob_qs, &glob_qid);
+			glob_tid_ptr = new QuadID(glob_qid);
+			not_empty_not_found = (glob_qid.getGraph()==0  && *graph!='\0'); 
+		}
 
 		// Make sure that all not-empty components arefound in dictionary.
-		if( (glob_tid.getSubject()==0 && subject!=NULL && *subject!='\0') ||
-				(glob_tid.getPredicate()==0 && predicate!=NULL && *predicate!='\0') ||
-				(glob_tid.getObject()==0 && object!=NULL && *object!='\0') ) {
+		if( (glob_tid_ptr->getSubject()==0 && subject!=NULL && *subject!='\0') ||
+				(glob_tid_ptr->getPredicate()==0 && predicate!=NULL && *predicate!='\0') ||
+				(glob_tid_ptr->getObject()==0 && object!=NULL && *object!='\0') || not_empty_not_found ) {
+			delete glob_tid_ptr;
+			glob_tid_ptr = NULL;
 			return new IteratorTripleString();
 		}
 
-		triples->toRoleIDs(role_tid_ptr, glob_tid);
-			
+		triples->toRoleIDs(role_tid_ptr, *glob_tid_ptr);
+
+		delete glob_tid_ptr;
+		glob_tid_ptr = NULL;
+
 		IteratorTripleID* iterID = triples->search(*role_tid_ptr);
 
 
-			iterID->goToStart();
-			while(iterID->hasNext())
-			{
-				cout << __FILE__ << ":" << __LINE__ << "00004a : hasNext() = true" <<endl;
-				const TripleID* tid = iterID->next();
-				cout << __FILE__ << ":" << __LINE__ << "00004a : next ="; tid->print(cout); cout <<endl;
-			}
-			iterID->goToStart();
-
-
-		if(role_tid_ptr)
-		{
-			delete role_tid_ptr;
-			role_tid_ptr = NULL;
-		}
-
-		TripleIDStringIterator* iterator = new TripleIDStringIterator(dictionary, iterID);
-		return iterator;
-	} catch (std::exception& e) {
-		cerr << "Exception: " << e.what() << endl;
-	}
-
-	if(role_tid_ptr)
-		delete role_tid_ptr;
-	return new IteratorTripleString();
-}
-
-IteratorTripleString* BasicHDT::search(const char* subject,	const char* predicate, const char* object, const char* graph) {
-	TripleID* role_tid_ptr=NULL;
-	const QuadString glob_qs(subject, predicate, object, graph);
-	try {
-		QuadID glob_qid;
-		dictionary->quadStringtoQuadID(&glob_qs, &glob_qid);
-
-		// Make sure that all not-empty components arefound in dictionary.
-		if( (glob_qid.getSubject()==0 && subject!=NULL && *subject!='\0') ||
-				(glob_qid.getPredicate()==0 && predicate!=NULL && *predicate!='\0') ||
-				(glob_qid.getObject()==0 && object!=NULL && *object!='\0') ||
-				(glob_qid.getGraph()==0 && graph!=NULL && *graph!='\0') ) {
-			return new IteratorTripleString();
-		}
-
-		triples->toRoleIDs(role_tid_ptr, glob_qid);
-		
-		IteratorTripleID* iterID = triples->search(*role_tid_ptr);
-
-
-iterID->goToStart();
+/*iterID->goToStart();
 while(iterID->hasNext())
 {
 	cout << __FILE__ << ":" << __LINE__ << " : 00004b : hasNext() = true" <<endl;
 	const TripleID* tid = iterID->next();
 	cout << __FILE__ << ":" << __LINE__ << " : 00004b : next ="; tid->print(cout); cout <<endl;
 }
-iterID->goToStart();
+iterID->goToStart();*/
 
 
 		if(role_tid_ptr)
@@ -276,7 +246,10 @@ iterID->goToStart();
 		cerr << "Exception: " << e.what() << endl;
 	}
 	if(role_tid_ptr)
+	{
 		delete role_tid_ptr;
+		role_tid_ptr = NULL;
+	}
 	return new IteratorTripleString();
 }
 
@@ -783,7 +756,7 @@ void BasicHDT::saveToRDF(RDFSerializer &serializer, ProgressListener *listener)
 {
 QuadString patt("","","","");
 	//IteratorTripleString *it = search("", "", "", "");
-	IteratorTripleString *it = search("http://example.org/C3", "", "");
+	IteratorTripleString *it = search("", "", "http://example.org/G2", "");
   serializer.serialize(it, listener, getTriples()->getNumberOfElements());
 	delete it;
 }

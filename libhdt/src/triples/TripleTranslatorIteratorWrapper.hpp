@@ -46,18 +46,8 @@ class TripleTranslatorIteratorWrapper : public TripleTranslator, public Iterator
 inline bool TripleTranslatorIteratorWrapper::hasNext()
 {return iterator_tid->hasNext();}
 
-inline TripleID* TripleTranslatorIteratorWrapper::next()
-{
-	const TripleID* tid_orig = iterator_tid->next();
-	TripleID* tid = tid_orig->new_copy();
-	convertToGlobalIDs(tid);
-	return tid; }
-
 inline bool TripleTranslatorIteratorWrapper::hasPrevious()
 {return iterator_tid->hasPrevious();}
-
-inline TripleID* TripleTranslatorIteratorWrapper::previous()
-{TripleID* tid = iterator_tid->previous();convertToGlobalIDs(tid); return tid; }
 
 inline void TripleTranslatorIteratorWrapper::goToStart()
 {return iterator_tid->goToStart();}

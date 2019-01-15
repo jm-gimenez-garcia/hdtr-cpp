@@ -8,7 +8,6 @@ using namespace hdt;
 DictionaryLoader::DictionaryLoader(ProgressListener *list) : listener(list), count(0) { }
 
 void DictionaryLoader::processTriple(const TripleString& triple, unsigned long long pos) {
-		cout << __FILE__ << ":" << __LINE__ << " : getDictionary()->getType()=" << getDictionary()->getType() << endl;
 	getDictionary()->insert(triple.getSubject(), SUBJECT);
 	getDictionary()->insert(triple.getPredicate(), PREDICATE);
 	getDictionary()->insert(triple.getObject(), OBJECT);
@@ -21,7 +20,6 @@ void DictionaryLoader::processTriple(const TripleString& triple, unsigned long l
 }
 
 void DictionaryLoader::processQuad(const QuadString& quad, unsigned long long pos) {
-		cout << __FILE__ << ":" << __LINE__ << " : getDictionary()->getType()=" << getDictionary()->getType() << endl;
 	getDictionary()->insert(quad.getSubject(), SUBJECT);
 	getDictionary()->insert(quad.getPredicate(), PREDICATE);
 	getDictionary()->insert(quad.getObject(), OBJECT);

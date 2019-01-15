@@ -9,7 +9,6 @@ void TripleTranslator::toRoleIDs(TripleID*& role_tid, const TripleID& glob_tid){
 		throw runtime_error("original global tripleID and local tripleID to set must be different");
 		return;
 	}
-cout << __FILE__ << ":" << __LINE__ << endl;
 	if(role_tid)
 		delete role_tid;
 
@@ -26,6 +25,5 @@ cout << __FILE__ << ":" << __LINE__ << endl;
 	{
 		role_tid = new TripleID(subj, pred, obj);
 	}
-	cout << __FILE__ << ":" << __LINE__ << " : role_tid=";role_tid->print(cout);cout << endl;
 		
 }

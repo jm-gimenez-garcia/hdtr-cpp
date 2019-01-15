@@ -117,7 +117,6 @@ void BitmapQuads::load(ModifiableTriples &triples, ProgressListener *listener/*=
 		lastY = y;
 		lastZ = z;
 
-cout << endl;
 
         NOTIFYCOND(listener, "Converting to BitmapTriples", numTriples, triples.getNumberOfElements());
 		numTriples++;
@@ -261,14 +260,17 @@ size_t BitmapQuads::load(unsigned char *ptr, unsigned char *ptrMax, ProgressList
 IteratorTripleID *BitmapQuads::search(TripleID& pattern)
 {
 	IteratorTripleID* tid_it;
-	QuadID qpatt = pattern.to_QuadID();
-	if(!qpatt.hasGraph())
+	if(!pattern.hasGraph())
+	{
 		tid_it = BitmapTriples::search(pattern);
+	}
 	else
 	{
-
+		QuadID qpatt = pattern.to_QuadID();
 		if(qpatt.getGraph()==0)
+		{
 			tid_it = new BitmapQuadIteratorWrapper(this, BitmapTriples::search(pattern),qpatt.getGraph());
+		}
 		else
 			tid_it = new BitmapQuadIteratorSingle(this, pattern.to_QuadID()); 
 	}

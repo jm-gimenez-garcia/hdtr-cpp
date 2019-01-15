@@ -179,7 +179,6 @@ void BitmapTriples::load(ModifiableTriples &triples, ProgressListener *listener)
 		lastY = y;
 		lastZ = z;
 
-cout << endl;
 
         NOTIFYCOND(listener, "Converting to BitmapTriples", numTriples, triples.getNumberOfElements());
 		numTriples++;

@@ -146,15 +146,19 @@ size_t AdjacencyList::binSearch(unsigned int element, size_t begin, size_t end) 
 		unsigned int read = elements->get(mid);
 
 		if (element > read)
+		{
 			begin = mid + 1;
+		}
 		else if (element < read)
+		{
 			end = mid - 1;
+		}
 		else
 		{
 			do
 			{
 				mid--;
-			}while(elements->get(mid)==read);
+			}while(mid>=begin && mid>=0 && elements->get(mid)==read );
 
 			return mid+1;
 		}

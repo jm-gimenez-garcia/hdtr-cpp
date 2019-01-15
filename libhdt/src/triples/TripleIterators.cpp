@@ -82,8 +82,8 @@ TripleID *PreFetchIteratorTripleID::previous(){
 }
 
 
-SequentialSearchIteratorTripleID::SequentialSearchIteratorTripleID(TripleID & pattern, IteratorTripleID *other)
-	: pattern(pattern), iterator(other)
+SequentialSearchIteratorTripleID::SequentialSearchIteratorTripleID(TripleID & patt, IteratorTripleID *other)
+	: pattern(patt), iterator(other)
 {
 	hasPreviousTriples = false;
 	goingUp = true;

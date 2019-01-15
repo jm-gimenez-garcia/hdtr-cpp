@@ -15,7 +15,8 @@ BitmapQuadIteratorWrapper::BitmapQuadIteratorWrapper(BitmapQuads* bmq, IteratorT
 	returnTriple(NULL),
 	pattG(patternG),
 	hasNext_called(false),
-	hasPrevious_called(false){}
+	hasPrevious_called(false){
+	}
 
 BitmapQuadIteratorWrapper::~BitmapQuadIteratorWrapper(){
 	if (previousTriple)
@@ -50,6 +51,7 @@ void BitmapQuadIteratorWrapper::goToStart()
 
 bool BitmapQuadIteratorWrapper::BitmapQuadIteratorWrapper::hasNext()
 {
+
 	if(returnTriple){
 		delete returnTriple;
 		returnTriple = NULL;
