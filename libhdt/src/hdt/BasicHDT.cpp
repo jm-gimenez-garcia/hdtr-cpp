@@ -752,12 +752,22 @@ void BasicHDT::loadFromSeveralHDT(const char **fileNames, size_t numFiles, strin
 
 
 
-void BasicHDT::saveToRDF(RDFSerializer &serializer, ProgressListener *listener)
+void BasicHDT::saveToRDF(RDFSerializer &serializer, ProgressListener *listener, TripleString* patt/*=NULL*/)
 {
-QuadString patt("","","","");
-	//IteratorTripleString *it = search("", "", "", "");
-	IteratorTripleString *it = search("", "", "http://example.org/G2", "");
+	bool need2DeletePatt = false;
+	if(!patt)
+	{
+		patt = new QuadString("","","","");
+		need2DeletePatt = true;
+	}
+	IteratorTripleString *it = RDFAccess::search(*patt);
   serializer.serialize(it, listener, getTriples()->getNumberOfElements());
+	if(need2DeletePatt)
+	{
+		delete patt;
+		patt = NULL;
+		need2DeletePatt = false;
+	}
 	delete it;
 }
 

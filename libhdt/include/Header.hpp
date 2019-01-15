@@ -72,6 +72,8 @@ public:
 	 * @param object
 	 * @return
 	 */
+	//no need to redeclare the pure virtual member function inherited from RDFAccess
+	//virtual IteratorTripleString *search(const char *subject, const char *predicate, const char *object, const char* graph=NULL) = 0;
 	virtual IteratorTripleString *search(const char *subject, const char *predicate, const char *object, const char *graph=NULL) = 0;
 
 	std::string getProperty(const char *subject, const char *predicate) {

@@ -117,7 +117,6 @@ public:
     * @return resulting QuadID
     */
     void quadStringtoQuadID(const QuadString* quadString, QuadID* qid) const{
-		std::cout << "string.subj=" << quadString->getSubject() << std::endl;
 		const unsigned int subj = stringToId(quadString->getSubject(), SUBJECT);
 		const unsigned int pred = stringToId(quadString->getPredicate(), PREDICATE);
 		const unsigned int obj = stringToId(quadString->getObject(), OBJECT);

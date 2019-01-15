@@ -128,10 +128,22 @@ void BasicModifiableHDT::loadFromRDF(const char *fileName, string baseUri, RDFNo
 
 }
 
-void BasicModifiableHDT::saveToRDF(RDFSerializer &serializer, ProgressListener *listener)
+void BasicModifiableHDT::saveToRDF(RDFSerializer &serializer, ProgressListener *listener, TripleString* patt/*=NULL*/)
 {
-    IteratorTripleString *it = search("","","");
+	bool need2DeletePatt = false;
+	if(!patt)
+	{
+		patt = new QuadString("","","","");
+		need2DeletePatt = true;
+	}
+    IteratorTripleString *it = RDFAccess::search(*patt);
     serializer.serialize(it, listener, this->getTriples()->getNumberOfElements() );
+	if(need2DeletePatt)
+	{
+		delete patt;
+		patt = NULL;
+		need2DeletePatt = false;
+	}
 	delete it;
 }
 

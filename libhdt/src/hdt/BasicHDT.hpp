@@ -123,7 +123,7 @@ public:
 	 * @param output
 	 * @param notation
 	 */
-	void saveToRDF(RDFSerializer &serializer, ProgressListener *listener = NULL);
+	void saveToRDF(RDFSerializer &serializer, ProgressListener *listener = NULL, TripleString* patt=NULL);
 
 	/**
 	 * @param output

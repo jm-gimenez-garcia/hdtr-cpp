@@ -79,7 +79,7 @@ public:
 	 * @param output
 	 * @param notation
 	 */
-	virtual void saveToRDF(RDFSerializer &serializer, ProgressListener *listener = NULL) = 0;
+	virtual void saveToRDF(RDFSerializer &serializer, ProgressListener *listener = NULL, TripleString* patt=NULL) = 0;
 
 	/**
 	 * Save the current HDT into a file in a compact manner.
@@ -104,19 +104,10 @@ public:
 	 * @param object
 	 * @return
 	 */
-	virtual IteratorTripleString *search(const char *subject, const char *predicate, const char *object, const char* graph=NULL) = 0;
+	
+	//no need to redeclare the pure virtual member function inherited from RDFAccess
+	//virtual IteratorTripleString *search(const char *subject, const char *predicate, const char *object, const char* graph=NULL) = 0;
 
-    IteratorTripleString *search(TripleString &pattern) {
-		if (pattern.hasGraph())
-		{
-			QuadString qpatt = pattern.to_QuadString();
-
-
-			return search(qpatt.getSubject().c_str(), qpatt.getPredicate().c_str(), qpatt.getObject().c_str(), qpatt.getGraph().c_str());
-		}
-		else
-			return search(pattern.getSubject().c_str(), pattern.getPredicate().c_str(), pattern.getObject().c_str());
-    }
 
     virtual bool isIndexed() const = 0;
 };
@@ -154,6 +145,8 @@ public:
 	 */
 	virtual void remove(IteratorTripleString *triples) = 0;
 
+	//no need to redeclare the pure virtual member function inherited from RDFAccess
+	//virtual IteratorTripleString *search(const char *subject, const char *predicate, const char *object, const char* graph=NULL) = 0;
 };
 
 } // namespace hdt

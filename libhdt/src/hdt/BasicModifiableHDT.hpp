@@ -60,7 +60,7 @@ public:
 
     void mapHDT(const char *fileName, ProgressListener *listener = NULL);
 
-	void saveToRDF(RDFSerializer &serializer, ProgressListener *listener = NULL);
+	void saveToRDF(RDFSerializer &serializer, ProgressListener *listener = NULL, TripleString* patt=NULL);
 
 	void saveToHDT(std::ostream &output, ProgressListener *listener = NULL);
 

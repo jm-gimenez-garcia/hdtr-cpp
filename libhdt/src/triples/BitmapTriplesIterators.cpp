@@ -76,13 +76,13 @@ BitmapTriplesSearchIterator::BitmapTriplesSearchIterator(BitmapTriples *trip, Tr
 #endif
 
     findRange();
-cout << __FILE__ << ":" << __LINE__ << " : patX=" << patX << endl;
+/*cout << __FILE__ << ":" << __LINE__ << " : patX=" << patX << endl;
 cout << __FILE__ << ":" << __LINE__ << " : patY=" << patY<< endl;
 cout << __FILE__ << ":" << __LINE__ << " : patZ=" << patZ<< endl;
 cout << __FILE__ << ":" << __LINE__ << " : minY=" << minY<< endl;
 cout << __FILE__ << ":" << __LINE__ << " : maxY=" << maxY << endl;
 cout << __FILE__ << ":" << __LINE__ << " : minZ=" << minZ << endl;
-cout << __FILE__ << ":" << __LINE__ << " : maxZ=" << maxZ << endl;
+cout << __FILE__ << ":" << __LINE__ << " : maxZ=" << maxZ << endl;*/
 
     goToStart();
 }
@@ -111,7 +111,7 @@ void BitmapTriplesSearchIterator::findRange()
 					{
 						if(patZ==adjZ.get(currPosZ))
 							maxZ++;
-cout << __FILE__ << ":" << __LINE__ << " : maxZ=" << maxZ <<endl;
+//cout << __FILE__ << ":" << __LINE__ << " : maxZ=" << maxZ <<endl;
 					}
 
                 } else {

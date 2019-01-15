@@ -53,6 +53,7 @@ public:
 	 * @return
 	 */
 	virtual IteratorTripleString *search(const char *subject, const char *predicate, const char *object, const char *graph=NULL) = 0;
+    IteratorTripleString *search(TripleString &pattern); 
 };
 
 /**

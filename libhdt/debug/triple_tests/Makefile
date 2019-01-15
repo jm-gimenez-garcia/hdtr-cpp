@@ -1,6 +1,6 @@
 include ../Makefile.inc
 
-SRC = testHdt2rdf.cpp
+SRC = testHdt2rdf_batch.cpp
 #SRC = testRdf2hdt.cpp
 #SRC = testNewBitmapQuadsBasic.cpp
 #SRC = testNewTriple.cpp
@@ -11,6 +11,8 @@ LIBS=$(LIBUTIL) $(LIBCDS) $(LIBCSD) $(LIBHDT)  $(LIBRDF) $(LIBDICT) $(LIBTRIPLES
 
 all: $(EXE) 
 
+hdt2rdf_batch: testHdt2rdf_batch.o $(LIBS) 
+	$(CXX) $<  $(LDFLAGS)  -o $@ 
 hdt2rdf: testHdt2rdf.o $(LIBS) 
 	$(CXX) $<  $(LDFLAGS)  -o $@ 
 rdf2hdt: testRdf2hdt.o $(LIBS) 
