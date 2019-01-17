@@ -191,18 +191,17 @@ IteratorTripleString* BasicHDT::search(const char* subject,	const char* predicat
 	try {
 		TripleID* glob_tid_ptr=NULL;
 		bool not_empty_not_found = false;
-
 		if(graph==NULL) { //if triple
 			const TripleString glob_ts(subject, predicate, object);
 			TripleID glob_tid;
 			dictionary->tripleStringtoTripleID(&glob_ts, &glob_tid);
-			glob_tid_ptr = new TripleID(glob_tid);
+			glob_tid_ptr = new QuadID(glob_tid.to_QuadID_pattern());
 		} else { // if quad
 			const QuadString glob_qs(subject, predicate, object, graph);
 			QuadID glob_qid;
 			dictionary->quadStringtoQuadID(&glob_qs, &glob_qid);
 			glob_tid_ptr = new QuadID(glob_qid);
-			not_empty_not_found = (glob_qid.getGraph()==0  && *graph!='\0'); 
+			not_empty_not_found = (glob_qid.getGraph()==0  && graph!=NULL && *graph!='\0'); 
 		}
 
 		// Make sure that all not-empty components arefound in dictionary.

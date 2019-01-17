@@ -1,6 +1,13 @@
 #!/bin/bash
 
-NB_TESTS='50'
+
+if [ $# -lt 1 ]; then
+	NB_TESTS='50'
+else
+	NB_TESTS="$1"
+fi
+
+
 
 (cd ../../src/rdf && make  all) && (cd ../../src/triples && make all) && (cd ../../src/hdt && make all) && (cd ../../src/sequence && make  all) && (cd ../../src/util && make  all)  && (cd ../../src/dictionary && make  all) && (cd ../../src/permutation/ && make clean all)
 

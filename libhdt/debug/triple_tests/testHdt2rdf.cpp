@@ -38,8 +38,10 @@ int main(int argc, char* argv[])
 		HDT *hdt = HDTManager::mapHDT(inputFile.c_str(), progress);
 
 		RDFSerializer *serializer = RDFSerializer::getSerializer(outputFile.c_str(), notation);
-		hdt->saveToRDF(*serializer);
+		//hdt->saveToRDF(*serializer);
+TripleString* ts = new TripleString("http://example.org/C3","http://example.org/link2","http://example.org/D3");	hdt->saveToRDF(*serializer, NULL, ts);
 		delete serializer;
+		delete ts;
 
 		delete hdt;
 		delete progress;
