@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
 
 		RDFSerializer *serializer = RDFSerializer::getSerializer(outputFile.c_str(), notation);
 		//hdt->saveToRDF(*serializer);
-TripleString* ts = new TripleString("http://example.org/C3","http://example.org/link2","http://example.org/D3");	hdt->saveToRDF(*serializer, NULL, ts);
+TripleString* ts = new TripleString("","","");	hdt->saveToRDF(*serializer, NULL, ts);
 		delete serializer;
 		delete ts;
 

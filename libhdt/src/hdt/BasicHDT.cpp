@@ -150,7 +150,7 @@ void BasicHDT::createComponents() {
     } else if (triplesType == HDTVocabulary::TRIPLES_TYPE_TRIPLESLISTDISK) {
 		triples = new TripleListDisk();
 #endif
-	} else if(triplesType==HDTVocabulary::TRIPLES_TYPE_BITMAPQUADS) {
+	} else if(triplesType==HDTVocabulary::QUADS_TYPE_BITMAP) {
 		triples = new BitmapQuads(spec);
 	} else {
 		triples = new BitmapQuads(spec);

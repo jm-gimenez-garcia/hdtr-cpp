@@ -47,7 +47,7 @@ size_t QuadsList::size() const
 void QuadsList::save(ostream &output, ControlInformation &controlInfo, ProgressListener *listener/*=NULL*/){
 	controlInfo.clear();
 	controlInfo.setUint("numQuads", numValidQuads);
-	controlInfo.setFormat(HDTVocabulary::TRIPLES_TYPE_QUADSLIST);
+	controlInfo.setFormat(HDTVocabulary::QUADS_TYPE_TRIPLESLIST);
 	controlInfo.setUint("order", orderQ);
 	controlInfo.save(output);
 
@@ -119,13 +119,13 @@ void QuadsList::load(ModifiableTriples &input, ProgressListener *listener/*=NULL
 }
 
 void QuadsList::populateHeader(Header &header, string rootNode){
-	header.insert(rootNode, HDTVocabulary::TRIPLES_TYPE, HDTVocabulary::TRIPLES_TYPE_QUADSLIST);
+	header.insert(rootNode, HDTVocabulary::TRIPLES_TYPE, HDTVocabulary::QUADS_TYPE_TRIPLESLIST);
 	header.insert(rootNode, HDTVocabulary::TRIPLES_NUM_QUADS, getNumberOfElements() );
 	header.insert(rootNode, HDTVocabulary::TRIPLES_ORDER, getOrderStr(orderQ) );
 }
 
 string QuadsList::getType() const
-{return HDTVocabulary::TRIPLES_TYPE_QUADSLIST;}
+{return HDTVocabulary::QUADS_TYPE_TRIPLESLIST;}
 
 TripleComponentOrder QuadsList::getOrder() const
 {return orderQ;}

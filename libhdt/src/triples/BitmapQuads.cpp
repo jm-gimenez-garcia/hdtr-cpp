@@ -297,7 +297,7 @@ void BitmapQuads::initTripleIDFromPos(TripleID*& tid_ptr, const unsigned int pos
 
 string BitmapQuads::getType() const
 {
-    return HDTVocabulary::TRIPLES_TYPE_BITMAPQUADS;
+    return HDTVocabulary::QUADS_TYPE_BITMAP;
 }
 
 }

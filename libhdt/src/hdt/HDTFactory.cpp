@@ -92,13 +92,13 @@ Triples *HDTFactory::readTriples(ControlInformation &controlInformation) {
 
 	if(triplesType==HDTVocabulary::TRIPLES_TYPE_BITMAP) {
 		return new BitmapTriples();
-	} else if(triplesType==HDTVocabulary::TRIPLES_TYPE_BITMAPQUADS) {
+	} else if(triplesType==HDTVocabulary::QUADS_TYPE_BITMAP) {
 		return new BitmapQuads();
 	} else if(triplesType==HDTVocabulary::TRIPLES_TYPE_PLAIN) {
 		return new PlainTriples();
 	} else if(triplesType==HDTVocabulary::TRIPLES_TYPE_TRIPLESLIST) {
 		return new TriplesList();
-	} else if(triplesType==HDTVocabulary::TRIPLES_TYPE_QUADSLIST) {
+	} else if(triplesType==HDTVocabulary::QUADS_TYPE_TRIPLESLIST) {
 		return new QuadsList();
 #ifndef WIN32
 	} else if(triplesType==HDTVocabulary::TRIPLES_TYPE_TRIPLESLISTDISK) {

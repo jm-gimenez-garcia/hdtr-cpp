@@ -40,13 +40,17 @@ namespace HDTVocabulary {
 	// Base
 	const std::string HDT_BASE = "<http://purl.org/HDT/hdt#";
 	const std::string HDT_CONTAINER = HDT_BASE+"HDTv" + HDT_VERSION + ">";
+
 	const std::string HDT_HEADER = HDT_BASE+"header";
 	const std::string HDT_DICTIONARY_BASE = HDT_BASE+"dictionary";
 	const std::string HDT_DICTIONARY = HDT_DICTIONARY_BASE+">";
+	const std::string HDT_DICTIONARY_TRIPLES = HDT_DICTIONARY_BASE + "_triples" +">";
+	const std::string HDT_DICTIONARY_GRAPHS = HDT_DICTIONARY_BASE + "quads" +">";
+
 	const std::string HDT_TRIPLES_BASE = HDT_BASE+"triples";
 	const std::string HDT_QUADS_BASE = HDT_BASE+"quads";
 	const std::string HDT_TRIPLES = HDT_TRIPLES_BASE+">";
-	const std::string HDT_QUADS = HDT_QUADS_BASE+">";
+	const std::string HDT_QUADS = HDT_QUADS_BASE+">";//doesn't exist in java version
 	const std::string HDT_SEQ_BASE = HDT_BASE+"seq";
 	const std::string HDT_PERM_BASE = HDT_BASE+"perm";
 	const std::string HDT_BITMAP_BASE = HDT_BASE+"bitmap";
@@ -80,32 +84,33 @@ namespace HDTVocabulary {
 	const std::string DICTIONARY_TYPE = DUBLIN_CORE+"format>";
 	const std::string DICTIONARY_NUMSUBJECTS = HDT_DICTIONARY_BASE+"numSubjects>";
 	const std::string DICTIONARY_NUMPREDICATES = HDT_DICTIONARY_BASE+"numPredicates>";
-	const std::string DICTIONARY_NUMGRAPHS = HDT_DICTIONARY_BASE+"numGraphs>";
 	const std::string DICTIONARY_NUMOBJECTS = HDT_DICTIONARY_BASE+"numObjects>";
 	const std::string DICTIONARY_NUMSHARED = HDT_DICTIONARY_BASE+"numSharedSubjectObject>";
+	const std::string DICTIONARY_NUMGRAPHS = HDT_DICTIONARY_BASE+"numGraphs>";
 	const std::string DICTIONARY_MAXSUBJECTID = HDT_DICTIONARY_BASE+"maxSubjectID>";
 	const std::string DICTIONARY_MAXPREDICATEID = HDT_DICTIONARY_BASE+"maxPredicateID>";
-	const std::string DICTIONARY_MAXGRAPHID = HDT_DICTIONARY_BASE+"maxGraphID>";
 	const std::string DICTIONARY_MAXOBJECTTID = HDT_DICTIONARY_BASE+"maxObjectID>";
-	const std::string DICTIONARY_MAPPING = HDT_DICTIONARY_BASE+"mapping>";
+	const std::string DICTIONARY_MAXGRAPHID = HDT_DICTIONARY_BASE+"maxGraphID>";
+	const std::string DICTIONARY_MAPPING = HDT_DICTIONARY_BASE+"mapping>"; //doesn't exist in java version
 	const std::string DICTIONARY_SIZE_STRINGS = HDT_DICTIONARY_BASE+"sizeStrings>";
 	const std::string DICTIONARY_BLOCK_SIZE = HDT_DICTIONARY_BASE+"blockSize>";
 
 	// Dictionary Types
 	const std::string DICTIONARY_TYPE_PLAIN = HDT_DICTIONARY_BASE+"Plain>";
-	const std::string DICTIONARY_TYPE_FOUR = HDT_DICTIONARY_BASE+"Four>";
-	const std::string DICTIONARY_TYPE_HTFC = HDT_DICTIONARY_BASE+"FrontCodingHuTucker>";
-	const std::string DICTIONARY_TYPE_LITERAL = HDT_DICTIONARY_BASE+"Literal>";
-	const std::string DICTIONARY_TYPE_PLAIN_GRAPH = HDT_DICTIONARY_BASE+"PlainGraph>";
-	const std::string DICTIONARY_TYPE_FOUR_GRAPH = HDT_DICTIONARY_BASE+"FourGraph>";
-	const std::string DICTIONARY_TYPE_LITERAL_GRAPH = HDT_DICTIONARY_BASE+"LiteralGraph>";
-	const std::string DICTIONARY_TYPE_QUERYABLEREIFICATION = HDT_DICTIONARY_BASE+"QueryableReification>";
-	const std::string DICTIONARY_TYPE_MODIFIABLEREIFICATION = HDT_DICTIONARY_BASE+"ModifiableReification>";
+	const std::string DICTIONARY_TYPE_FOUR = HDT_DICTIONARY_BASE+"Four>";// 'DICTIONARY_TYPE_FOUR_SECTION' in java version
+	const std::string DICTIONARY_TYPE_HTFC = HDT_DICTIONARY_BASE+"FrontCodingHuTucker>";//doesn't exist in java version
+	const std::string DICTIONARY_TYPE_LITERAL = HDT_DICTIONARY_BASE+"Literal>";//doesn't exist in java version
+	const std::string DICTIONARY_TYPE_PLAIN_GRAPH = HDT_DICTIONARY_BASE+"PlainGraph>";//doesn't exist in java version
+	const std::string DICTIONARY_TYPE_FOUR_GRAPH = HDT_DICTIONARY_BASE+"FourGraph>";//doesn't exist in java version
+	const std::string DICTIONARY_TYPE_LITERAL_GRAPH = HDT_DICTIONARY_BASE+"LiteralGraph>";//doesn't exist in java version
+	const std::string DICTIONARY_TYPE_REIFICATION = HDT_DICTIONARY_BASE+"Reification>";
+	const std::string DICTIONARY_TYPE_QUERYABLEREIFICATION = HDT_DICTIONARY_BASE+"QueryableReification>";//doesn't exist in java version
+	const std::string DICTIONARY_TYPE_MODIFIABLEREIFICATION = HDT_DICTIONARY_BASE+"ModifiableReification>";//doesn't exist in java version
 
 	// Triples
 	const std::string TRIPLES_TYPE = DUBLIN_CORE+"format>";
 	const std::string TRIPLES_NUM_TRIPLES = HDT_TRIPLES_BASE+"numTriples>";
-	const std::string TRIPLES_NUM_QUADS = HDT_TRIPLES_BASE+"numQuads>";
+	const std::string TRIPLES_NUM_QUADS = HDT_TRIPLES_BASE+"numQuads>";//doesn't exist in java version
 	const std::string TRIPLES_ORDER = HDT_TRIPLES_BASE+"Order>";
 	const std::string TRIPLES_SEQX_TYPE = HDT_TRIPLES_BASE+"seqX>";
 	const std::string TRIPLES_SEQY_TYPE = HDT_TRIPLES_BASE+"seqY>";
@@ -119,12 +124,12 @@ namespace HDTVocabulary {
 
 	// Triples types
 	const std::string TRIPLES_TYPE_TRIPLESLIST = HDT_TRIPLES_BASE+"List>";
-	const std::string TRIPLES_TYPE_QUADSLIST = HDT_QUADS_BASE+"List>";
 	const std::string TRIPLES_TYPE_TRIPLESLISTDISK = HDT_TRIPLES_BASE+"ListDisk>";
 	const std::string TRIPLES_TYPE_PLAIN = HDT_TRIPLES_BASE+"Plain>";
 	const std::string TRIPLES_TYPE_BITMAP = HDT_TRIPLES_BASE+"Bitmap>";
-	const std::string TRIPLES_TYPE_BITMAPQUADS = HDT_QUADS_BASE+"Bitmap>";
 	const std::string TRIPLES_TYPE_KYOTO = HDT_TRIPLES_BASE+"KYOTO>";
+	const std::string QUADS_TYPE_TRIPLESLIST = HDT_QUADS_BASE+"List>";
+	const std::string QUADS_TYPE_BITMAP = HDT_QUADS_BASE+"Bitmap>";
 
 	// Index types
 	const std::string INDEX_TYPE_FOQ = HDT_BASE+"indexFoQ>";
@@ -133,7 +138,7 @@ namespace HDTVocabulary {
 	const std::string SEQ_TYPE_INT32 = HDT_SEQ_BASE+"Int32>";
 	const std::string SEQ_TYPE_INT64 = HDT_SEQ_BASE+"Int64>";
 	const std::string SEQ_TYPE_LOG = HDT_SEQ_BASE+"Log>";
-	const std::string SEQ_TYPE_LOG2 = HDT_SEQ_BASE+"Log2>";
+	const std::string SEQ_TYPE_LOG2 = HDT_SEQ_BASE+"Log2>";//doesn't exist in java version
 	const std::string SEQ_TYPE_HUFFMAN = HDT_SEQ_BASE+"Huffman>";
 	const std::string SEQ_TYPE_WAVELET = HDT_SEQ_BASE+"Wavelet>";
 
