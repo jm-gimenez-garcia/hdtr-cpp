@@ -66,7 +66,7 @@ src/libdcs/fmindex/SSA.cpp \
 src/libdcs/fmindex/SuffixArray.cpp \
 src/libdcs/VByte.cpp \
 src/permutation/PermutationMRRR.cpp \
-src/rdf/RDF.cpp
+src/rdf/RDF.cpp \
 src/rdf/RDFParser.cpp \
 src/rdf/RDFParserNtriples.cpp \
 src/rdf/RDFParserSerd.cpp \
