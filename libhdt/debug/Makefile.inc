@@ -30,6 +30,8 @@ LIBUTIL := $(LIBUTIL_DIR)/libutil.a
 LIBDICT := $(LIBDICT_DIR)/libdict.a
 LIBTRIPLES := $(LIBTRIPLES_DIR)/libtriples.a
 
+LIBCSD_SRC = $(wildcard $(LIBCSD_DIR)/src/utils/*.cpp $(LIBCSD_DIR)/src/static/*/*.cpp)
+LIBCSD_OBJ = $(patsubst %.cpp,%.o,$(SRC))
 
 CXXFLAGS := $(CXXFLAGS) -g -p -DHAVE_CDS -DHAVE_KYOTO -DHAVE_SERD -DHAVE_ZLIB -std=c++11 -I$(LOCAL_LIB_DIR)/include -I$(HDT_CPP_ROOT)/libhdt/include -I$(HDT_CPP_ROOT)/libhdt/src/dictionary -I$(HDT_CPP_ROOT)/libhdt/src/triples -I$(LIBCDS_DIR) -I$(LIBHDT_DIR) -I$(LIBSEQUENCE_DIR) -I$(LIBBITSEQUENCE_DIR) -I$(LIBPERMUTATION_DIR) -I$(LOCAL_LIB_DIR)/include/serd-0 -I$(LIBUTIL_DIR) -I$(LIBRDF_DIR) -I$(LIBDICT_DIR) -I$(LIBCSD_DIR)/include -I$(LIBTRIPLES_DIR) -I$(LIBHEADER_DIR) 
 

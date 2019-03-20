@@ -4,7 +4,6 @@ SRC = testNewDictionary_reif.cpp
 OBJ = $(patsubst %.cpp,%.o,$(SRC))
 EXE = $(patsubst %.cpp,%,$(SRC))
 
-
 all: $(EXE) 
 $(EXE) : $(OBJ) $(LIBUTIL) $(LIBCDS) $(LIBCSD) $(LIBHDT) $(LIBSEQUENCE)  $(LIBRDF) $(LIBDICT) $(LIBTRIPLES) 
 	$(CXX) $<  $(LDFLAGS)  -o $@ 
@@ -12,8 +11,8 @@ $(EXE) : $(OBJ) $(LIBUTIL) $(LIBCDS) $(LIBCSD) $(LIBHDT) $(LIBSEQUENCE)  $(LIBRD
 	$(CXX) -c $^ $(CXXFLAGS)  -o $@ 
 
 
-$(LIBCSD):
-	(cd $(LIBCSD_DIR) && make)
+$(LIBCSD): $(LIBCSD_OBJ)
+	ar rcs $@ $^
 $(LIBCDS):
 	(cd $(LIBCDS_DIR) && make)
 $(LIBHDT):

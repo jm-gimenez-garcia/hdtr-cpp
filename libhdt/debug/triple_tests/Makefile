@@ -29,8 +29,8 @@ $(EXE) : $(OBJ) $(LIBS)
 	$(CXX) -c $^ $(CXXFLAGS)  -o $@ 
 
 
-$(LIBCSD):
-	(cd $(LIBCSD_DIR) && make)
+$(LIBCSD): $(LIBCSD_OBJ)
+	ar rcs $@ $^
 $(LIBCDS):
 	(cd $(LIBCDS_DIR) && make)
 $(LIBHDT):
