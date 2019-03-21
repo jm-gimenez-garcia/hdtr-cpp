@@ -3,11 +3,11 @@
 #include <exception>
 #include <fstream>
 
-#include "HDTEnums.hpp"
-#include "HDTSpecification.hpp"
+#include <HDTEnums.hpp>
+#include <HDTSpecification.hpp>
 #include "StopWatch.hpp"
-#include "HDTListener.hpp"
-#include "HDTManager.hpp"
+#include <HDTListener.hpp>
+#include <HDTManager.hpp>
 
 
 using namespace std;
@@ -46,6 +46,7 @@ int main(int argc, char* argv[])
 		hdt->saveToHDT(outputFile.c_str(), progress);
 
 		globalTimer.stop();
+		cout << __FILE__ << " :" << __LINE__ << endl;
 #define vout if (!verbose) {} else std::cerr /* Verbose output */
 		vout << "HDT Successfully generated." << endl;
 		vout << "Total processing time: ";

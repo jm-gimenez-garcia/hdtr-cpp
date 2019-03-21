@@ -1,20 +1,20 @@
 
 //#include "CachedIterator.hpp"
-#include "Iterator.hpp"
+#include <Iterator.hpp>
 
 namespace hdt{
 
-bool CachedIterator::hasNext()
+bool CachedIterator::hasNext() const
 {itUCharStr->hasNext();}
 
-unsigned char *next() {
-	unsigned char* cache_tmp = cachedValue;
-	cachedValue = itUCharStr->next();
-	return cache_tmp;
+unsigned char *CachedIterator::next() {
+    unsigned char* cache_tmp = cachedValue;
+    cachedValue = itUCharStr->next();
+    return cache_tmp;
 }
 
-int compare(const CachedIterator& cachedIt)const{
-	return strcmp(cachedValue, cachedIt.getCurrent());
+int CachedIterator::compare(const CachedIterator& cachedIt)const{
+    return strcmp(cachedValue, cachedIt.getCurrent());
 }
 
 

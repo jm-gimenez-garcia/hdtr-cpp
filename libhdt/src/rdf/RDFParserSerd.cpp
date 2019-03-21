@@ -6,9 +6,9 @@
 
 #include "../util/fileUtil.hpp"
 #include "RDFParserSerd.hpp"
-#include "RDFParser.hpp"
-#include "SingleQuad.hpp"
-#include "SingleTriple.hpp"
+#include <RDFParser.hpp>
+#include <SingleQuad.hpp>
+#include <SingleTriple.hpp>
 
 namespace hdt {
 

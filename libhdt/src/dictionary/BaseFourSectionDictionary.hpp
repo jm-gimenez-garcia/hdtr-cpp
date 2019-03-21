@@ -33,10 +33,10 @@
 #define HDT_BFS_DICTIONARY_HPP_
 
 //#include <Iterator.hpp>
-#include "HDTSpecification.hpp"
-#include "Dictionary.hpp"
+#include <HDTSpecification.hpp>
+#include <Dictionary.hpp>
 //#include "../libdcs/CSD.h"
-#include "HDTEnums.hpp"
+#include <HDTEnums.hpp>
 
 namespace csd{
 	class CSD;

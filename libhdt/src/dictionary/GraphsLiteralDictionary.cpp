@@ -4,12 +4,12 @@
 
 #if HAVE_CDS
 
-#include "HDTVocabulary.hpp"
-#include "Iterator.hpp"
+#include <HDTVocabulary.hpp>
+#include <Iterator.hpp>
 #include "../libdcs/CSD_PFC.h"
 #include "../libdcs/CSD_Cache.h"
 #include "../libdcs/CSD_Cache2.h"
-#include "Header.hpp"
+#include <Header.hpp>
 
 namespace hdt {
 GraphsLiteralDictionary::GraphsLiteralDictionary() : graphs(new csd::CSD_PFC()){}

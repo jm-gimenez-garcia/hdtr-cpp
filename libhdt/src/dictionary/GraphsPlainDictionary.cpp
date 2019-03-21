@@ -1,8 +1,8 @@
 
 #include "GraphsPlainDictionary.hpp"
-#include "HDTVocabulary.hpp"
-#include "HDTListener.hpp"
-#include "Header.hpp"
+#include <HDTVocabulary.hpp>
+#include <HDTListener.hpp>
+#include <Header.hpp>
 
 namespace hdt {
 

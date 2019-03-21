@@ -1,7 +1,7 @@
 #ifndef BITMAPQUADITERATORWRAPPER_HPP
 #define BITMAPQUADITERATORWRAPPER_HPP
 
-#include "Iterator.hpp"
+#include <Iterator.hpp>
 
 namespace hdt{
 class BitmapQuads;

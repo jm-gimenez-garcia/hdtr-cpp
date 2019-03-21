@@ -1,10 +1,10 @@
 #ifndef __TRIPLE_TRANSLATOR_ITERATOR_WRAPPER_HPP__
 #define __TRIPLE_TRANSLATOR_ITERATOR_WRAPPER_HPP__
 
-#include "TripleTranslator.hpp"
-#include "Iterator.hpp"
-#include "HDTEnums.hpp"
-#include "SingleQuad.hpp"
+#include "../dictionary/TripleTranslator.hpp"
+#include <Iterator.hpp>
+#include <HDTEnums.hpp>
+#include <SingleQuad.hpp>
 
 namespace hdt{
 class TripleID;

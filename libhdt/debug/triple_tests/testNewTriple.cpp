@@ -3,7 +3,7 @@
 #include "PlainHeader.hpp"
 #include "BitmapTriples.hpp"
 #include "PlainTriples.hpp"
-#include "HDTVocabulary.hpp"
+#include <HDTVocabulary.hpp>
 #include "TripleListDisk.hpp"
 #include "TriplesList.hpp"
 #include "TriplesLoader.hpp"

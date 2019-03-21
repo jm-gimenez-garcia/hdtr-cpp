@@ -30,7 +30,7 @@
 #include <string>
 #include <iostream>
 #include <sstream>
-#include "ControlInformation.hpp"
+#include <ControlInformation.hpp>
 #include "../util/crc16.h"
 
 using namespace std;

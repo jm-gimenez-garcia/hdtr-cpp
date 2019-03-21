@@ -1,8 +1,8 @@
 #ifndef BITMAPQUADITERATORSINGLE_HPP_
 #define BITMAPQUADITERATORSINGLE_HPP_
 
-#include "Iterator.hpp"
-#include "SingleQuad.hpp"
+#include <Iterator.hpp>
+#include <SingleQuad.hpp>
 
 namespace hdt{
 class BitmapQuads;

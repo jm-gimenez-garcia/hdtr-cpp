@@ -2,7 +2,7 @@
 #ifndef __HDT_BITMAPIDENTIFIABLETRIPLES_HPP__
 #define __HDT_BITMAPIDENTIFIABLETRIPLES_HPP__
 
-#include "TripleTranslator.hpp"
+#include "../dictionary/TripleTranslator.hpp"
 #include "BitmapTriples.hpp"
 
 

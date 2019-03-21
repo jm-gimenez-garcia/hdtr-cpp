@@ -35,8 +35,8 @@
 #include "../libdcs/VByte.h"
 
 #include "PlainHeader.hpp"
-#include "HDTListener.hpp"
-#include "ControlInformation.hpp"
+#include <HDTListener.hpp>
+#include <ControlInformation.hpp>
 
 namespace hdt {
 

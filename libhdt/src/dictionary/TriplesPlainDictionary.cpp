@@ -1,8 +1,8 @@
 
 #include "TriplesPlainDictionary.hpp"
-#include "HDTVocabulary.hpp"
-#include "HDTListener.hpp"
-#include "Header.hpp"
+#include <HDTVocabulary.hpp>
+#include <HDTListener.hpp>
+#include <Header.hpp>
 #include "DictionaryEntry.hpp"
 
 namespace hdt {

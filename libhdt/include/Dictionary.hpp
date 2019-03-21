@@ -34,9 +34,9 @@
 
 #include <cstdint>
 #include <vector>
-#include "HDTEnums.hpp"
-#include "SingleTriple.hpp"
-#include "SingleQuad.hpp"
+#include <HDTEnums.hpp>
+#include <SingleTriple.hpp>
+#include <SingleQuad.hpp>
 
 
 namespace std{

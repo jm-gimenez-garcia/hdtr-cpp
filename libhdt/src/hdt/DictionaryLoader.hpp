@@ -1,8 +1,8 @@
 #ifndef DICTIONARYLOADER_HPP_
 #define DICTIONARYLOADER_HPP_
 
-#include "RDFParser.hpp"
-#include "Dictionary.hpp"
+#include <RDFParser.hpp>
+#include <Dictionary.hpp>
 
 namespace hdt {
 class TripleString;

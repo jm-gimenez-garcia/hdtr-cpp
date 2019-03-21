@@ -32,10 +32,10 @@
 #include "BasePlainDictionary.hpp"
 #include "../util/Histogram.h"
 
-#include "ControlInformation.hpp"
-#include "HDTListener.hpp"
-#include "Header.hpp"
-#include "HDTVocabulary.hpp"
+#include <ControlInformation.hpp>
+#include <HDTListener.hpp>
+#include <Header.hpp>
+#include <HDTVocabulary.hpp>
 #include <algorithm>
 
 #include "DictionaryEntry.hpp"

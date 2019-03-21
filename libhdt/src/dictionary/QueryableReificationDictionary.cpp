@@ -1,7 +1,7 @@
 #include "QueryableReificationDictionary.hpp"
 #include "TriplesFourSectionDictionary.hpp"
 #include "GraphsFourSectionDictionary.hpp"
-#include "HDTSpecification.hpp"
+#include <HDTSpecification.hpp>
 
 namespace hdt{
 

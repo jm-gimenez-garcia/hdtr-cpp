@@ -1,5 +1,5 @@
-#include "RDF.hpp"
-#include "SingleQuad.hpp"
+#include <RDF.hpp>
+#include <SingleQuad.hpp>
 
 using namespace hdt;
 

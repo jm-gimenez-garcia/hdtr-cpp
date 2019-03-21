@@ -4,7 +4,7 @@
 #include <Triples.hpp>
 #include "TripleIterators.hpp"
 #include "TriplesList.hpp"
-#include "SingleQuad.hpp"
+#include <SingleQuad.hpp>
 #include "QuadsList.hpp"
 
 namespace hdt{

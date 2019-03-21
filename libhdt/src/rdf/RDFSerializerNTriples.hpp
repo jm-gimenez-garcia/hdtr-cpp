@@ -7,7 +7,7 @@
 #define RDFSERIALIZERNTRIPLES_H_
 
 #include <fstream>
-#include "RDFSerializer.hpp"
+#include <RDFSerializer.hpp>
 
 namespace hdt {
 

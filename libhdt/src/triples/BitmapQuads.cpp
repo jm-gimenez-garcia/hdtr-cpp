@@ -1,13 +1,13 @@
 #include "BitmapQuads.hpp"
-#include "SingleQuad.hpp"
-#include "PermutationMRRR.hpp"
-#include "BitSequence375.h"
-#include "SingleQuad.hpp"
-#include "Iterator.hpp"
+#include <SingleQuad.hpp>
+#include "../permutation/PermutationMRRR.hpp"
+#include "../bitsequence/BitSequence375.h"
+#include <SingleQuad.hpp>
+#include <Iterator.hpp>
 #include "BitmapQuadIteratorWrapper.hpp"
 #include "BitmapQuadIteratorSingle.hpp"
 #include "TripleTranslatorIteratorWrapper.hpp"
-#include "HDTVocabulary.hpp"
+#include <HDTVocabulary.hpp>
 
 using namespace std;
 

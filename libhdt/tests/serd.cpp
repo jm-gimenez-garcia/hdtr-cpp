@@ -3,7 +3,7 @@
 #include <config.h>
 #endif
 
-#include "RDFParser.hpp"
+#include <RDFParser.hpp>
 
 using namespace std;
 using namespace hdt;

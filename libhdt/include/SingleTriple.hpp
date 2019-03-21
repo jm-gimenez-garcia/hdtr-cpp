@@ -32,7 +32,7 @@
 #ifndef HDT_SINGLETRIPLE_HPP_
 #define HDT_SINGLETRIPLE_HPP_
 
-#include "HDTEnums.hpp"
+#include <HDTEnums.hpp>
 #include <stdexcept>
 #include <iostream>
 #include <string>

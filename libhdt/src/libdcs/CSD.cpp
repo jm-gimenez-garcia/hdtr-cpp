@@ -33,7 +33,7 @@
 #include <stdexcept>
 #include "CSD.h"
 #include "CSD_PFC.h"
-#include "Iterator.hpp"
+#include <Iterator.hpp>
 #ifdef HAVE_CDS
 #include "CSD_HTFC.h"
 #include "CSD_FMIndex.h"

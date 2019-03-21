@@ -17,8 +17,8 @@
 #include <fstream>
 #include <getopt.h>
 
-#include "../src/dictionary/LiteralDictionary.hpp"
-#include "../src/dictionary/FourSectionDictionary.hpp"
+#include "../src/dictionary/TriplesLiteralDictionary.hpp"
+#include "../src/dictionary/TriplesFourSectionDictionary.hpp"
 
 #include "../src/util/StopWatch.hpp"
 #include "../src/util/fileUtil.hpp"

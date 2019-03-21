@@ -32,9 +32,9 @@
 #ifndef HDT_RDFPARSER_HPP_
 #define HDT_RDFPARSER_HPP_
 
-#include "SingleTriple.hpp"
-#include "Iterator.hpp"
-#include "HDTEnums.hpp"
+#include <SingleTriple.hpp>
+#include <Iterator.hpp>
+#include <HDTEnums.hpp>
 
 #include <string>
 #include <istream>

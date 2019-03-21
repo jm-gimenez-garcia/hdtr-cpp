@@ -1,8 +1,8 @@
 #include "BitmapQuadIteratorWrapper.hpp"
 #include "BitmapQuads.hpp"
-#include "Permutation.hpp"
-#include "BitSequence375.h"
-#include "SingleQuad.hpp"
+#include "../permutation/Permutation.hpp"
+#include "../bitsequence/BitSequence375.h"
+#include <SingleQuad.hpp>
 
 namespace hdt{
 

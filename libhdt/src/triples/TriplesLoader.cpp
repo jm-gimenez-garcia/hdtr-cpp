@@ -1,9 +1,9 @@
 #include "TriplesLoader.hpp"
-#include "Dictionary.hpp"
-#include "Triples.hpp"
-#include "SingleTriple.hpp"
-#include "SingleQuad.hpp"
-#include "HDTListener.hpp"
+#include <Dictionary.hpp>
+#include <Triples.hpp>
+#include <SingleTriple.hpp>
+#include <SingleQuad.hpp>
+#include <HDTListener.hpp>
 
 using namespace hdt;
 

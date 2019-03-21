@@ -1,7 +1,7 @@
 #ifndef REIFICATIONDICTIONARYLOADER_HPP_
 #define REIFICATIONDICTIONARYLOADER_HPP_
 
-#include "RDFParser.hpp"
+#include <RDFParser.hpp>
 #include "DictionaryLoader.hpp"
 
 namespace hdt {

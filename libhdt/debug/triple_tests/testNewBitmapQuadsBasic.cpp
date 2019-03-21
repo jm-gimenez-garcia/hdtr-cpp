@@ -4,7 +4,7 @@
 #include "BitmapTriples.hpp"
 #include "BitmapQuads.hpp"
 #include "PlainTriples.hpp"
-#include "HDTVocabulary.hpp"
+#include <HDTVocabulary.hpp>
 #include "BasicHDT.hpp"
 #include "TripleListDisk.hpp"
 #include "TriplesList.hpp"
@@ -14,7 +14,7 @@
 #include "ReificationDictionaryLoader.hpp"
 #include "QueryableReificationDictionary.hpp"
 #include "ModifiableReificationDictionary.hpp"
-#include "HDTManager.hpp"
+#include <HDTManager.hpp>
 
 
 using namespace std;

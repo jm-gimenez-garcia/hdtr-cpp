@@ -1,6 +1,6 @@
 #include "QuadsList.hpp"
-#include "SingleQuad.hpp"
-#include "HDTVocabulary.hpp"
+#include <SingleQuad.hpp>
+#include <HDTVocabulary.hpp>
 #include "TriplesComparator.hpp"
 #include "../util/StopWatch.hpp"
 #include <algorithm>

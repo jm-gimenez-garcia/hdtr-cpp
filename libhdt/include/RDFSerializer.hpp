@@ -32,10 +32,10 @@
 #ifndef HDT_RDFSERIALIZER_HPP_
 #define HDT_RDFSERIALIZER_HPP_
 
-#include "SingleTriple.hpp"
-#include "Iterator.hpp"
-#include "HDTEnums.hpp"
-#include "HDTListener.hpp"
+#include <SingleTriple.hpp>
+#include <Iterator.hpp>
+#include <HDTEnums.hpp>
+#include <HDTListener.hpp>
 
 #include <iostream>
 

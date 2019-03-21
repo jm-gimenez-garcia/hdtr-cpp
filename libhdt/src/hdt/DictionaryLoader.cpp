@@ -1,8 +1,8 @@
 #include "DictionaryLoader.hpp"
-#include "SingleTriple.hpp"
-#include "SingleQuad.hpp"
-#include "HDTListener.hpp"
-#include "ModifiableTriplesDictionary.hpp"
+#include <SingleTriple.hpp>
+#include <SingleQuad.hpp>
+#include <HDTListener.hpp>
+#include "../dictionary/ModifiableTriplesDictionary.hpp"
 using namespace hdt;
 
 DictionaryLoader::DictionaryLoader(ProgressListener *list) : listener(list), count(0) { }

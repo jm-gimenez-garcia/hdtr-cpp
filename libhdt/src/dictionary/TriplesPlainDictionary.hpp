@@ -3,7 +3,7 @@
 
 #include "BasePlainDictionary.hpp"
 #include "ModifiableTriplesDictionary.hpp"
-#include "HDTEnums.hpp"
+#include <HDTEnums.hpp>
 
 namespace hdt {
 

@@ -1,6 +1,6 @@
 #include "TripleTranslatorIteratorWrapper.hpp"
-#include "SingleQuad.hpp"
-#include "Triples.hpp"
+#include <SingleQuad.hpp>
+#include <Triples.hpp>
 
 using namespace hdt;
 

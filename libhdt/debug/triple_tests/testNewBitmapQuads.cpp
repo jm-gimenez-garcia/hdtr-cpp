@@ -4,7 +4,7 @@
 #include "BitmapTriples.hpp"
 #include "BitmapQuads.hpp"
 #include "PlainTriples.hpp"
-#include "HDTVocabulary.hpp"
+#include <HDTVocabulary.hpp>
 #include "TripleListDisk.hpp"
 #include "TriplesList.hpp"
 #include "TriplesQuadsList.hpp"

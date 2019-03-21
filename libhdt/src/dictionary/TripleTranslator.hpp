@@ -1,7 +1,7 @@
 #ifndef __TRIPLETRANSLATOR_HPP__
 #define __TRIPLETRANSLATOR_HPP__
 #include <functional>
-#include "HDTEnums.hpp"
+#include <HDTEnums.hpp>
 
 namespace hdt{
 class TripleID;

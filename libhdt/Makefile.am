@@ -45,15 +45,12 @@ src/hdt/BasicModifiableHDT.cpp \
 src/hdt/ControlInformation.cpp \
 src/hdt/DictionaryLoader.cpp \
 src/hdt/HDTFactory.cpp \
-src/hdt/HDTFactory_dictionary.cpp \
 src/hdt/HDTManager.cpp \
 src/hdt/HDTSpecification.cpp \
 src/hdt/ReificationDictionaryLoader.cpp \
 src/hdt/TripleIDStringIterator.cpp \
 src/hdt/TriplesDictionaryLoader.cpp \
 src/header/PlainHeader.cpp \
-src/iterator/CachedIterator.cpp \
-src/iterator/CompositeIteratorUCharString.cpp \
 src/huffman/huff.cpp \
 src/huffman/Huffman.cpp \
 src/libdcs/CSD_Cache2.cpp \
@@ -161,13 +158,10 @@ src/hdt/BasicHDT.hpp\
 src/hdt/BasicModifiableHDT.hpp\
 src/hdt/DictionaryLoader.hpp \
 src/hdt/HDTFactory.hpp\
-src/hdt/HDTFactory_dictionary.hpp \
 src/hdt/ReificationDictionaryLoader.hpp \
 src/hdt/TripleIDStringIterator.hpp\
 src/hdt/TriplesDictionaryLoader.hpp \
 src/header/PlainHeader.hpp\
-src/iterator/CachedIterator.hpp \
-src/iterator/CompositeIteratorUCharString.hpp \
 src/permutation/Permutation.hpp \
 src/permutation/PermutationMRRR.hpp \
 src/rdf/RDFParserNtriples.hpp\

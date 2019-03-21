@@ -1,7 +1,8 @@
 include ../Makefile.inc
 
-SRC = testHdt2rdf_batch.cpp
+#SRC = testHdt2rdf_batch.cpp
 #SRC = testRdf2hdt.cpp
+SRC = testHdt2rdf.cpp
 #SRC = testNewBitmapQuadsBasic.cpp
 #SRC = testNewTriple.cpp
 OBJ = $(patsubst %.cpp,%.o,$(SRC))

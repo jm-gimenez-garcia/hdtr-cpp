@@ -35,7 +35,7 @@
 #include <HDTSpecification.hpp>
 #include <Dictionary.hpp> //for ModifiableDictionary
 #include <Iterator.hpp>
-#include "HDTEnums.hpp"
+#include <HDTEnums.hpp>
 
 //#include <string.h>
 //#include <string>

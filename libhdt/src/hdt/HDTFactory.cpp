@@ -35,8 +35,8 @@
 
 #include "../header/PlainHeader.hpp"
 
-#include "Dictionary.hpp"
-#include "TriplesDictionary.hpp"
+#include <Dictionary.hpp>
+#include "../dictionary/TriplesDictionary.hpp"
 #include "../dictionary/TriplesPlainDictionary.hpp"
 #include "../dictionary/GraphsPlainDictionary.hpp"
 #include "../dictionary/TriplesFourSectionDictionary.hpp"

@@ -1,5 +1,5 @@
 #include "TripleTranslator.hpp"
-#include "SingleQuad.hpp"
+#include <SingleQuad.hpp>
 using namespace std;
 using namespace hdt;
 

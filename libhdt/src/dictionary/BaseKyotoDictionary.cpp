@@ -36,10 +36,10 @@
 #endif
 
 #include "BaseKyotoDictionary.hpp"
-#include "HDTListener.hpp"
-#include "Header.hpp"
+#include <HDTListener.hpp>
+#include <Header.hpp>
 #include <HDTVocabulary.hpp>
-#include "ControlInformation.hpp"
+#include <ControlInformation.hpp>
 
 #ifdef HAVE_KYOTO
 

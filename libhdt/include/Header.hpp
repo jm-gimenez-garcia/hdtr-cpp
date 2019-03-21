@@ -32,9 +32,9 @@
 #ifndef HDT_HEADER_HPP_
 #define HDT_HEADER_HPP_
 
-#include "RDF.hpp"
-#include "ControlInformation.hpp"
-#include "HDTListener.hpp"
+#include <RDF.hpp>
+#include <ControlInformation.hpp>
+#include <HDTListener.hpp>
 #include <stdexcept>
 #include <iostream>
 #include <sstream>

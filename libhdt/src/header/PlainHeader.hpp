@@ -32,10 +32,10 @@
 #ifndef PLAINHEADER_H_
 #define PLAINHEADER_H_
 
-#include "Header.hpp"
-#include "HDTSpecification.hpp"
-#include "SingleTriple.hpp"
-#include "Iterator.hpp"
+#include <Header.hpp>
+#include <HDTSpecification.hpp>
+#include <SingleTriple.hpp>
+#include <Iterator.hpp>
 
 namespace hdt {
 class ProgressListener;

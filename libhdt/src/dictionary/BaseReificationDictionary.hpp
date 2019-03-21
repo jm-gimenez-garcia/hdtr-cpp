@@ -4,11 +4,11 @@
 #include <functional>
 #include "TriplesDictionary.hpp"
 #include "GraphsDictionary.hpp"
-#include "HDTVocabulary.hpp"
-#include "HDTListener.hpp"
-#include "Header.hpp"
+#include <HDTVocabulary.hpp>
+#include <HDTListener.hpp>
+#include <Header.hpp>
 #include "TripleTranslator.hpp"
-#include "HDTEnums.hpp"
+#include <HDTEnums.hpp>
 
 
 namespace hdt{

@@ -5,7 +5,7 @@
 //#include <Iterator.hpp>
 #include <HDTSpecification.hpp>
 #include <Dictionary.hpp>
-#include "Iterator.hpp"
+#include <Iterator.hpp>
 #include <vector>
 #include <utility>
 

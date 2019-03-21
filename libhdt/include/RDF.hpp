@@ -32,8 +32,8 @@
 #ifndef HDT_RDF_HPP_
 #define HDT_RDF_HPP_
 
-#include "SingleTriple.hpp"
-#include "Iterator.hpp"
+#include <SingleTriple.hpp>
+#include <Iterator.hpp>
 
 namespace hdt {
 

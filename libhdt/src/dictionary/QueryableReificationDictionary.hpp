@@ -4,9 +4,9 @@
 #include "BaseReificationDictionary.hpp"
 #include "TriplesDictionary.hpp"
 #include "GraphsDictionary.hpp"
-#include "HDTVocabulary.hpp"
-#include "HDTListener.hpp"
-#include "Header.hpp"
+#include <HDTVocabulary.hpp>
+#include <HDTListener.hpp>
+#include <Header.hpp>
 
 
 namespace hdt{

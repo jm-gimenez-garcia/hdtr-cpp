@@ -1,8 +1,8 @@
 #include "BaseReificationDictionary.hpp"
 #include "TriplesFourSectionDictionary.hpp"
 #include "GraphsFourSectionDictionary.hpp"
-#include "HDTSpecification.hpp"
-#include "HDTFactory.hpp"
+#include <HDTSpecification.hpp>
+#include "../hdt/HDTFactory.hpp"
 
 namespace hdt{
 

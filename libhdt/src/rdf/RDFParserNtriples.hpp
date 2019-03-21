@@ -11,7 +11,7 @@
 #include <stdint.h>
 #include <fstream>
 
-#include "RDFParser.hpp"
+#include <RDFParser.hpp>
 
 namespace hdt {
 

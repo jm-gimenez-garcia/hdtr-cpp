@@ -1,6 +1,6 @@
 #include <iostream>
 #include <exception>
-#include "ControlInformation.hpp"
+#include <ControlInformation.hpp>
 #include "TriplesPlainDictionary.hpp"
 #include "GraphsPlainDictionary.hpp"
 #include "TriplesKyotoDictionary.hpp"
@@ -8,10 +8,10 @@
 #include "GraphsFourSectionDictionary.hpp"
 #include "TriplesLiteralDictionary.hpp"
 #include "DictionaryLoader.hpp"
-#include "Dictionary.hpp"
-#include "HDTListener.hpp"
-#include "RDFParser.hpp"
-#include "HDTVocabulary.hpp"
+#include <Dictionary.hpp>
+#include <HDTListener.hpp>
+#include <RDFParser.hpp>
+#include <HDTVocabulary.hpp>
 using namespace std;
 using namespace hdt;
 int main(int argc, char* argv[])

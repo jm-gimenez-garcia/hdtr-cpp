@@ -9,7 +9,7 @@
 
 #include <HDTEnums.hpp>
 
-#include "RDFParser.hpp"
+#include <RDFParser.hpp>
 
 namespace hdt {
 

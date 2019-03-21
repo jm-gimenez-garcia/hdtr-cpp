@@ -2,12 +2,12 @@
 #include <string>
 #include <exception>
 
-#include "HDTEnums.hpp"
-#include "HDTSpecification.hpp"
+#include <HDTEnums.hpp>
+#include <HDTSpecification.hpp>
 #include "StopWatch.hpp"
-#include "HDTListener.hpp"
-#include "HDTManager.hpp"
-#include "RDFSerializer.hpp"
+#include <HDTListener.hpp>
+#include <HDTManager.hpp>
+#include <RDFSerializer.hpp>
 
 using namespace std;
 using namespace hdt;

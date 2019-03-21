@@ -35,7 +35,7 @@
 #include <Triples.hpp>
 #include "TripleIterators.hpp"
 #include <HDTSpecification.hpp>
-#include "SingleTriple.hpp"
+#include <SingleTriple.hpp>
 
 namespace hdt {
 

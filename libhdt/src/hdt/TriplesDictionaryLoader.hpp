@@ -1,7 +1,7 @@
 #ifndef TRIPLESDICTIONARYLOADER_HPP_
 #define TRIPLESDICTIONARYLOADER_HPP_
 
-#include "RDFParser.hpp"
+#include <RDFParser.hpp>
 #include "DictionaryLoader.hpp"
 
 namespace hdt {

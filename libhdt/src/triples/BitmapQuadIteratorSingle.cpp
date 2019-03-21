@@ -1,10 +1,10 @@
 #include "BitmapQuadIteratorSingle.hpp"
 #include "TripleOrderConvert.hpp"
 
-#include "HDTEnums.hpp"
+#include <HDTEnums.hpp>
 #include "BitmapQuads.hpp"
-#include "Permutation.hpp"
-#include "BitSequence375.h"
+#include "../permutation/Permutation.hpp"
+#include "../bitsequence/BitSequence375.h"
 
 namespace hdt{
 

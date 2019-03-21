@@ -5,7 +5,7 @@
 
 #include <serd/serd.h>
 
-#include "RDFSerializer.hpp"
+#include <RDFSerializer.hpp>
 
 namespace hdt {
 

@@ -4,7 +4,7 @@
 #include <cstdio>
 #include <cstring>
 #include <stdexcept>
-#include "SingleQuad.hpp"
+#include <SingleQuad.hpp>
 #include "RDFSerializerSerd.hpp"
 
 namespace hdt {

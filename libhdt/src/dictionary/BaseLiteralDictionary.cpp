@@ -2,14 +2,14 @@
 #if HAVE_CDS
 
 #include "BaseLiteralDictionary.hpp"
-#include "HDTVocabulary.hpp"
-#include "ControlInformation.hpp"
-#include "Iterator.hpp"
+#include <HDTVocabulary.hpp>
+#include <ControlInformation.hpp>
+#include <Iterator.hpp>
 #include "../libdcs/CSD_PFC.h"
 //#include "../libdcs/CSD_HTFC.h"
 #include "../libdcs/CSD_FMIndex.h"
 #include "../libdcs/CSD_Cache.h"
-#include "Header.hpp"
+#include <Header.hpp>
 
 namespace hdt {
 

@@ -24,7 +24,7 @@
  *   Miguel A. Martinez-Prieto: migumar2@infor.uva.es
  *
  */
-#include "TriplesQuadsList.hpp"
+#include "../triples/TriplesQuadsList.hpp"
 
 #include <iomanip>
 #include <algorithm>
@@ -38,27 +38,27 @@
 
 #include "../util/StopWatch.hpp"
 #include "../util/fileUtil.hpp"
-#include "filemap.h"
+#include "../util/filemap.h"
 
-#include "ControlInformation.hpp"
+#include <ControlInformation.hpp>
 #include "HDTFactory.hpp"
 #include "BasicHDT.hpp"
 
-#include "PlainHeader.hpp"
+#include "../header/PlainHeader.hpp"
 
-#include "TriplesDictionary.hpp"
-#include "TriplesPlainDictionary.hpp"
-#include "TriplesKyotoDictionary.hpp"
-#include "TriplesFourSectionDictionary.hpp"
-#include "QueryableReificationDictionary.hpp"
-#include "DictionaryEntry.hpp"
+#include "../dictionary/TriplesDictionary.hpp"
+#include "../dictionary/TriplesPlainDictionary.hpp"
+#include "../dictionary/TriplesKyotoDictionary.hpp"
+#include "../dictionary/TriplesFourSectionDictionary.hpp"
+#include "../dictionary/QueryableReificationDictionary.hpp"
+#include "../dictionary/DictionaryEntry.hpp"
+#include "../dictionary/ModifiableTriplesDictionary.hpp"
+#include "../dictionary/ModifiableReificationDictionary.hpp"
+#include "../dictionary/TripleTranslator.hpp"
 #include "ReificationDictionaryLoader.hpp"
 #include "TriplesDictionaryLoader.hpp"
-#include "ModifiableTriplesDictionary.hpp"
-#include "ModifiableReificationDictionary.hpp"
-#include "TriplesLoader.hpp"
-#include "TripleTranslator.hpp"
-#include "BitmapQuadIteratorWrapper.hpp"
+#include "../triples/TriplesLoader.hpp"
+#include "../triples/BitmapQuadIteratorWrapper.hpp"
 
 #ifdef HAVE_CDS
 #include "../dictionary/TriplesLiteralDictionary.hpp"

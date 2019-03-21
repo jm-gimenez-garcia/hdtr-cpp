@@ -6,19 +6,19 @@
  */
 #include <stdexcept>
 #include "BasicModifiableHDT.hpp"
-#include "ModifiableReificationDictionary.hpp"
+#include "../dictionary/ModifiableReificationDictionary.hpp"
 #include "TripleIDStringIterator.hpp"
 #include "../util/StopWatch.hpp"
 
-#include "TriplesDictionary.hpp"
-#include "TriplesPlainDictionary.hpp"
-#include "GraphsPlainDictionary.hpp"
+#include "../dictionary/TriplesDictionary.hpp"
+#include "../dictionary/TriplesPlainDictionary.hpp"
+#include "../dictionary/GraphsPlainDictionary.hpp"
 
-#include "PlainHeader.hpp"
+#include "../header/PlainHeader.hpp"
 
-#include "TriplesList.hpp"
-#include "QuadsList.hpp"
-#include "TriplesKyoto.hpp"
+#include "../triples/TriplesList.hpp"
+#include "../triples/QuadsList.hpp"
+#include "../triples/TriplesKyoto.hpp"
 #ifndef WIN32
 #include "../triples/TripleListDisk.hpp"
 #endif

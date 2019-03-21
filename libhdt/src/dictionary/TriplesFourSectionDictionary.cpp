@@ -3,10 +3,10 @@
 #include <string>
 #include "BaseFourSectionDictionary.hpp"
 #include "TriplesFourSectionDictionary.hpp"
-#include "Iterator.hpp"
+#include <Iterator.hpp>
 #include "../libdcs/CSD_PFC.h"
 #include "../libdcs/CSD_Cache2.h"
-#include "HDTListener.hpp"
+#include <HDTListener.hpp>
 
 using namespace std;
 namespace hdt {

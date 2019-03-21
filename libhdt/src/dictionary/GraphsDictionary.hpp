@@ -32,7 +32,7 @@
 #ifndef HDT_GRAPHS_DICTIONARY_HPP_
 #define HDT_GRAPHS_DICTIONARY_HPP_
 
-#include "Dictionary.hpp"
+#include <Dictionary.hpp>
 
 namespace hdt {
 class IteratorUCharString;

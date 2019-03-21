@@ -6,7 +6,7 @@
  */
 
 #include "PermutationMRRR.hpp"
-#include "HDTVocabulary.hpp"
+#include <HDTVocabulary.hpp>
 #include "../util/crc8.h"
 #include <map>
 

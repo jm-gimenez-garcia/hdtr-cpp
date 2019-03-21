@@ -5,7 +5,7 @@
  *      Author: mck
  */
 #include <stdexcept>
-#include "RDFSerializer.hpp"
+#include <RDFSerializer.hpp>
 #ifdef HAVE_SERD
 #include "RDFSerializerSerd.hpp"
 #endif

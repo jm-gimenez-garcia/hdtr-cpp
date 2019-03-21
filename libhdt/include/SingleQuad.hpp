@@ -32,12 +32,12 @@
 #ifndef __HDT_SINGLEQUAD_HPP__
 #define __HDT_SINGLEQUAD_HPP__
 
-#include "HDTEnums.hpp"
+#include <HDTEnums.hpp>
 #include <stdexcept>
 #include <iostream>
 #include <string>
 #include <vector>
-#include "SingleTriple.hpp"
+#include <SingleTriple.hpp>
 
 using namespace std;
 

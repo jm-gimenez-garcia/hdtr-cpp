@@ -1,14 +1,14 @@
 #include "BaseFourSectionDictionary.hpp"
-#include "Iterator.hpp"
+#include <Iterator.hpp>
 #include <istream>
 #include <ostream>
 #include <string>
 //#include "../libdcs/CSD.h"
 #include "../libdcs/CSD_PFC.h"
-#include "ControlInformation.hpp"
-#include "HDTListener.hpp"
-#include "Header.hpp"
-#include "HDTVocabulary.hpp"
+#include <ControlInformation.hpp>
+#include <HDTListener.hpp>
+#include <Header.hpp>
+#include <HDTVocabulary.hpp>
 #include <algorithm>
 
 using namespace std;

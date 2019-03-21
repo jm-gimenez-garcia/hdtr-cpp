@@ -1,7 +1,7 @@
 #ifndef __TRIPLESLOADER_HPP__
 #define __TRIPLESLOADER_HPP__
 
-#include "RDFParser.hpp"
+#include <RDFParser.hpp>
 
 namespace hdt {
 	class Dictionary;

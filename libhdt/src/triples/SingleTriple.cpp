@@ -1,4 +1,4 @@
-#include "SingleQuad.hpp"
+#include <SingleQuad.hpp>
 using namespace hdt;
 QuadID TripleID::to_QuadID() const {
 	return QuadID(*this);
