@@ -1,8 +1,8 @@
 include ../Makefile.inc
 
 #SRC = testHdt2rdf_batch.cpp
-#SRC = testRdf2hdt.cpp
-SRC = testHdt2rdf.cpp
+SRC = testRdf2hdt.cpp
+#SRC = testHdt2rdf.cpp
 #SRC = testNewBitmapQuadsBasic.cpp
 #SRC = testNewTriple.cpp
 OBJ = $(patsubst %.cpp,%.o,$(SRC))
@@ -58,3 +58,4 @@ clean:
 	rm -f $(OBJ) $(EXE)
 cleanall:
 	make clean  && (cd $(LIBCDS_DIR) && make clean) && (cd $(LIBCSD_DIR) && make clean) && (cd $(LIBHDT_DIR) && make clean) && (cd $(LIBHEADER_DIR) && make clean) && (cd $(LIBSEQUENCE_DIR) && make clean) && (cd $(LIBHUFFMAN_DIR) && make clean) && (cd $(LIBBITSEQUENCE_DIR) && make clean)  && (cd $(LIBUTIL_DIR) && make clean) && (cd $(LIBRDF_DIR) && make clean) && (cd $(LIBDICT_DIR) && make clean) && (cd $(LIBPERMUTATION_DIR) && make clean) && (cd $(LIBTRIPLES_DIR) && make clean)
+
