@@ -1,1 +1,38 @@
-export CXXFLAGS="-DHAVE_CDS -DHAVE_KYOTO -DHAVE_SERD -DHAVE_ZLIB"
+#!/bin/bash
+HDT2CPP_QUADS_ROOTDIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )
+HDT2CPP_QUADS_LIBDIR=${HDT2CPP_QUADS_ROOTDIR}/extern_libraries
+cd ${HDT2CPP_QUADS_LIBDIR}
+tar zxf kyotocabinet-1.2.76.tar.gz
+cd kyotocabinet-1.2.76
+sed -i '1281s/false/NULL/' kcdbext.h
+./configure --prefix=${HDT2CPP_QUADS_LIBDIR} && make && make install
+cd ${HDT2CPP_QUADS_LIBDIR}
+tar zxf zlib-1.2.11.tar.gz
+cd zlib-1.2.11/
+./configure --prefix=${HDT2CPP_QUADS_LIBDIR} && make && make install
+cd ${HDT2CPP_QUADS_LIBDIR}
+tar jxf serd-0.30.0.tar.bz2
+cd serd-0.30.0/
+./waf configure --prefix=${HDT2CPP_QUADS_LIBDIR} && ./waf build --prefix=${HDT2CPP_QUADS_LIBDIR} && ./waf install --prefix=${HDT2CPP_QUADS_LIBDIR}
+cd ${HDT2CPP_QUADS_LIBDIR}
+tar zxf gzstream.tgz
+cd gzstream/
+make && cp libgzstream.a ${HDT2CPP_QUADS_LIBDIR}/lib && cp gzstream.h ${HDT2CPP_QUADS_LIBDIR}/include
+
+
+export CXXFLAGS='-DHAVE_CDS -DHAVE_KYOTO -DHAVE_SERD -DHAVE_ZLIB'
+export CPPFLAGS='-DHAVE_CDS -DHAVE_KYOTO -DHAVE_SERD -DHAVE_ZLIB'
+export SERD_CFLAGS="-I${HDT2CPP_QUADS_LIBDIR}/include -I${HDT2CPP_QUADS_LIBDIR}/include/serd-0 -I${HDT2CPP_QUADS_LIBDIR}/include/serd-0/serd -DHAVE_SERD "
+export SERD_LIBS="-L${HDT2CPP_QUADS_LIBDIR}/lib -lserd-0"
+export KYOTO_CFLAGS="-I${HDT2CPP_QUADS_LIBDIR}/include -DHAVE_KYOTO"
+export KYOTO_LIBS="-L${HDT2CPP_QUADS_LIBDIR}/lib -lkyotocabinet"
+export ZLIB_CFLAGS="-I${HDT2CPP_QUADS_LIBDIR}/include -DHAVE_ZLIB"
+export ZLIB_LIBS="-L${HDT2CPP_QUADS_LIBDIR}/lib -lz "
+export PATH="${HDT2CPP_QUADS_ROOTDIR}/libhdt/debug/triple_tests:${HDT2CPP_QUADS_LIBDIR}/bin:$PATH"
+
+cd ${HDT2CPP_QUADS_ROOTDIR}
+./autogen.sh
+./configure --with-zlib --with-serd --with-kyoto --prefix=/home_expes/database-servers/hdt-2-cpp-quads && make && make install
+
+cd ${HDT2CPP_QUADS_ROOTDIR}/libhdt/debug/triple_tests/
+make
