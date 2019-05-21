@@ -1,16 +1,9 @@
 include ../Makefile.inc
 
-#SRC = testHdt2rdf_batch.cpp
-SRC = testRdf2hdt.cpp
-#SRC = testHdt2rdf.cpp
-#SRC = testNewBitmapQuadsBasic.cpp
-#SRC = testNewTriple.cpp
-OBJ = $(patsubst %.cpp,%.o,$(SRC))
-EXE = $(patsubst %.cpp,%,$(SRC))
 
 LIBS=$(LIBUTIL) $(LIBCDS) $(LIBCSD) $(LIBHDT)  $(LIBRDF) $(LIBDICT) $(LIBTRIPLES) $(LIBPERMUTATION) $(LIBHEADER) $(LIBSEQUENCE) $(LIBBITSEQUENCE) $(LIBHUFFMAN)
 
-all: $(EXE) 
+all: hdt2rdf_batch hdt2rdf rdf2hdt quads quadsbasic
 
 hdt2rdf_batch: testHdt2rdf_batch.o $(LIBS) 
 	$(CXX) $<  $(LDFLAGS)  -o $@ 
@@ -21,9 +14,6 @@ rdf2hdt: testRdf2hdt.o $(LIBS)
 quads: testNewBitmapQuads.o $(LIBS)
 	$(CXX) $<  $(LDFLAGS)  -o $@ 
 quadsbasic: testNewBitmapQuadsBasic.o $(LIBS)
-	$(CXX) $<  $(LDFLAGS)  -o $@ 
-
-$(EXE) : $(OBJ) $(LIBS)
 	$(CXX) $<  $(LDFLAGS)  -o $@ 
 
 %.o: %.cpp 
@@ -55,7 +45,7 @@ $(LIBTRIPLES):
 $(LIBPERMUTATION):
 	(cd $(LIBPERMUTATION_DIR) && make)
 clean:
-	rm -f $(OBJ) $(EXE)
+	rm -f hdt2rdf_batch hdt2rdf rdf2hdt quads quadsbasic
 cleanall:
 	make clean  && (cd $(LIBCDS_DIR) && make clean) && (cd $(LIBCSD_DIR) && make clean) && (cd $(LIBHDT_DIR) && make clean) && (cd $(LIBHEADER_DIR) && make clean) && (cd $(LIBSEQUENCE_DIR) && make clean) && (cd $(LIBHUFFMAN_DIR) && make clean) && (cd $(LIBBITSEQUENCE_DIR) && make clean)  && (cd $(LIBUTIL_DIR) && make clean) && (cd $(LIBRDF_DIR) && make clean) && (cd $(LIBDICT_DIR) && make clean) && (cd $(LIBPERMUTATION_DIR) && make clean) && (cd $(LIBTRIPLES_DIR) && make clean)
 
