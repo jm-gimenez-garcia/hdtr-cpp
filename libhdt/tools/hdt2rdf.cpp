@@ -53,7 +53,7 @@ void help() {
 int main(int argc, char **argv) {
 	int c;
 	string rdfFormat, inputFile, outputFile;
-	RDFNotation notation = NTRIPLES;
+	RDFNotation notation = NQUAD;
 	bool verbose=false;
 	bool showProgress=false;
 
@@ -89,12 +89,14 @@ int main(int argc, char **argv) {
 	if(rdfFormat!="") {
 		if(rdfFormat=="ntriples") {
 			notation = NTRIPLES;
+		} else if(rdfFormat=="nquad") {
+			notation = NQUAD;
 		} else if(rdfFormat=="n3") {
 			notation = TURTLE;
 		} else if(rdfFormat=="turtle") {
 			notation = TURTLE;
 		} else {
-			cerr << "ERROR: The RDF output format must be one of: (ntriples, n3, turtle)" << endl;
+			cerr << "ERROR: The RDF output format must be one of: (ntriples, nquad, n3, turtle)" << endl;
 			help();
 			return 1;
 		}
