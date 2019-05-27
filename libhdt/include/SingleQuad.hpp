@@ -404,7 +404,7 @@ public:
 	 * Get Identifier.
 	 * @return
 	 */
-	std::string getGraph() const{
+	const std::string& getGraph() const{
 		if (!hasGraph())
 		{
 			throw std::runtime_error("This QuadID is a TripleID (no graph)");
@@ -518,15 +518,21 @@ public:
 
 		// Reads the object
 		pos_b = line.find(" ", pos_a);
-		object = line.substr(pos_a, pos_b - pos_a);
-		//if(object[0]=='?') object = "";
-		pos_a = pos_b+1;
+		if (pos_b == std::string::npos){
+			object = line.substr(pos_a);
+			graph = "?";
+		} else {
+			object = line.substr(pos_a, pos_b - pos_a);
+			pos_a = pos_b + 1;
 
-		// Reads the graph
-		pos_b = line.find(" ", pos_a);
-		graph = line.substr(pos_a, pos_b - pos_a);
-		//if(object[0]=='?') graph = "";
-		pos_a = pos_b;
+			graph = line.substr(pos_a);
+		}
+		pos_a = line.length()-1;
+		cout << "subject=" << subject <<endl;
+		cout << "predicate=" << predicate << endl;
+		cout << "object=" << object << endl;
+		cout << "graph=" << graph << endl;
+
 	}
 };
 

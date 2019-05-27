@@ -65,12 +65,13 @@ void help() {
 }
 
 void iterate(HDT *hdt, char *query, ostream &out, bool measure, uint32_t offset) {
-	TripleString tripleString;
-	tripleString.read(query);
+	QuadString quadString("aa","bb","cc","dd");
+	quadString.read(query);
 
-	const char *subj = tripleString.getSubject().c_str();
-	const char *pred = tripleString.getPredicate().c_str();
-	const char *obj = tripleString.getObject().c_str();
+	const char *subj = quadString.getSubject().c_str();
+	const char *pred = quadString.getPredicate().c_str();
+	const char *obj = quadString.getObject().c_str();
+	const char *gr = quadString.getGraph().c_str();
 	if(strcmp(subj, "?")==0) {
 		subj="";
 	}
@@ -80,6 +81,9 @@ void iterate(HDT *hdt, char *query, ostream &out, bool measure, uint32_t offset)
 	if(strcmp(obj, "?")==0) {
 		obj="";
 	}
+	if(strcmp(gr, "?")==0) {
+		gr="";
+	}
 
 #if 0
 	cout << "Subject: |" << subj <<"|"<< endl;
@@ -88,7 +92,7 @@ void iterate(HDT *hdt, char *query, ostream &out, bool measure, uint32_t offset)
 #endif
 
 	try {
-		IteratorTripleString *it = hdt->search(subj, pred, obj);
+		IteratorTripleString *it = hdt->search(subj, pred, obj, gr);
 
 		StopWatch st;
 
@@ -118,7 +122,7 @@ void iterate(HDT *hdt, char *query, ostream &out, bool measure, uint32_t offset)
 				out << *ts << endl;
 			numTriples++;
 		}
-		cerr << numTriples << " results in " << st << endl;
+		cerr << endl <<  numTriples << " results in " << st << endl;
 		delete it;
 
 		interruptSignal=0;	// Interrupt caught, enable again.

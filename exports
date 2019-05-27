@@ -32,7 +32,7 @@ export PATH="${HDT2CPP_QUADS_ROOTDIR}/libhdt/debug/triple_tests:${HDT2CPP_QUADS_
 
 cd ${HDT2CPP_QUADS_ROOTDIR}
 ./autogen.sh
-./configure --with-zlib --with-serd --with-kyoto --prefix=/home_expes/database-servers/hdt-2-cpp-quads && make && make install
+./configure --with-zlib --with-serd --with-kyoto --prefix=${HDT2CPP_QUADS_ROOTDIR} && make && make install
 
 cd ${HDT2CPP_QUADS_ROOTDIR}/libhdt/debug/triple_tests/
 make

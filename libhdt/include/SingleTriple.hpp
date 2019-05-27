@@ -520,9 +520,17 @@ public:
 		pos_a = pos_b + 1;
 
 		// Reads the object
-		object = line.substr(pos_a);
-		//if(object[0]=='?') object = "";
-		pos_a = pos_b;
+		pos_b = line.find(" ", pos_a);
+		if (pos_b == std::string::npos)
+		{
+			object = line.substr(pos_a);
+			pos_a = line.length()-1;
+		}
+		else
+		{
+			object = line.substr(pos_a, pos_b - pos_a);
+			pos_a = pos_b;
+		}
 	}
 };
 
