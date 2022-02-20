@@ -41,8 +41,8 @@
 
 namespace hdt {
 
-class TriplesFourSectionDictionary : public BaseFourSectionDictionary, public TriplesDictionary {
-private:
+class TriplesFourSectionDictionary : virtual public BaseFourSectionDictionary, public TriplesDictionary {
+protected:
 	csd::CSD *predicates;
 
 public:
@@ -57,6 +57,9 @@ public:
 
 	void importFourthSection(Dictionary *other, ProgressListener *listener, IntermediateListener& iListener);
 
+	csd::CSD* getDictionarySection(unsigned int id, TripleComponentRole position) const;
+	csd::CSD *getDictionarySection(DictionarySection section)const;
+	
 	IteratorUCharString* getPredicates();
 	IteratorUCharString* getPredicates()const;
 	//IteratorUCharString* getGraphs();
@@ -77,7 +80,6 @@ public:
     IteratorUInt *getIDSuggestions(const char *prefix, TripleComponentRole role);
 
 private:
-	csd::CSD* getDictionarySection(unsigned int id, TripleComponentRole position) const;
 	unsigned int getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position)const;
 	unsigned int getGlobalId(unsigned int id, DictionarySection position)const{
 		return getGlobalId(mapping, id, position);}

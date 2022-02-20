@@ -134,7 +134,12 @@ unsigned int GraphsFourSectionDictionary::getNunused()const
 unsigned int GraphsFourSectionDictionary::getMaxID()const
 {return BaseFourSectionDictionary::getMaxID() + GraphsFourSectionDictionary::getNunused();}
 
-
+csd::CSD *GraphsFourSectionDictionary::getDictionarySection(DictionarySection section) const{
+	if(section==UNUSED_GRAPH)
+        return graphs;
+	else
+		return BaseFourSectionDictionary::getDictionarySection(section);
+}
 
 csd::CSD *GraphsFourSectionDictionary::getDictionarySection(unsigned int id, TripleComponentRole position) const{
 	if(position==GRAPH) 
@@ -148,16 +153,16 @@ unsigned int GraphsFourSectionDictionary::getGlobalId(unsigned int mapping, unsi
 	switch(position)
 	{
 		case UNUSED_GRAPH:
-			if(mapping==MAPPING1)
+			// if(mapping==MAPPING1)
 				return id+shared->getLength()+subjects->getLength()+objects->getLength();
-			else if (mapping==MAPPING2)
-			{
-				max_s_o = (subjects->getLength() > objects->getLength()) ? subjects->getLength() : objects->getLength();
-				return id+shared->getLength()+max_s_o;
-			}
-			else
-				throw runtime_error("Unknown mapping");
-			return shared->getLength()+max_s_o+id;
+			// else if (mapping==MAPPING2)
+			// {
+			// 	max_s_o = (subjects->getLength() > objects->getLength()) ? subjects->getLength() : objects->getLength();
+			// 	return id+shared->getLength()+max_s_o;
+			// }
+			// else
+				// throw runtime_error("Unknown mapping");
+			// return shared->getLength()+max_s_o+id;
 			break;
 		case NOT_SHARED_SUBJECT:
 		case NOT_SHARED_OBJECT:

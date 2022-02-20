@@ -3,6 +3,9 @@
 # vim
 *.swp
 
+#vscode
+.vscode
+
 # C++ builds
 *.o
 *.so

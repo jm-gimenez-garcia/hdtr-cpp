@@ -226,6 +226,14 @@ public:
         return NULL;
     }
 
+    virtual size_t getTriplePosition() {
+        return NULL;
+    }
+
+    virtual size_t getNextTriplePosition() {
+        return NULL;
+    }
+
     virtual bool hasPrevious() {
         return false;
     }
@@ -271,6 +279,12 @@ public:
         return false;
     }
     virtual TripleString *next() {
+        return NULL;
+    }
+    virtual size_t getTriplePosition() {
+        return NULL;
+    }
+    virtual size_t getNextTriplePosition() {
         return NULL;
     }
     virtual bool hasPrevious() {

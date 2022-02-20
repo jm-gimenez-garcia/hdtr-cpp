@@ -76,6 +76,8 @@ public:
 
 	bool hasNext();
 	TripleID *next();
+	size_t getTriplePosition();
+	size_t getNextTriplePosition();
 	bool hasPrevious();
 	TripleID *previous();
 	void goToStart();

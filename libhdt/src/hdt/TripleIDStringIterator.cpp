@@ -7,6 +7,7 @@
 
 
 #include "TripleIDStringIterator.hpp"
+#include "../util/StopWatch.hpp"
 
 namespace hdt {
 
@@ -23,15 +24,20 @@ bool TripleIDStringIterator::hasNext() {
 
 TripleString *TripleIDStringIterator::next() {
 	const TripleID *tid = iterator->next();
+	// cout << tid->to_QuadID().getSubject() << "," << tid->to_QuadID().getPredicate() << ","  << tid->to_QuadID().getObject() << "," <<  tid->to_QuadID().getGraph() << endl;
 	if(tid->hasGraph())
 	{
+		// StopWatch st;
 		const QuadID qid = tid->to_QuadID();
 		dict->quadIDtoQuadString(&qid, &result_qs);
+		// cerr << "Time to retrieve Quad String: " << st << endl;
 		return &result_qs;
 	}
 	else
 	{
+		// StopWatch st;
 		dict->tripleIDtoTripleString(tid, &result_ts);
+		// cerr << "Time to retrieve Triple String: " << st << endl;
 		return &result_ts;
 	}
 }

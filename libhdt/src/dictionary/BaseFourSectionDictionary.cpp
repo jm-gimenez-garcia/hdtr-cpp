@@ -411,9 +411,6 @@ string BaseFourSectionDictionary::getType()const
 unsigned int BaseFourSectionDictionary::getMapping()const
 {return mapping;}
 
-
-
-
 csd::CSD *BaseFourSectionDictionary::getDictionarySection(unsigned int id, TripleComponentRole position) const{
 	if (position == SUBJECT) 
 		return (id<=shared->getLength()) ? shared : subjects;
@@ -421,6 +418,26 @@ csd::CSD *BaseFourSectionDictionary::getDictionarySection(unsigned int id, Tripl
 		return (id<=shared->getLength()) ? shared : objects;
 
 	throw runtime_error("Item not found");
+}
+
+csd::CSD *BaseFourSectionDictionary::getDictionarySection(DictionarySection section) const{
+	switch(section){
+		case SHARED:
+		case SHARED_OBJECT:
+		case SHARED_SUBJECT:
+		case SHARED_GRAPH:
+		case SHARED_SUBJECT_GRAPH:
+		case SHARED_OBJECT_GRAPH:
+			return shared;
+		case NOT_SHARED_SUBJECT:
+		case NOT_SHARED_SUBJECT_GRAPH:
+			return subjects;
+		case NOT_SHARED_OBJECT:
+		case NOT_SHARED_OBJECT_GRAPH:
+			return objects;
+		default:
+			throw runtime_error("Item not found");
+	}
 }
 
 unsigned int BaseFourSectionDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) const{

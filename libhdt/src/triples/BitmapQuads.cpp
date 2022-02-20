@@ -260,19 +260,20 @@ size_t BitmapQuads::load(unsigned char *ptr, unsigned char *ptrMax, ProgressList
 IteratorTripleID *BitmapQuads::search(TripleID& pattern)
 {
 	IteratorTripleID* tid_it;
+	TripleID tpatt = pattern.to_TripleID();
 	if(!pattern.hasGraph())
 	{
-		tid_it = BitmapTriples::search(pattern);
+		tid_it = BitmapTriples::search(tpatt);
 	}
 	else
 	{
 		QuadID qpatt = pattern.to_QuadID();
 		if(qpatt.getGraph()==0)
 		{
-			tid_it = new BitmapQuadIteratorWrapper(this, BitmapTriples::search(pattern),qpatt.getGraph());
+			tid_it = new BitmapQuadIteratorWrapper(this, BitmapTriples::search(tpatt),qpatt.getGraph());
 		}
 		else
-			tid_it = new BitmapQuadIteratorSingle(this, pattern.to_QuadID()); 
+			tid_it = new BitmapQuadIteratorSingle(this, qpatt); 
 	}
 	IteratorTripleID* tid_ttiw = new TripleTranslatorIteratorWrapper(this, tid_it);
 	return tid_ttiw;

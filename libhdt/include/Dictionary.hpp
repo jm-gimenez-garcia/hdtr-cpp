@@ -136,17 +136,17 @@ public:
     * @return resultant TripleSTring
     */
     void quadIDtoQuadString(const QuadID* qid, QuadString* qs) {
-		const std::string subj = idToString(qid->getSubject(), SUBJECT);
-		const std::string pred = idToString(qid->getPredicate(), PREDICATE);
-		const std::string obj = idToString(qid->getObject(), OBJECT);
+      const std::string subj = idToString(qid->getSubject(), SUBJECT);
+      const std::string pred = idToString(qid->getPredicate(), PREDICATE);
+      const std::string obj = idToString(qid->getObject(), OBJECT);
 
-		if (qid->hasGraph())
-		{
-			const std::string gr = idToString(qid->getGraph(), GRAPH);
-			qs->setAll(subj, pred, obj, gr);
-		}
-		else
-			qs->setAll(subj, pred, obj);
+      if (qid->hasGraph())
+      {
+        const std::string gr = idToString(qid->getGraph(), GRAPH);
+        qs->setAll(subj, pred, obj, gr);
+      }
+      else
+        qs->setAll(subj, pred, obj);
     }
 
     /** Number of total elements of the dictionary

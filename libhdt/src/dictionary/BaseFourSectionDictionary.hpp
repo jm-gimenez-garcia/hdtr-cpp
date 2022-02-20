@@ -52,7 +52,6 @@ class Header;
 
 class BaseFourSectionDictionary : virtual public Dictionary {
 protected:
-
 	unsigned int mapping;
 	uint64_t sizeStrings;
 	uint32_t blocksize;
@@ -60,7 +59,6 @@ protected:
 	csd::CSD *subjects;
 	csd::CSD *objects;
 	csd::CSD *shared;
-
 
 	//ControlInformation controlInformation;
 	HDTSpecification spec;
@@ -92,6 +90,9 @@ public:
 	virtual void importFourthSection(Dictionary *other, ProgressListener *listener, IntermediateListener& iListener)=0;
 	void importObjects(Dictionary *other, ProgressListener *listener, IntermediateListener& iListener);
 	void importShared(Dictionary *other, ProgressListener *listener, IntermediateListener& iListener); 
+
+	virtual csd::CSD *getDictionarySection(unsigned int id, TripleComponentRole position)const;
+	virtual csd::CSD *getDictionarySection(DictionarySection section)const;
 
 	IteratorUCharString* getSubjects();
 	IteratorUCharString* getSubjects()const;
@@ -130,7 +131,6 @@ public:
     virtual IteratorUInt *getIDSuggestions(const char *prefix, TripleComponentRole role);
 
 protected:
-	virtual csd::CSD *getDictionarySection(unsigned int id, TripleComponentRole position)const;
 	virtual unsigned int getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position)const;
 	virtual unsigned int getGlobalId(unsigned int id, DictionarySection position)const{
 		return BaseFourSectionDictionary::getGlobalId(mapping, id, position);}

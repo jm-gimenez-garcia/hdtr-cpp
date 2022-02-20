@@ -133,7 +133,12 @@ unsigned int TriplesFourSectionDictionary::getMaxPredicateID()const
 	return 0;
 }*/
 
-
+csd::CSD *TriplesFourSectionDictionary::getDictionarySection(DictionarySection section) const{
+	if(section==NOT_SHARED_PREDICATE)
+        return predicates;
+	else
+		return BaseFourSectionDictionary::getDictionarySection(section);
+}
 
 csd::CSD *TriplesFourSectionDictionary::getDictionarySection(unsigned int id, TripleComponentRole position) const{
 	return (position==PREDICATE) ? predicates : BaseFourSectionDictionary::getDictionarySection(id, position);

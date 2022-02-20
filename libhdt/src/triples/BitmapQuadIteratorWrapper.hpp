@@ -40,11 +40,10 @@ class BitmapQuadIteratorWrapper : public IteratorTripleID{
 		bool isSorted(TripleComponentRole role);
 
 	private:
+		unsigned int getGraphID(const size_t triplePosition);
 		unsigned int getGraphID(const TripleID& tid);
 		unsigned int getGraphIDNextTriple(const TripleID& tid);
 		unsigned int getGraphIDNewTriple(const TripleID& tid);
-
-
 };
 
 inline size_t BitmapQuadIteratorWrapper::estimatedNumResults()

@@ -46,6 +46,8 @@
 using namespace hdt;
 using namespace std;
 
+StopWatch st;
+
 int interruptSignal = 0;
 
 void signalHandler(int sig)
@@ -94,7 +96,7 @@ void iterate(HDT *hdt, char *query, ostream &out, bool measure, uint32_t offset)
 	try {
 		IteratorTripleString *it = hdt->search(subj, pred, obj, gr);
 
-		StopWatch st;
+		st.reset();
 
         // Go to the right offset.
         if(it->canGoTo()) {
@@ -178,7 +180,9 @@ int main(int argc, char **argv) {
 
 	try {
 		StdoutProgressListener prog;
+		st.reset();
 		HDT *hdt = HDTManager::mapIndexedHDT(inputFile.c_str(), &prog);
+		cerr << endl << " HDT loaded in " << st << endl;
 
 		ostream *out;
 		ofstream outF;
