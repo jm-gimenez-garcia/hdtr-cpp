@@ -53,18 +53,22 @@ void BitmapQuads::load(ModifiableTriples &triples, ProgressListener *listener/*=
 
 		swapComponentOrder(triple, SPO, order);
 
-		x = toRoleID(triple->getSubject(), SUBJECT);
-
-		y = toRoleID(triple->getPredicate(), PREDICATE);
-		z = toRoleID(triple->getObject(), OBJECT);
+		// x = toRoleID(triple->getSubject(), SUBJECT);
+		// y = toRoleID(triple->getPredicate(), PREDICATE);
+		// z = toRoleID(triple->getObject(), OBJECT);
+		x = triple->getSubject();
+		y = triple->getPredicate();
+		z = triple->getObject();
 		QuadID qid(triple->to_QuadID());
 		if (qid.hasGraph())
 		{
-			gr = toRoleID(qid.getGraph(), GRAPH); // returns 0 if triple is a TripleID
+			// gr = toRoleID(qid.getGraph(), GRAPH); // returns 0 if triple is a TripleID
+			gr = qid.getGraph();
 		}
 		else
 			gr = 0;
 
+		// cout << x << " ," << y << " ," << z << ", " << gr << endl;
 
 		if(x==0 || y==0 || z==0) {
 			cerr << "ERROR: Triple with at least one component zero." << endl;
@@ -260,22 +264,24 @@ size_t BitmapQuads::load(unsigned char *ptr, unsigned char *ptrMax, ProgressList
 IteratorTripleID *BitmapQuads::search(TripleID& pattern)
 {
 	IteratorTripleID* tid_it;
+	TripleID tpatt = pattern.to_TripleID();
 	if(!pattern.hasGraph())
 	{
-		tid_it = BitmapTriples::search(pattern);
+		tid_it = BitmapTriples::search(tpatt);
 	}
 	else
 	{
 		QuadID qpatt = pattern.to_QuadID();
 		if(qpatt.getGraph()==0)
 		{
-			tid_it = new BitmapQuadIteratorWrapper(this, BitmapTriples::search(pattern),qpatt.getGraph());
+			tid_it = new BitmapQuadIteratorWrapper(this, BitmapTriples::search(tpatt),qpatt.getGraph());
 		}
 		else
-			tid_it = new BitmapQuadIteratorSingle(this, pattern.to_QuadID()); 
+			tid_it = new BitmapQuadIteratorSingle(this, qpatt); 
 	}
-	IteratorTripleID* tid_ttiw = new TripleTranslatorIteratorWrapper(this, tid_it);
-	return tid_ttiw;
+	// IteratorTripleID* tid_ttiw = new TripleTranslatorIteratorWrapper(this, tid_it);
+	// return tid_ttiw;
+	return tid_it;
 }
 
 //equivalent of get method in java

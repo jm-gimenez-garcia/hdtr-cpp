@@ -97,22 +97,22 @@ IteratorTripleString *BasicModifiableHDT::search(const char *subject, const char
 		glob_tid_ptr = new QuadID(qid);
 	}
 
-	triples->toRoleIDs(role_tid_ptr, *glob_tid_ptr);
+	// triples->toRoleIDs(role_tid_ptr, *glob_tid_ptr);
+
+	// delete glob_tid_ptr;
+	// glob_tid_ptr = NULL;
+
+	IteratorTripleID* iterID = triples->search(*glob_tid_ptr);
 
 	delete glob_tid_ptr;
 	glob_tid_ptr = NULL;
 
-	IteratorTripleID* iterID = triples->search(*role_tid_ptr);
 
-	delete glob_tid_ptr;
-	glob_tid_ptr = NULL;
-
-
-	if(role_tid_ptr)
-	{
-		delete role_tid_ptr;
-		role_tid_ptr = NULL;
-	}
+	// if(role_tid_ptr)
+	// {
+	// 	delete role_tid_ptr;
+	// 	role_tid_ptr = NULL;
+	// }
 
 	TripleIDStringIterator *iterator = new TripleIDStringIterator(dictionary, iterID);
 	return iterator;

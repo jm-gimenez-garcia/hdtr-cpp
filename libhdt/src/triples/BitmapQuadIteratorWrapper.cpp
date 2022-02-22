@@ -60,7 +60,12 @@ bool BitmapQuadIteratorWrapper::BitmapQuadIteratorWrapper::hasNext()
 	if (it->hasNext()){
 		// tid should always be a non-QuadID TripleID
 		const TripleID* tid(it->next());
-		const unsigned int gr = getGraphID(*tid);
+		size_t graphPosition = it->getNextTriplePosition();
+		// cout << "Next Triple Position: " << it->getNextTriplePosition() << endl;
+		if (graphPosition == 0) {
+			throw std::runtime_error("Could not get graph position");
+		}
+		const unsigned int gr = getGraphID(graphPosition);
 		TripleID* tid_ptr=NULL;
 		
 		if(gr!=pattG && pattG!=0){
@@ -89,6 +94,8 @@ TripleID* BitmapQuadIteratorWrapper::next(){
 		throw std::runtime_error("Unable to call BitmapQuadIteratorWrapper::next() : the hasNext() method has not been called or has returned 'false'");
 	}
 	hasNext_called = false;
+
+	// cout << returnTriple->to_QuadID().getSubject() << "," << returnTriple->to_QuadID().getPredicate() << ","  << returnTriple->to_QuadID().getObject() << "," <<  (returnTriple->hasGraph() ? returnTriple->to_QuadID().getGraph() : 0) << endl;
 	return returnTriple;
 
 }
@@ -136,6 +143,14 @@ TripleID* BitmapQuadIteratorWrapper::previous(){
 	return returnTriple;
 }
 
+unsigned int BitmapQuadIteratorWrapper::getGraphID(const size_t triplePosition) {
+	unsigned int gr = 0;
+
+	if(bitmapPerm->access(triplePosition-1)!=0)
+		gr = perm->pi(bitmapPerm->rank1(triplePosition-1));
+		
+	return gr;
+}
 
 unsigned int BitmapQuadIteratorWrapper::getGraphID(const TripleID& tid){
 	unsigned int gr;
@@ -156,17 +171,15 @@ unsigned int BitmapQuadIteratorWrapper::getGraphID(const TripleID& tid){
 unsigned int BitmapQuadIteratorWrapper::getGraphIDNextTriple(const TripleID& tid){
 	previousPosition++;
 
-if(bitmapPerm->access(previousPosition)!=0)
-{
-	const unsigned int val = perm->pi(bitmapPerm->rank1(previousPosition));
-	return val;
-}
-else
-{
-	return 0;
-}
-
-
+	if(bitmapPerm->access(previousPosition)!=0)
+	{
+		const unsigned int val = perm->pi(bitmapPerm->rank1(previousPosition));
+		return val;
+	}
+	else
+	{
+		return 0;
+	}
 	//return bitmapPerm->access(previousPosition) ? perm->pi(bitmapPerm->rank1(previousPosition)) : 0;
 }
 
@@ -179,7 +192,6 @@ unsigned int BitmapQuadIteratorWrapper::getGraphIDNewTriple(const TripleID& tid)
 
 	predPos = quads->getAdjY().find(subj-1, pred);
 	objPos = quads->getAdjZ().find(predPos, obj);
-
 
 	if(objPos > 0){
 		TripleID* tid_ptr=NULL;

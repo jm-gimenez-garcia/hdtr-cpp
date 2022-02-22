@@ -235,13 +235,13 @@ void BasePlainDictionary::load(std::istream & input, ControlInformation &ci, Pro
 		if(line!="") {
 			if (region == 1) { //shared SO
 				NOTIFYCOND(&iListener, "Dictionary loading shared area.", numLine, numElements);
-				insert(line, SHARED_SUBJECT);
+				insert(line, SHARED_SUBJECTS);
 			} else if (region == 2) { //not shared Subjects
 				NOTIFYCOND(&iListener, "Dictionary loading subjects.", numLine, numElements);
-				insert(line, NOT_SHARED_SUBJECT);
+				insert(line, NOT_SHARED_SUBJECTS);
 			} else if (region == 3) { //not shared Objects
 				NOTIFYCOND(&iListener, "Dictionary loading objects.", numLine, numElements);
-				insert(line, NOT_SHARED_OBJECT);
+				insert(line, NOT_SHARED_OBJECTS);
 			} else if (region == 4) { //predicates or graphs, numElements)
 				insertFourthRegion(iListener, line, numLine, numElements);
 			}
@@ -416,20 +416,24 @@ const vector<DictionaryEntry*> &BasePlainDictionary::getDictionaryEntryVector(un
 
 unsigned int BasePlainDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) const{
 	switch (position) {
-		case NOT_SHARED_SUBJECT:
-		case NOT_SHARED_SUBJECT_GRAPH:
+		case NOT_SHARED_SUBJECTS:
+		case NOT_SHARED_SUBJECTS_TRIPLES:
+		case NOT_SHARED_SUBJECTS_GRAPHS:
 			if(id >= getNsubjects() - getNshared())
 				throw std::logic_error("NOT_SHARED_SUBJECT idx exceeds dimension");
 			return shared.size()+id+1;
-		case NOT_SHARED_OBJECT:
-		case NOT_SHARED_OBJECT_GRAPH:
+		case NOT_SHARED_OBJECTS:
+		case NOT_SHARED_OBJECTS_TRIPLES:
+		case NOT_SHARED_OBJECTS_GRAPHS:
 			if(id >= getNobjects() - getNshared())
 				throw std::logic_error("NOT_SHARED_OBJECT idx exceeds dimension");
 			return (mapping==MAPPING2) ? shared.size()+id+1 : shared.size()+subjects.size()+id+1;
-		case SHARED_SUBJECT:
-		case SHARED_OBJECT:
-		case SHARED_SUBJECT_GRAPH:
-		case SHARED_OBJECT_GRAPH:
+		case SHARED_SUBJECTS:
+		case SHARED_OBJECTS:
+		case SHARED_SUBJECTS_TRIPLES:
+		case SHARED_OBJECTS_TRIPLES:
+		case SHARED_SUBJECTS_GRAPHS:
+		case SHARED_OBJECTS_GRAPHS:
 			if(id >= getNshared())
 				throw std::logic_error("SHARED_OBJECT idx exceeds dimension");
 			return id+1;
@@ -532,18 +536,22 @@ unsigned int BasePlainDictionary::getNshared()const
 
 void BasePlainDictionary::updateID(unsigned int oldid, unsigned int newid, DictionarySection position) {
 	switch (position) {
-		case SHARED_SUBJECT:
-		case SHARED_OBJECT:
-		case SHARED_SUBJECT_GRAPH:
-		case SHARED_OBJECT_GRAPH:
+		case SHARED_SUBJECTS:
+		case SHARED_OBJECTS:
+		case SHARED_SUBJECTS_TRIPLES:
+		case SHARED_OBJECTS_TRIPLES:
+		case SHARED_SUBJECTS_GRAPHS:
+		case SHARED_OBJECTS_GRAPHS:
 			shared[oldid]->id = newid;
 			break;
-		case NOT_SHARED_SUBJECT:
-		case NOT_SHARED_SUBJECT_GRAPH:
+		case NOT_SHARED_SUBJECTS:
+		case NOT_SHARED_SUBJECTS_TRIPLES:
+		case NOT_SHARED_SUBJECTS_GRAPHS:
 			subjects[oldid]->id = newid;
 			break;
-		case NOT_SHARED_OBJECT:
-		case NOT_SHARED_OBJECT_GRAPH:
+		case NOT_SHARED_OBJECTS:
+		case NOT_SHARED_OBJECTS_TRIPLES:
+		case NOT_SHARED_OBJECTS_GRAPHS:
 			objects[oldid]->id = newid;
 			break;
 		default:
@@ -554,20 +562,24 @@ void BasePlainDictionary::updateID(unsigned int oldid, unsigned int newid, Dicti
 void BasePlainDictionary::push_back(DictionaryEntry* entry, DictionarySection pos){
 
 	switch(pos){
-		case SHARED_SUBJECT:
-		case SHARED_OBJECT:
-		case SHARED_SUBJECT_GRAPH:
-		case SHARED_OBJECT_GRAPH:
+		case SHARED_SUBJECTS:
+		case SHARED_OBJECTS:
+		case SHARED_SUBJECTS_TRIPLES:
+		case SHARED_OBJECTS_TRIPLES:
+		case SHARED_SUBJECTS_GRAPHS:
+		case SHARED_OBJECTS_GRAPHS:
 			shared.push_back(entry);
 			sizeStrings+=strlen(entry->str);
 			break;
-		case NOT_SHARED_SUBJECT:
-		case NOT_SHARED_SUBJECT_GRAPH:
+		case NOT_SHARED_SUBJECTS:
+		case NOT_SHARED_SUBJECTS_TRIPLES:
+		case NOT_SHARED_SUBJECTS_GRAPHS:
 			subjects.push_back(entry);
 			sizeStrings+=strlen(entry->str);
 			break;
-		case NOT_SHARED_OBJECT:
-		case NOT_SHARED_OBJECT_GRAPH:
+		case NOT_SHARED_OBJECTS:
+		case NOT_SHARED_OBJECTS_TRIPLES:
+		case NOT_SHARED_OBJECTS_GRAPHS:
 			objects.push_back(entry);
 			sizeStrings+=strlen(entry->str);
 			break;

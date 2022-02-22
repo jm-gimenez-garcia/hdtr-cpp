@@ -135,6 +135,16 @@ TripleID *SequentialSearchIteratorTripleID::next()
 	return &returnTriple;
 }
 
+size_t SequentialSearchIteratorTripleID::getTriplePosition()
+{
+    return iterator->getTriplePosition();
+}
+
+size_t SequentialSearchIteratorTripleID::getNextTriplePosition()
+{
+    return iterator->getNextTriplePosition();
+}
+
 
 bool SequentialSearchIteratorTripleID::hasPrevious()
 {

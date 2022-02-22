@@ -528,10 +528,10 @@ public:
 			graph = line.substr(pos_a);
 		}
 		pos_a = line.length()-1;
-		cout << "subject=" << subject <<endl;
-		cout << "predicate=" << predicate << endl;
-		cout << "object=" << object << endl;
-		cout << "graph=" << graph << endl;
+		// cout << "subject=" << subject <<endl;
+		// cout << "predicate=" << predicate << endl;
+		// cout << "object=" << object << endl;
+		// cout << "graph=" << graph << endl;
 
 	}
 };

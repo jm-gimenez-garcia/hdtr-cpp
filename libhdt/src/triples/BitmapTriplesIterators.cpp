@@ -180,6 +180,16 @@ TripleID *BitmapTriplesSearchIterator::next()
     return &returnTriple;
 }
 
+size_t BitmapTriplesSearchIterator::getTriplePosition()
+{
+    return posZ-1;
+}
+
+size_t BitmapTriplesSearchIterator::getNextTriplePosition()
+{
+    return posZ;
+}
+
 bool BitmapTriplesSearchIterator::hasPrevious()
 {
     return posZ>minZ;
@@ -402,6 +412,16 @@ TripleID *MiddleWaveletIterator::next()
     posZ++;
     updateOutput();
     return &returnTriple;
+}
+
+size_t MiddleWaveletIterator::getTriplePosition()
+{
+    return posZ-1;
+}
+
+size_t MiddleWaveletIterator::getNextTriplePosition()
+{
+    return posZ;
 }
 
 bool MiddleWaveletIterator::hasPrevious()
@@ -652,6 +672,26 @@ TripleID *IteratorY::next()
 	return &returnTriple;
 }
 
+size_t IteratorY::getTriplePosition()
+{
+    if(posZ<prevZ) {
+        return adjZ.find(prevY);
+    }
+    else {
+        return posZ-1;
+    }
+}
+
+size_t IteratorY::getNextTriplePosition()
+{
+    if(posZ>nextZ) {
+        return adjZ.find(nextY);
+    }
+    else {
+        return posZ;
+    }
+}
+
 bool IteratorY::hasPrevious()
 {
 	return prevY!=-1 || posZ>=prevZ;
@@ -815,6 +855,16 @@ TripleID *ObjectIndexIterator::next()
 
     updateOutput();
     return &returnTriple;
+}
+
+size_t ObjectIndexIterator::getTriplePosition()
+{
+    return getPosZ(posIndex-2)+1;
+}
+
+size_t ObjectIndexIterator::getNextTriplePosition()
+{
+    return getPosZ(posIndex-1)+1;
 }
 
 bool ObjectIndexIterator::hasPrevious()
@@ -1049,6 +1099,14 @@ TripleID *BTInterleavedIterator::next()
     return &returnTriple;
 }
 
+size_t BTInterleavedIterator::getTriplePosition()
+{
+    return posZ-skip;
+}
 
+size_t BTInterleavedIterator::getNextTriplePosition()
+{
+    return posZ;
+}
 
 }

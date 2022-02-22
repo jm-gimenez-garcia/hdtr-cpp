@@ -53,7 +53,7 @@ unsigned int TriplesFourSectionDictionary::stringToId(const string &key, const T
         if(key.length()==0)
 			return 0;
 		ret = predicates->locate((const unsigned char *)key.c_str(), key.length());
-		return (ret==0) ? 0 : getGlobalId(ret, NOT_SHARED_PREDICATE);
+		return (ret==0) ? 0 : getGlobalId(ret, NOT_SHARED_PREDICATES);
 	}
 }
 
@@ -133,7 +133,12 @@ unsigned int TriplesFourSectionDictionary::getMaxPredicateID()const
 	return 0;
 }*/
 
-
+csd::CSD *TriplesFourSectionDictionary::getDictionarySection(DictionarySection section) const{
+	if(section==NOT_SHARED_PREDICATES)
+        return predicates;
+	else
+		return BaseFourSectionDictionary::getDictionarySection(section);
+}
 
 csd::CSD *TriplesFourSectionDictionary::getDictionarySection(unsigned int id, TripleComponentRole position) const{
 	return (position==PREDICATE) ? predicates : BaseFourSectionDictionary::getDictionarySection(id, position);
@@ -142,12 +147,16 @@ csd::CSD *TriplesFourSectionDictionary::getDictionarySection(unsigned int id, Tr
 unsigned int TriplesFourSectionDictionary::getGlobalId(unsigned int map, unsigned int id, DictionarySection position) const{
 	switch(position)
 	{
-		case NOT_SHARED_PREDICATE:
+		case NOT_SHARED_PREDICATES:
 			return id;
-		case SHARED_SUBJECT:
-		case NOT_SHARED_SUBJECT:
-		case SHARED_OBJECT:
-		case NOT_SHARED_OBJECT:
+		case SHARED_SUBJECTS:
+		case SHARED_SUBJECTS_TRIPLES:
+		case NOT_SHARED_SUBJECTS:
+		case NOT_SHARED_SUBJECTS_TRIPLES:
+		case SHARED_OBJECTS:
+		case SHARED_OBJECTS_TRIPLES:
+		case NOT_SHARED_OBJECTS:
+		case NOT_SHARED_OBJECTS_TRIPLES:
 			return BaseFourSectionDictionary::getGlobalId(map, id, position);
 		default:
 			throw runtime_error("Invalid DictionarySection in TriplesDictionary");

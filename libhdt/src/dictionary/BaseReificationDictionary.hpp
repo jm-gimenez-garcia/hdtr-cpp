@@ -19,8 +19,21 @@ class IteratorUInt;
 
 class BaseReificationDictionary : virtual public TriplesDictionary, virtual public GraphsDictionary, public TripleTranslator{
 protected:
-	unsigned int maxTriplesDictID; 
 	uint64_t sizeStrings;
+	unsigned int maxTriplesDictID; 
+	unsigned int max_subj_id;
+	unsigned int max_obj_id;
+	unsigned int Tsh;
+	unsigned int Gsh;
+	unsigned int Tsubj;
+	unsigned int Gsubj;
+	unsigned int Tobj;
+	unsigned int Gobj;
+	unsigned int Gun;
+	unsigned int min_sub_obj_length;
+	unsigned int max_sub_obj_length;
+	unsigned int last_comm_subj_obj_id;
+	// unsigned int last_common_obj_sub_id;
 
 public:
 	BaseReificationDictionary();
@@ -73,15 +86,6 @@ public:
 	virtual const TriplesDictionary* getTriplesDictionaryPtr()const=0;
 	virtual const  GraphsDictionary* getGraphsDictionaryPtr()const=0;
 	std::function<unsigned int (unsigned int,TripleComponentRole)> roleIdToGlobalId = [this](unsigned int arr_id, TripleComponentRole pos){
-		const unsigned int Tsh = getTriplesDictionaryPtr()->getNshared();
-		const unsigned int Tsubj = getTriplesDictionaryPtr()->getNsubjects() - getTriplesDictionaryPtr()->getNshared();
-		const unsigned int Tobj = getTriplesDictionaryPtr()->getNobjects() - getTriplesDictionaryPtr()->getNshared();
-	
-		const unsigned int Gsh = getGraphsDictionaryPtr()->getNshared();
-		const unsigned int Gsubj = getGraphsDictionaryPtr()->getNsubjects() - getGraphsDictionaryPtr()->getNshared();
-		const unsigned int Gobj = getGraphsDictionaryPtr()->getNobjects() - getGraphsDictionaryPtr()->getNshared();
-		const unsigned int Gun = getGraphsDictionaryPtr()->getNunused();
-	
 		switch(pos)
 		{
 			case PREDICATE:
@@ -114,16 +118,6 @@ public:
 		}
 	};
 	std::function<unsigned int (unsigned int,TripleComponentRole)> globalIdToRoleId = [this](unsigned int dict_id, TripleComponentRole pos){
-		const unsigned int Tsh = getTriplesDictionaryPtr()->getNshared();
-		const unsigned int Tsubj = getTriplesDictionaryPtr()->getNsubjects() - getTriplesDictionaryPtr()->getNshared();
-		const unsigned int Tobj = getTriplesDictionaryPtr()->getNobjects() - getTriplesDictionaryPtr()->getNshared();
-	
-		const unsigned int Gsh = getGraphsDictionaryPtr()->getNshared();
-		const unsigned int Gsubj = getGraphsDictionaryPtr()->getNsubjects() - getGraphsDictionaryPtr()->getNshared();
-		const unsigned int Gobj = getGraphsDictionaryPtr()->getNobjects() - getGraphsDictionaryPtr()->getNshared();
-		const unsigned int Gun = getGraphsDictionaryPtr()->getNunused();
-	
-	
 		switch(pos){
 			case PREDICATE:
 				if(dict_id>=1 && dict_id <= getNpredicates())
@@ -167,9 +161,9 @@ protected:
 	virtual TriplesDictionary* getTriplesDictionaryPtr()=0;
 	virtual GraphsDictionary* getGraphsDictionaryPtr()=0;
 	unsigned int getTrGrGlobalIdFromGlobalId(unsigned int globid, TripleComponentRole position)const;
-	unsigned int getGlobalIdFromTrGrGlobalId(unsigned int tr_gr_globid, DictionarySection pos)const;
-	unsigned int getGlobalIdFromTrGrGlobalId(unsigned int tr_gr_globid, TripleComponentRole role, const Dictionary* sub_dictionary)const;
-
+	// unsigned int getGlobalIdFromTrGrGlobalId(unsigned int tr_gr_globid, DictionarySection pos)const;
+	// unsigned int getGlobalIdFromTrGrGlobalId(unsigned int tr_gr_globid, TripleComponentRole role, const Dictionary* sub_dictionary)const;
+	void initValues();
 };
 
 }

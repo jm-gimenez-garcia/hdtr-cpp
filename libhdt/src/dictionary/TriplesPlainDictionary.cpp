@@ -46,7 +46,7 @@ void TriplesPlainDictionary::push_back(DictionaryEntry* entry, DictionarySection
 	
 	switch(pos)
 	{
-		case NOT_SHARED_PREDICATE:
+		case NOT_SHARED_PREDICATES:
 		{
 			const unsigned int nb_el = predicates.size();
 			entry->id = nb_el+1;
@@ -54,10 +54,14 @@ void TriplesPlainDictionary::push_back(DictionaryEntry* entry, DictionarySection
 			sizeStrings+=strlen(entry->str);
 			break;
 		}
-		case SHARED_SUBJECT:
-		case NOT_SHARED_SUBJECT:
-		case SHARED_OBJECT:
-		case NOT_SHARED_OBJECT:
+		case SHARED_SUBJECTS:
+		case SHARED_SUBJECTS_TRIPLES:
+		case NOT_SHARED_SUBJECTS:
+		case NOT_SHARED_SUBJECTS_TRIPLES:
+		case SHARED_OBJECTS:
+		case SHARED_OBJECTS_TRIPLES:
+		case NOT_SHARED_OBJECTS:
+		case NOT_SHARED_OBJECTS_TRIPLES:
 			BasePlainDictionary::push_back(entry, pos);
 			break;
 		default:
@@ -87,7 +91,7 @@ void TriplesPlainDictionary::saveFourthSection(std::ostream &output, ProgressLis
 void TriplesPlainDictionary::insertFourthRegion(IntermediateListener& iListener, const std::string& line, unsigned int& numLine, unsigned int& numElements)
 {
 	NOTIFYCOND(&iListener, "Dictionary loading predicates.", numLine, numElements);
-	insert(line, NOT_SHARED_PREDICATE);	
+	insert(line, NOT_SHARED_PREDICATES);	
 }
 
 
@@ -130,13 +134,13 @@ unsigned int TriplesPlainDictionary::getNpredicates()const
 void TriplesPlainDictionary::updateIDs() 
 {
 	for (unsigned int i = 0; i < shared.size(); i++) 
-		shared[i]->id = getGlobalId(i, SHARED_SUBJECT);
+		shared[i]->id = getGlobalId(i, SHARED_SUBJECTS);
 	for (unsigned int i = 0; i < subjects.size(); i++) 
-		subjects[i]->id = getGlobalId(i, NOT_SHARED_SUBJECT);
+		subjects[i]->id = getGlobalId(i, NOT_SHARED_SUBJECTS);
 	for (unsigned int i = 0; i < objects.size(); i++) 
-		objects[i]->id = getGlobalId(i, NOT_SHARED_OBJECT);
+		objects[i]->id = getGlobalId(i, NOT_SHARED_OBJECTS);
 	for (unsigned int i = 0; i < predicates.size(); i++) 
-		predicates[i]->id = getGlobalId(mapping, i, NOT_SHARED_PREDICATE);
+		predicates[i]->id = getGlobalId(mapping, i, NOT_SHARED_PREDICATES);
 }
 
 const vector<DictionaryEntry*>& TriplesPlainDictionary::getDictionaryEntryVector(unsigned int id, TripleComponentRole position) const
@@ -146,12 +150,16 @@ unsigned int TriplesPlainDictionary::getGlobalId(unsigned int mapping_type, unsi
 {
 	switch(position)
 	{
-		case NOT_SHARED_PREDICATE:
+		case NOT_SHARED_PREDICATES:
 			return id+1;
-		case SHARED_SUBJECT:
-		case NOT_SHARED_SUBJECT:
-		case SHARED_OBJECT:
-		case NOT_SHARED_OBJECT:
+		case SHARED_SUBJECTS:
+		case SHARED_SUBJECTS_TRIPLES:
+		case NOT_SHARED_SUBJECTS:
+		case NOT_SHARED_SUBJECTS_TRIPLES:
+		case SHARED_OBJECTS:
+		case SHARED_OBJECTS_TRIPLES:
+		case NOT_SHARED_OBJECTS:
+		case NOT_SHARED_OBJECTS_TRIPLES:
 			return BasePlainDictionary::getGlobalId(mapping_type, id, position);
 		default:
 			throw runtime_error("Invalid DictionarySection in TriplesDictionary");
@@ -174,13 +182,17 @@ void TriplesPlainDictionary::updateID(unsigned int oldid, unsigned int newid, Di
 {
 	switch(position)
 	{
-		case NOT_SHARED_PREDICATE:
+		case NOT_SHARED_PREDICATES:
 			predicates[oldid]->id = newid;
 			break;
-		case SHARED_SUBJECT:
-		case NOT_SHARED_SUBJECT:
-		case SHARED_OBJECT:
-		case NOT_SHARED_OBJECT:
+		case SHARED_SUBJECTS:
+		case SHARED_SUBJECTS_TRIPLES:
+		case NOT_SHARED_SUBJECTS:
+		case NOT_SHARED_SUBJECTS_TRIPLES:
+		case SHARED_OBJECTS:
+		case SHARED_OBJECTS_TRIPLES:
+		case NOT_SHARED_OBJECTS:
+		case NOT_SHARED_OBJECTS_TRIPLES:
 			BasePlainDictionary::updateID(oldid, newid, position);
 			break;
 		default:

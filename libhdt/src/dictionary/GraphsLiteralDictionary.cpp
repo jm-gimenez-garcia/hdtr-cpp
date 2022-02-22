@@ -48,7 +48,7 @@ unsigned int GraphsLiteralDictionary::stringToId(const std::string &key, const T
 		unsigned int ret;
 		ret = graphs->locate((const unsigned char *) key.c_str(), key.length());
 		if (ret != 0) 
-			return BaseLiteralDictionary::getGlobalId(ret, UNUSED_GRAPH);
+			return BaseLiteralDictionary::getGlobalId(ret, GRAPHS_UNUSED);
 	}
     return 0;
 }
@@ -160,12 +160,14 @@ csd::CSD *GraphsLiteralDictionary::getDictionarySection(unsigned int id, TripleC
 unsigned int GraphsLiteralDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) const{
 	switch(position)
 	{
-		case UNUSED_GRAPH:
+		case GRAPHS_UNUSED:
 			return id;
-		case NOT_SHARED_SUBJECT_GRAPH:
-		case NOT_SHARED_OBJECT_GRAPH:
-		case SHARED_OBJECT_GRAPH:
-		case SHARED_SUBJECT_GRAPH:
+		case NOT_SHARED_SUBJECTS:
+		case NOT_SHARED_OBJECTS:
+		case NOT_SHARED_SUBJECTS_GRAPHS:
+		case NOT_SHARED_OBJECTS_GRAPHS:
+		case SHARED_OBJECTS_GRAPHS:
+		case SHARED_SUBJECTS_GRAPHS:
 			return BaseLiteralDictionary::getGlobalId(mapping, id, position);
 		default:
 			throw runtime_error("Invalid DictionarySection in GraphsDictionary");

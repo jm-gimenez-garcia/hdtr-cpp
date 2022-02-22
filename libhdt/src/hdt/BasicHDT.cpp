@@ -187,7 +187,7 @@ Triples *BasicHDT::getTriples() {
 }
 
 IteratorTripleString* BasicHDT::search(const char* subject,	const char* predicate, const char* object, const char* graph/*=NULL*/) {
-	TripleID* role_tid_ptr=NULL;
+	// TripleID* role_tid_ptr=NULL;
 	try {
 		TripleID* glob_tid_ptr=NULL;
 		bool not_empty_not_found = false;
@@ -213,12 +213,12 @@ IteratorTripleString* BasicHDT::search(const char* subject,	const char* predicat
 			return new IteratorTripleString();
 		}
 
-		triples->toRoleIDs(role_tid_ptr, *glob_tid_ptr);
+		// triples->toRoleIDs(role_tid_ptr, *glob_tid_ptr);
 
-		delete glob_tid_ptr;
-		glob_tid_ptr = NULL;
+		// delete glob_tid_ptr;
+		// glob_tid_ptr = NULL;
 
-		IteratorTripleID* iterID = triples->search(*role_tid_ptr);
+		IteratorTripleID* iterID = triples->search(*glob_tid_ptr);
 
 
 /*iterID->goToStart();
@@ -231,10 +231,10 @@ while(iterID->hasNext())
 iterID->goToStart();*/
 
 
-		if(role_tid_ptr)
+		if(glob_tid_ptr)
 		{
-			delete role_tid_ptr;
-			role_tid_ptr = NULL;
+			delete glob_tid_ptr;
+			glob_tid_ptr = NULL;
 		}
 
 		TripleIDStringIterator* iterator = new TripleIDStringIterator(dictionary, iterID);
@@ -244,11 +244,11 @@ iterID->goToStart();*/
 	} catch (std::exception& e) {
 		cerr << "Exception: " << e.what() << endl;
 	}
-	if(role_tid_ptr)
-	{
-		delete role_tid_ptr;
-		role_tid_ptr = NULL;
-	}
+	// if(role_tid_ptr)
+	// {
+	// 	delete role_tid_ptr;
+	// 	role_tid_ptr = NULL;
+	// }
 	return new IteratorTripleString();
 }
 

@@ -49,25 +49,28 @@ unsigned int GraphsFourSectionDictionary::stringToId(const string &key, const Tr
 	if(key.length()==0)
 		return 0;
 
-	if (position!=GRAPH)
+	switch (position)
 	{
-		return BaseFourSectionDictionary::stringToId(key, position);
-	}
-	else
-	{
-		ret = BaseFourSectionDictionary::stringToId(key, SUBJECT);
-		if (ret!=0)
-			return ret;
-		ret = BaseFourSectionDictionary::stringToId(key, OBJECT);
-		if (ret!=0)
-			return ret;
+	case GRAPHS:
+	case GRAPHS_SHARED:
+	case GRAPHS_SUBJECTS:
+	case GRAPHS_OBJECTS:
+	case GRAPHS_UNUSED:
+		ret = shared->locate((const unsigned char *)key.c_str(), key.length());
+		if (ret!=0) return ret;
+		ret = subjects->locate((const unsigned char *)key.c_str(), key.length());
+		if (ret!=0) return ret + shared->getLength();
+		ret = objects->locate((const unsigned char *)key.c_str(), key.length());
+		if (ret!=0) return ret + shared->getLength() + subjects->getLength();
 		ret = graphs->locate((const unsigned char *)key.c_str(), key.length());
-		if(ret!=0) 
-		{
-			return GraphsFourSectionDictionary::getGlobalId(ret, UNUSED_GRAPH);
-		}
-        return 0;
+		if(ret!=0) return ret + shared->getLength() + subjects->getLength() + objects->getLength();
+		break;
+	default:
+		return BaseFourSectionDictionary::stringToId(key, position);
+		break;
 	}
+
+	return 0;
 }
 
 void GraphsFourSectionDictionary::loadFourthSection(istream & input, IntermediateListener& iListener)
@@ -134,7 +137,12 @@ unsigned int GraphsFourSectionDictionary::getNunused()const
 unsigned int GraphsFourSectionDictionary::getMaxID()const
 {return BaseFourSectionDictionary::getMaxID() + GraphsFourSectionDictionary::getNunused();}
 
-
+csd::CSD *GraphsFourSectionDictionary::getDictionarySection(DictionarySection section) const{
+	if(section==GRAPHS_UNUSED)
+        return graphs;
+	else
+		return BaseFourSectionDictionary::getDictionarySection(section);
+}
 
 csd::CSD *GraphsFourSectionDictionary::getDictionarySection(unsigned int id, TripleComponentRole position) const{
 	if(position==GRAPH) 
@@ -144,82 +152,60 @@ csd::CSD *GraphsFourSectionDictionary::getDictionarySection(unsigned int id, Tri
 }
 
 unsigned int GraphsFourSectionDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) const{
-	unsigned int max_s_o=0;
 	switch(position)
 	{
-		case UNUSED_GRAPH:
-			if(mapping==MAPPING1)
-				return id+shared->getLength()+subjects->getLength()+objects->getLength();
-			else if (mapping==MAPPING2)
-			{
-				max_s_o = (subjects->getLength() > objects->getLength()) ? subjects->getLength() : objects->getLength();
-				return id+shared->getLength()+max_s_o;
-			}
-			else
-				throw runtime_error("Unknown mapping");
-			return shared->getLength()+max_s_o+id;
+		case SHARED_SUBJECTS:
+		case SHARED_SUBJECTS_GRAPHS:
+		case SHARED_OBJECTS:
+		case SHARED_OBJECTS_GRAPHS:
+		case GRAPHS_SHARED:
+			return id;
 			break;
-		case NOT_SHARED_SUBJECT:
-		case NOT_SHARED_OBJECT:
-		case SHARED_OBJECT:
-		case SHARED_SUBJECT:
-			return BaseFourSectionDictionary::getGlobalId(mapping, id, position);
+		case NOT_SHARED_SUBJECTS:
+		case NOT_SHARED_SUBJECTS_GRAPHS:
+		case GRAPHS_SUBJECTS:
+			return id+shared->getLength();
+			break;
+		case NOT_SHARED_OBJECTS:
+		case NOT_SHARED_OBJECTS_GRAPHS:
+		case GRAPHS_OBJECTS:
+			return id+shared->getLength()+subjects->getLength();
+			break;
+		case GRAPHS_UNUSED:
+			return id+shared->getLength()+subjects->getLength()+objects->getLength();
+			break;
 		default:
-			throw runtime_error("Invalid DictionarySection in GraphsDictionary");
-
+			return BaseFourSectionDictionary::getGlobalId(mapping, id, position);
 		}
 }
 
 unsigned int GraphsFourSectionDictionary::getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position) const{
 
-	if(position==GRAPH)
+	switch(position)
 	{
-
-		const unsigned int sh_length = shared->getLength();
-		const unsigned int sub_length = subjects->getLength();
-		const unsigned int obj_length = objects->getLength();
-		const unsigned int gr_length = graphs->getLength();
-		unsigned int last_obj_sub_glob_id;
-		unsigned int locid_shift = 0;
-
-		if(mapping==MAPPING1)
-		{
-			if(id>0 && id<=sh_length+sub_length)
-				return GraphsFourSectionDictionary::getLocalId(mapping, id, SUBJECT);
-			if(id>sh_length+sub_length && id<=sh_length+sub_length+obj_length)
-				return GraphsFourSectionDictionary::getLocalId(mapping, id, OBJECT);
-
-			locid_shift = 2;
-			last_obj_sub_glob_id = sh_length + sub_length + obj_length;
+		case SHARED_SUBJECTS:
+		case SHARED_SUBJECTS_GRAPHS:
+		case SHARED_OBJECTS:
+		case SHARED_OBJECTS_GRAPHS:
+		case GRAPHS_SHARED:
+			return id;
+			break;
+		case NOT_SHARED_SUBJECTS:
+		case NOT_SHARED_SUBJECTS_GRAPHS:
+		case GRAPHS_SUBJECTS:
+			return id-shared->getLength();
+			break;
+		case NOT_SHARED_OBJECTS:
+		case NOT_SHARED_OBJECTS_GRAPHS:
+		case GRAPHS_OBJECTS:
+			return id-shared->getLength()-subjects->getLength();
+			break;
+		case GRAPHS_UNUSED:
+			return id-shared->getLength()-subjects->getLength()-objects->getLength();
+			break;
+		default:
+			return BaseFourSectionDictionary::getLocalId(mapping, id, position);
 		}
-		else if (mapping==MAPPING2)
-		{
-			if(id>0 && id<=sh_length)
-				return GraphsFourSectionDictionary::getLocalId(mapping, id, SUBJECT);
-
-			const unsigned int max_sub_obj_length = (obj_length>sub_length) ? obj_length : sub_length;
-			last_obj_sub_glob_id = sh_length + max_sub_obj_length ;
-			
-			if(id>sh_length+obj_length && id<=sh_length+sub_length)
-				return GraphsFourSectionDictionary::getLocalId(mapping, id, SUBJECT);
-			else if(id>sh_length+sub_length && id<=sh_length+obj_length)
-				return GraphsFourSectionDictionary::getLocalId(mapping, id, OBJECT);
-			else if(id>sh_length && id <=last_obj_sub_glob_id)
-				throw runtime_error("Error: This globalID matches both a non-shared subject graph and a non-shared object graph. Try to call directly BaseReificationDictionary::getLocalId(...)");
-
-		}
-		else
-			throw runtime_error("Unknown mapping");
-
-
-		const unsigned int last_gr_glob_id  = last_obj_sub_glob_id + gr_length;
-		if(id>last_obj_sub_glob_id && id<=last_gr_glob_id)
-			return locid_shift + id-last_obj_sub_glob_id;
-		else
-			throw runtime_error("This globalID does not correspond to an unused graph");
-	}
-	else
-		return BaseFourSectionDictionary::getLocalId(mapping, id, position);
 }
 
 void GraphsFourSectionDictionary::getSuggestions(const char *base, TripleComponentRole role, vector<string> &out, int maxResults)

@@ -117,11 +117,11 @@ switch (position) {
 case SUBJECT:
 	ret = shared->locate((const unsigned char *) key.c_str(), key.length());
 	if (ret != 0) {
-		return getGlobalId(ret, SHARED_SUBJECT);
+		return getGlobalId(ret, SHARED_SUBJECTS);
 	}
 	ret = subjects->locate((const unsigned char *) key.c_str(), key.length());
 	if (ret != 0) {
-		return getGlobalId(ret, NOT_SHARED_SUBJECT);
+		return getGlobalId(ret, NOT_SHARED_SUBJECTS);
 	}
 	return 0;
 
@@ -130,17 +130,17 @@ case OBJECT:
 		ret = objectsLiterals->locate((const unsigned char *) key.c_str(),
 				key.length());
 		if (ret != 0) {
-			return getGlobalId(ret, NOT_SHARED_OBJECT);
+			return getGlobalId(ret, NOT_SHARED_OBJECTS);
 		}
 		return 0;
 	} else {
 		ret = shared->locate((const unsigned char *) key.c_str(), key.length());
 		if (ret != 0) {
-			return getGlobalId(ret, SHARED_OBJECT);
+			return getGlobalId(ret, SHARED_OBJECTS);
 		}
 		ret = objectsNotLiterals->locate((const unsigned char *) key.c_str(), key.length());
 		if (ret != 0) {
-			return getGlobalId(ret, NOT_SHARED_OBJECT)+	objectsLiterals->getLength();
+			return getGlobalId(ret, NOT_SHARED_OBJECTS)+	objectsLiterals->getLength();
 		}
 		return 0;
 	}
@@ -397,7 +397,7 @@ if(cache!=NULL) {
 if(fmIndex!=NULL) {
 	uint32_t ret = fmIndex->locate_substring(s, len, offset, limit, deduplicate, occs, num_occ);
 	for (int i=0;i<*num_occ;i++){
-		(*occs)[i] = this->getGlobalId((*occs)[i], NOT_SHARED_OBJECT);
+		(*occs)[i] = this->getGlobalId((*occs)[i], NOT_SHARED_OBJECTS);
 	}
 	return ret;
 }
@@ -589,22 +589,26 @@ return NULL;
 
 unsigned int BaseLiteralDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) const{
 switch (position) {
-case NOT_SHARED_SUBJECT:
-case NOT_SHARED_SUBJECT_GRAPH:
+case NOT_SHARED_SUBJECTS:
+case NOT_SHARED_SUBJECTS_TRIPLES:
+case NOT_SHARED_SUBJECTS_GRAPHS:
 	return shared->getLength() + id;
 
-case NOT_SHARED_OBJECT:
-case NOT_SHARED_OBJECT_GRAPH:
+case NOT_SHARED_OBJECTS:
+case NOT_SHARED_OBJECTS_TRIPLES:
+case NOT_SHARED_OBJECTS_GRAPHS:
 	if (mapping == MAPPING2) {
 		return shared->getLength() + id;
 	} else {
 		return shared->getLength() + subjects->getLength() + id;
 	}
 
-case SHARED_SUBJECT:
-case SHARED_OBJECT:
-case SHARED_SUBJECT_GRAPH:
-case SHARED_OBJECT_GRAPH:
+case SHARED_SUBJECTS:
+case SHARED_OBJECTS:
+case SHARED_SUBJECTS_TRIPLES:
+case SHARED_OBJECTS_TRIPLES:
+case SHARED_SUBJECTS_GRAPHS:
+case SHARED_OBJECTS_GRAPHS:
 	return id;
 default:
 	throw std::runtime_error("Item not found");

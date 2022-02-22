@@ -38,8 +38,8 @@
 
 namespace hdt {
 
-class GraphsFourSectionDictionary : public BaseFourSectionDictionary, public GraphsDictionary {
-private:
+class GraphsFourSectionDictionary : virtual public BaseFourSectionDictionary, public GraphsDictionary {
+protected:
 	csd::CSD *graphs;
 
 public:
@@ -53,7 +53,10 @@ public:
 	void loadFourthSection(unsigned char *ptr, unsigned char *ptrMax, size_t& count, IntermediateListener& iListener);	
 
 	void importFourthSection(Dictionary *other, ProgressListener *listener, IntermediateListener& iListener);
-
+	
+	csd::CSD* getDictionarySection(unsigned int id, TripleComponentRole position) const;
+	csd::CSD *getDictionarySection(DictionarySection section)const;
+	
 	IteratorUCharString* getGraphs();
 	IteratorUCharString* getGraphs()const;
 
@@ -70,7 +73,6 @@ public:
     IteratorUInt *getIDSuggestions(const char *prefix, TripleComponentRole role);
 
 protected:
-	csd::CSD* getDictionarySection(unsigned int id, TripleComponentRole position) const;
 	unsigned int getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position)const;
 	unsigned int getGlobalId(unsigned int id, DictionarySection position)const{return getGlobalId(mapping, id, position);}
 	unsigned int getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position)const;

@@ -135,9 +135,12 @@ void BitmapTriples::load(ModifiableTriples &triples, ProgressListener *listener)
 
 		swapComponentOrder(triple, SPO, order);
 
-		x = toRoleID(triple->getSubject(), SUBJECT);
-		y = toRoleID(triple->getPredicate(), PREDICATE);
-		z = toRoleID(triple->getObject(), OBJECT);
+		// x = toRoleID(triple->getSubject(), SUBJECT);
+		// y = toRoleID(triple->getPredicate(), PREDICATE);
+		// z = toRoleID(triple->getObject(), OBJECT);
+		x = triple->getSubject();
+		y = triple->getPredicate();
+		z = triple->getObject();
 
 		if(x==0 || y==0 || z==0) {
 			cerr << "ERROR: Triple with at least one component zero." << endl;
@@ -614,10 +617,14 @@ IteratorTripleID *BitmapTriples::search(TripleID & pattern)
 	std::string patternString = reorderedPat->getPatternString();
 	delete reorderedPat; reorderedPat=NULL;
 
+	// cout << patternString << endl;
+
 	if(patternString=="?P?") {
 		if(predicateIndex!=NULL) {
+			// cout << "MiddleWaveletIterator (1)" << endl;
 			return new MiddleWaveletIterator(this, pattern);
 		} else {
+			// cout << "IteratorY (2)" << endl;
 			return new IteratorY(this, pattern);
 		}
 	}
@@ -625,20 +632,26 @@ IteratorTripleID *BitmapTriples::search(TripleID & pattern)
 
 	if(patternString=="S?O") {
 	    if(this->order == SPO) {
-		return new SequentialSearchIteratorTripleID(pattern, new BitmapTriplesSearchIterator(this, pattern));
+			// cout << "SequentialSearchIteratorTripleID (3)" << endl;
+			return new SequentialSearchIteratorTripleID(pattern, new BitmapTriplesSearchIterator(this, pattern));
 	    } else if( (this->order == OPS) && (arrayIndex!=NULL)) {
-		return new SequentialSearchIteratorTripleID(pattern, new ObjectIndexIterator(this, pattern));
+			// cout << "SequentialSearchIteratorTripleID (4)" << endl;
+			return new SequentialSearchIteratorTripleID(pattern, new ObjectIndexIterator(this, pattern));
 	    }
 	}
 
 	if((arrayIndex!=NULL) && (patternString=="??O" || patternString=="?PO" )) {
+		// cout << "ObjectIndexIterator (5)" << endl;
 		return new ObjectIndexIterator(this, pattern);
     } else if( predicateIndex != NULL && patternString=="?P?") {
+		// cout << "MiddleWaveletIterator (6)" << endl;
 		return new MiddleWaveletIterator(this, pattern);
 	} else {
 		if(patternString=="???" || patternString=="S??" || patternString=="SP?"|| patternString=="SPO" || patternString=="SPO?") {
+			// cout << "BitmapTriplesSearchIterator (7)" << endl;
 			return new BitmapTriplesSearchIterator(this, pattern);
 		} else {
+			// cout << "SequentialSearchIteratorTripleID (8)" << endl;
 			return new SequentialSearchIteratorTripleID(pattern, new BitmapTriplesSearchIterator(this, pattern));
 		}
 	}
