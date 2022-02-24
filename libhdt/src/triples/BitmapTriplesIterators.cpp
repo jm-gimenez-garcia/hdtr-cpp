@@ -793,10 +793,13 @@ ObjectIndexIterator::ObjectIndexIterator(BitmapTriples *trip, TripleID &pat) :
     goToStart();
 }
 
-unsigned int ObjectIndexIterator::getPosZ(unsigned int indexObjectPos) {
+size_t ObjectIndexIterator::getPosZ(unsigned int indexObjectPos) {
 #ifdef SAVE_ADJ_LIST
     unsigned int posZ=0;
-    unsigned int posAdjList = adjIndex.get(indexObjectPos);
+
+    unsigned int posAdjList;
+    if (indexObjectPos == posIndex-1) posAdjList=posY;
+    else posAdjList = adjIndex.get(indexObjectPos);
 
     try {
         posZ = adjZ.find(posAdjList, patZ);
@@ -816,7 +819,29 @@ unsigned int ObjectIndexIterator::getPosZ(unsigned int indexObjectPos) {
     return posZ;
 }
 
-unsigned int ObjectIndexIterator::getY(unsigned int index) {
+size_t ObjectIndexIterator::getPosZ() {
+#ifdef SAVE_ADJ_LIST
+    unsigned int posZ=0;
+
+    try {
+        posZ = adjZ.find(posY,patZ);
+//        z = adjZ.get(posZ);
+    } catch (std::exception& e) {
+	    cerr << "Object " << patZ << "/" << triples->toRoleID(patZ,OBJECT) <<  " not found in the position " << posY << endl;
+        posZ = adjZ.find(posY);
+    }
+
+#else
+    unsigned int posZ = adjIndex.get(index);
+
+    while( (z=adjZ.get(posZ))!=patZ,OBJECT)) {
+        posZ++;
+    }
+#endif
+    return posZ;
+}
+
+size_t ObjectIndexIterator::getY(unsigned int index) {
 
 #ifdef SAVE_ADJ_LIST
     unsigned int posAdjList = adjIndex.get(index);
@@ -845,7 +870,7 @@ bool ObjectIndexIterator::hasNext()
 
 TripleID *ObjectIndexIterator::next()
 {
-    unsigned int posY = adjIndex.get(posIndex);
+    posY = adjIndex.get(posIndex);
 
     z = patZ;
     y = patY!=0 ? patY : adjY.get(posY);
@@ -864,7 +889,7 @@ size_t ObjectIndexIterator::getTriplePosition()
 
 size_t ObjectIndexIterator::getNextTriplePosition()
 {
-    return getPosZ(posIndex-1)+1;
+    return getPosZ()+1;
 }
 
 bool ObjectIndexIterator::hasPrevious()
@@ -888,8 +913,8 @@ TripleID *ObjectIndexIterator::previous()
 
 void ObjectIndexIterator::calculateRange() {
 
-    minIndex=adjIndex.find(patZ-1);
-    maxIndex=adjIndex.last(patZ-1);
+    minIndex=adjIndex.find(triples->toRoleID(patZ,OBJECT)-1);
+    maxIndex=adjIndex.last(triples->toRoleID(patZ,OBJECT)-1);
     //maxIndex=adjIndex.findNext(minIndex)-1;
 
 

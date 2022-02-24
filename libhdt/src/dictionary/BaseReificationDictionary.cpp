@@ -7,7 +7,20 @@
 namespace hdt{
 
 BaseReificationDictionary::BaseReificationDictionary(){toGlobalID=roleIdToGlobalId; toRoleID=globalIdToRoleId;}
-BaseReificationDictionary::BaseReificationDictionary(HDTSpecification &spec){toGlobalID=roleIdToGlobalId; toRoleID=globalIdToRoleId;}
+BaseReificationDictionary::BaseReificationDictionary(HDTSpecification &spec){
+	toGlobalID=roleIdToGlobalId;
+	toRoleID=globalIdToRoleId;
+
+	string map ="";
+	try{
+		map = spec.get("dictionary.mapping");
+	}catch(exception& e){}
+	if(map=="mapping1") {
+		this->mapping = MAPPING1;
+	} else {
+		this->mapping = MAPPING2;
+	}
+	}
 
 BaseReificationDictionary::~BaseReificationDictionary(){}
 
@@ -86,7 +99,7 @@ IteratorUCharString* BaseReificationDictionary::getGraphs() {
 // value MAPPING1 is not used afterwards
 unsigned int BaseReificationDictionary::getGlobalId(unsigned int id, DictionarySection pos)const{		
 	// getGlobalId(MAPPING1, id, pos);
-	return getGlobalId(MAPPING2, id, pos);
+	return getGlobalId(this->getMapping(), id, pos);
 }
 
 //locid is the local ID in the Triples/Graphs Dictionary ; the return value is the global ID in the reification dictionary 
@@ -157,16 +170,24 @@ unsigned int BaseReificationDictionary::getGlobalId(unsigned int mapping_type, u
 			break;
 		case GRAPHS:
 		case GRAPHS_SHARED:
-			ret=locid;
+			if (mapping_type==MAPPING2) ret=locid;
+			else if (mapping_type==MAPPING1) ret=locid+Tsh;
+			else throw std::logic_error("Unkown type of mapping");
 			break;
 		case GRAPHS_SUBJECTS:
-			ret=locid+Gsh;
+			if (mapping_type==MAPPING2) ret=locid+Gsh;
+			else if (mapping_type==MAPPING1) ret=locid+Tsh+Gsh+Tsubj;
+			else throw std::logic_error("Unkown type of mapping");
 			break;
 		case GRAPHS_OBJECTS:
-			ret=locid+Gsh+Gsubj;
+			if (mapping_type==MAPPING2) ret=locid+Gsh+Gsubj;
+			else if (mapping_type==MAPPING1) ret=locid+Tsh+Gsh+Tsubj+Gsubj+Tobj;
+			else throw std::logic_error("Unkown type of mapping");
 			break;
 		case GRAPHS_UNUSED:
-			ret=locid+Gsh+Gsubj+Gobj;
+			if (mapping_type==MAPPING2) ret=locid+Gsh+Gsubj+Gobj;
+			else if (mapping_type==MAPPING1) ret=locid+Tsh+Gsh+Tsubj+Gsubj+Tobj+Gobj;
+			else throw std::logic_error("Unkown type of mapping");
 			break;
 		default:
 			throw std::logic_error("Unkown type of DictionarySection");
@@ -367,7 +388,7 @@ unsigned int BaseReificationDictionary::getLocalId(unsigned int id, TripleCompon
 				throw std::logic_error("getLocalId:Id too high to be a subject");
 			break;
 		case OBJECT:
-		cout << "object=" << id << endl;
+		// cout << "object=" << id << endl;
 			if(id <= Tsh)
 				return id;
 			else if (id <= Tsh + Gsh)
@@ -394,17 +415,31 @@ unsigned int BaseReificationDictionary::getLocalId(unsigned int id, TripleCompon
 				throw std::logic_error("getLocalId:Id too high to be a predicate");
 			break;
 		case GRAPH:
-		cout << "graph" << endl;
-			if(id > 0 && id <= Gsh)
-				return id;
-			else if (id <= Gsh + Gsubj)
-				return id-Gsh;
-			else if (id <= Gsh + Gsubj + Gobj)
-				return id-Gsh-Gsubj;
-			else if (id <= Gsh + Gsubj + Gobj + Gun)
-				return id-Gsh-Gsubj-Gobj;
-			else
-				throw std::logic_error("getLocalId:Id too high to be a graph");
+		// cout << "graph" << endl;
+			if (this->getMapping() == MAPPING2) {
+				if(id > 0 && id <= Gsh)
+					return id;
+				else if (id <= Gsh + Gsubj)
+					return id-Gsh;
+				else if (id <= Gsh + Gsubj + Gobj)
+					return id-Gsh-Gsubj;
+				else if (id <= Gsh + Gsubj + Gobj + Gun)
+					return id-Gsh-Gsubj-Gobj;
+				else
+					throw std::logic_error("getLocalId:Id too high to be a graph");
+			} else if (this->getMapping() == MAPPING1) {
+				if(id > 0 && id <= Tsh + Gsh)
+					return id-Tsh;
+				else if (id <= Tsh + Gsh + Tsubj+ Gsubj)
+					return id-Tsh-Gsh-Tsubj;
+				else if (id <= Tsh + Gsh + Tsubj + Gsubj + Tobj + Gobj)
+					return id-Tsh-Gsh-Tsubj-Gsubj-Tobj;
+				else if (id <= Tsh + Gsh + Tsubj + Gsubj + Tobj + Gobj + Gun)
+					return id-Tsh-Gsh-Tsubj-Gsubj-Tobj-Gobj;
+				else
+					throw std::logic_error("getLocalId:Id too high to be a graph");
+			} else
+				throw std::logic_error("getLocalId:Unkown type of mapping");
 			break;
 	}
 	return 0;
@@ -535,22 +570,29 @@ unsigned int BaseReificationDictionary::stringToId(const std::string &key, Tripl
 				if( ret == 0) {
                 	ret = getGraphsDictionaryPtr()->stringToId(key,position);
 					if (ret != 0 && ret <= Gsh) ret += Tsh;
-					else if (ret <= Gsh+Gobj) {
-						if (this->getMapping() == MAPPING2) ret += Tsh+Tobj;
-						else if (this->getMapping() == MAPPING1) ret += Tsh+Tsubj+Tobj;
-						else throw std::logic_error("stringToId: Unrecognised type of mapping.");
-					}
+					else if (this->getMapping() == MAPPING2 && ret <= Gsh+Gobj) ret += Tsh+Tobj;
+					else if (this->getMapping() == MAPPING1 && ret <= Gsh+Gsubj+Gobj) ret += Tsh+Tsubj+Tobj;
 					else throw std::logic_error("stringToId: ID " + std::to_string(ret) + " too high to be an object.");
 				}
 				else if (ret <= Tsh); //do nothing, ret is already the correct ID
-				else if (ret <= Tsh+Tobj) ret += Gsh;
+				else if (this->getMapping() == MAPPING2 && ret <= Tsh+Tobj) ret += Gsh;
+				else if (this->getMapping() == MAPPING1 && ret <= Tsh+Tsubj+Tobj) ret += Gsh+Gsubj;
 				else throw std::logic_error("stringToId: Object ID " + std::to_string(ret) + " not found.");
 				break;
 			case PREDICATE:
                 ret = getTriplesDictionaryPtr()->stringToId(key, position);
 				break;
 			case GRAPH:
-                ret = getGraphsDictionaryPtr()->stringToId(key, position);
+				if (this->getMapping()==MAPPING2) ret = getGraphsDictionaryPtr()->stringToId(key, position);
+				else if (this->getMapping() == MAPPING1) {
+					ret = getGraphsDictionaryPtr()->stringToId(key,position);
+					if(ret <= Gsh) ret += Tsh;
+					else if (ret <= Gsh + Gsubj) ret += Tsh+Tsubj;
+					// else if (ret <= Gsh + Gsubj + Gobj) ret += Tsh+Tsubj+Tobj;
+					else if (ret <= Gsh + Gsubj + Gobj + Gun) ret += Tsh+Tsubj+Tobj;
+					else
+						throw std::logic_error("stringToId: Graph ID " + std::to_string(ret) + " not found.");
+				} else throw std::logic_error("idToString:Unkown type of mapping");
 				break;
 			default:
                 throw std::logic_error("stringToId: Unrecognised role");
@@ -608,17 +650,30 @@ std::string BaseReificationDictionary::idToString(const unsigned int id, const T
 				throw std::logic_error("idToString:Id too high to be a predicate");
 			break;
 		case GRAPH:
-			if(id > 0 && id <= Gsh)
-				return getGraphsDictionaryPtr()->getShared()->getStr(id);
-			else if (id <= Gsh + Gsubj)
-				return getGraphsDictionaryPtr()->getSubjects()->getStr(id-Gsh);
-			else if (id <= Gsh + Gsubj + Gobj)
-				return getGraphsDictionaryPtr()->getObjects()->getStr(id-Gsh-Gsubj);
-			else if (id <= Gsh + Gsubj + Gobj + Gun)
-				return getGraphsDictionaryPtr()->getGraphs()->getStr(id-Gsh-Gsubj-Gobj);
-			else
-				throw std::logic_error("idToString:Id too high to be a graph");
-			break;
+			if (this->getMapping() == MAPPING2) {
+				if(id > 0 && id <= Gsh)
+					return getGraphsDictionaryPtr()->getShared()->getStr(id);
+				else if (id <= Gsh + Gsubj)
+					return getGraphsDictionaryPtr()->getSubjects()->getStr(id-Gsh);
+				else if (id <= Gsh + Gsubj + Gobj)
+					return getGraphsDictionaryPtr()->getObjects()->getStr(id-Gsh-Gsubj);
+				else if (id <= Gsh + Gsubj + Gobj + Gun)
+					return getGraphsDictionaryPtr()->getGraphs()->getStr(id-Gsh-Gsubj-Gobj);
+				else
+					throw std::logic_error("idToString:Id too high to be a graph");
+			} else if (this->getMapping() == MAPPING1) {
+				if(id > 0 && id <= Gsh)
+					return getGraphsDictionaryPtr()->getShared()->getStr(id-Tsh);
+				else if (id <= Gsh + Gsubj)
+					return getGraphsDictionaryPtr()->getSubjects()->getStr(id-Tsh-Gsh-Tsubj);
+				else if (id <= Gsh + Gsubj + Gobj)
+					return getGraphsDictionaryPtr()->getObjects()->getStr(id-Tsh-Gsh-Tsubj-Gsubj-Tobj);
+				else if (id <= Gsh + Gsubj + Gobj + Gun)
+					return getGraphsDictionaryPtr()->getGraphs()->getStr(id-Tsh-Gsh-Tsubj-Gsubj-Tobj-Gobj);
+				else
+					throw std::logic_error("idToString:Id too high to be a graph");
+			} else throw std::logic_error("idToString:Unkown type of mapping");
+		break;
 	}
 
 	// if(pos==SUBJECT || pos==OBJECT)
@@ -658,7 +713,7 @@ std::string BaseReificationDictionary::idToString(const unsigned int id, const T
 }
 
 unsigned int BaseReificationDictionary::getMapping()const{
-	return MAPPING2;
+	return this->mapping;
 }
 
 void BaseReificationDictionary::import(Dictionary *other, ProgressListener *listener/*=NULL*/){
@@ -669,6 +724,9 @@ void BaseReificationDictionary::import(Dictionary *other, ProgressListener *list
 }
 void BaseReificationDictionary::import(BaseReificationDictionary *other, ProgressListener *listener/*=NULL*/)
 {
+	sizeStrings = other->size();
+	mapping = other->getMapping();
+
 	//Dictionary* trDict = other->getTriplesDictionaryPtr();
 	getTriplesDictionaryPtr()->import(other->getTriplesDictionaryPtr(), listener);
 
@@ -685,8 +743,7 @@ size_t BaseReificationDictionary::load(unsigned char *ptr, unsigned char *ptrMax
     size_t count=0;
     IntermediateListener iListener(listener);
  
-	ControlInformation ci;
-    count += ci.load(&ptr[count], ptrMax);
+	loadControlInfo(ptr, ptrMax, count);
 
 	count += getTriplesDictionaryPtr()->load(&ptr[count], ptrMax);
 	count += getGraphsDictionaryPtr()->load(&ptr[count], ptrMax);
@@ -696,18 +753,9 @@ size_t BaseReificationDictionary::load(unsigned char *ptr, unsigned char *ptrMax
 	return count;
 }
 
-void BaseReificationDictionary::getSuggestions(const char *base, TripleComponentRole role, std::vector<std::string> &out, int maxResults)
-{throw std::logic_error("Not implemented");}
-
-IteratorUCharString *BaseReificationDictionary::getSuggestions(const char *prefix, TripleComponentRole role)
-{throw std::logic_error("Not implemented");}
-
-IteratorUInt *BaseReificationDictionary::getIDSuggestions(const char *prefix, TripleComponentRole role)
-{throw std::logic_error("Not implemented");}
-
-
 void BaseReificationDictionary::load(std::istream & input, ControlInformation &ci, ProgressListener *listener)
 {
+	loadControlInfo(input, ci);
 
 	Dictionary* t_dict = getTriplesDictionaryPtr();
 	Dictionary* g_dict = getGraphsDictionaryPtr();
@@ -725,20 +773,57 @@ void BaseReificationDictionary::load(std::istream & input, ControlInformation &c
 	initValues();
 }
 
+void BaseReificationDictionary::loadControlInfo(istream & input, ControlInformation & ci)
+{
+	string format = ci.getFormat();
+	if(format!=getType()) {
+		throw runtime_error("Trying to read a BaseFourSectionDictionary but the data is not BaseFourSectionDictionary");
+	}
+	this->mapping = ci.getUint("mapping");
+	this->sizeStrings = ci.getUint("sizeStrings");
+}
+
+void BaseReificationDictionary::loadControlInfo(unsigned char *ptr, unsigned char *ptrMax, size_t& count){
+    ControlInformation ci;
+    count += ci.load(&ptr[count], ptrMax);
+
+    this->mapping = ci.getUint("mapping");
+    this->sizeStrings = ci.getUint("sizeStrings");
+}
+
+void BaseReificationDictionary::getSuggestions(const char *base, TripleComponentRole role, std::vector<std::string> &out, int maxResults)
+{throw std::logic_error("Not implemented");}
+
+IteratorUCharString *BaseReificationDictionary::getSuggestions(const char *prefix, TripleComponentRole role)
+{throw std::logic_error("Not implemented");}
+
+IteratorUInt *BaseReificationDictionary::getIDSuggestions(const char *prefix, TripleComponentRole role)
+{throw std::logic_error("Not implemented");}
+
 void BaseReificationDictionary::save(std::ostream &output, ControlInformation &ci, ProgressListener *listener/*=NULL*/){
 	const ControlInformation ci_original = ControlInformation(ci);
 	
+	saveControlInfo(output, ci);
+
 	Dictionary* t_dict = getTriplesDictionaryPtr();
 	Dictionary* g_dict = getGraphsDictionaryPtr();
 
-	ci.setFormat(getType());
-	ci.save(output);
+	// ci.setFormat(getType());
+	// ci.save(output);
 
 	ci = ci_original;
 	t_dict->save(output,ci);
 
 	ci = ci_original;
 	g_dict->save(output,ci);
+}
+
+void BaseReificationDictionary::saveControlInfo(ostream& output, ControlInformation & controlInformation)
+{
+	controlInformation.setFormat(getType());
+	controlInformation.setUint("mapping", this->mapping);
+	controlInformation.setUint("sizeStrings", this->sizeStrings);
+	controlInformation.save(output);
 }
 
 void BaseReificationDictionary::initValues(){
@@ -755,7 +840,6 @@ void BaseReificationDictionary::initValues(){
 	min_sub_obj_length = (Gobj>Gsubj) ? Gsubj : Gobj;
 	max_sub_obj_length = (Gobj>Gsubj) ? Gobj : Gsubj;
 	last_comm_subj_obj_id = (max_subj_id>max_obj_id) ? max_obj_id:max_subj_id;
-	// last_common_obj_sub_id = Gsh + min_sub_obj_length ;
 
 	// cout << "maxTriplesDictID=" << maxTriplesDictID << endl;
 	// cout << "max_subj_id=" << max_subj_id << endl;
@@ -771,6 +855,8 @@ void BaseReificationDictionary::initValues(){
 	// cout << "max_sub_obj_length=" << max_sub_obj_length << endl;
 	// cout << "last_comm_subj_obj_id=" << last_comm_subj_obj_id << endl;
 	// cout << "Mapping=" << this->getMapping() << endl;
+	// cout << "Triples Mapping=" << getTriplesDictionaryPtr()->getMapping() << endl;
+	// cout << "Graphs Mapping=" << getGraphsDictionaryPtr()->getMapping() << endl;
 }
 
 }

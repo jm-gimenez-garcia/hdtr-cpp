@@ -20,6 +20,7 @@ class IteratorUInt;
 class BaseReificationDictionary : virtual public TriplesDictionary, virtual public GraphsDictionary, public TripleTranslator{
 protected:
 	uint64_t sizeStrings;
+	unsigned int mapping;
 	unsigned int maxTriplesDictID; 
 	unsigned int max_subj_id;
 	unsigned int max_obj_id;
@@ -50,8 +51,11 @@ public:
 	void import(Dictionary *other, ProgressListener *listener=NULL);
 	virtual void populateHeader(Header &header, std::string rootNode)=0;
 	void save(std::ostream &output, ControlInformation &ci, ProgressListener *listener = NULL);
+	void saveControlInfo(std::ostream& output, ControlInformation& controlInformation);
 	void load(std::istream &input, ControlInformation &ci, ProgressListener *listener = NULL);
 	size_t load(unsigned char *ptr, unsigned char *ptrMax, ProgressListener *listener=NULL);
+	void loadControlInfo(std::istream & input, ControlInformation & ci);
+	void loadControlInfo(unsigned char *ptr, unsigned char *ptrMax, size_t& count);
 	unsigned int getNsubjects()const;
 	unsigned int getNobjects()const;
     unsigned int getNshared()const;
@@ -99,22 +103,29 @@ public:
 				else
 					throw std::logic_error("Incorrect array_id for SUBJECT");
 			case OBJECT:
-				if(arr_id>=1 && arr_id <= Tsh+Gsh)
-					return arr_id;
-				else if(arr_id <= getNobjects())
-					return arr_id + Tsubj + Gsubj;
-				else
-					throw std::logic_error("Incorrect array_id for OBJECT");
+				if (getMapping() == MAPPING2 && arr_id>=1 && arr_id <= getNobjects()) return arr_id;
+				else if (getMapping() == MAPPING1) {
+					if(arr_id>=1 && arr_id <= Tsh+Gsh)
+						return arr_id;
+					else if(arr_id <= getNobjects())
+						return arr_id + Tsubj + Gsubj;
+					else
+						throw std::logic_error("Incorrect array_id for OBJECT");
+				}
+				else throw std::logic_error("Incorrect mapping " + getMapping());
 			case GRAPH:
-				if (arr_id>=1 && arr_id <= Gsh)
-					return arr_id + Tsh;
-				else if (arr_id <= Gsh + Gsubj)
-					return arr_id + Tsh + Tsubj;
-				else if (arr_id <= Gsh + Gsubj + Gobj + Gun) 
-					return arr_id + Tsh + Tsubj + Tobj;
-				else
-					throw std::logic_error("Incorrect array_id for GRAPH");
-
+				if (getMapping() == MAPPING2 && arr_id>=1 && arr_id<+getNgraphs()) return arr_id;
+				else if (getMapping() == MAPPING1) {
+					if (arr_id>=1 && arr_id <= Gsh)
+						return arr_id + Tsh;
+					else if (arr_id <= Gsh + Gsubj)
+						return arr_id + Tsh + Tsubj;
+					else if (arr_id <= Gsh + Gsubj + Gobj + Gun) 
+						return arr_id + Tsh + Tsubj + Tobj;
+					else
+						throw std::logic_error("Incorrect array_id for GRAPH");
+				}
+				else throw std::logic_error("Incorrect mapping " + getMapping());
 		}
 	};
 	std::function<unsigned int (unsigned int,TripleComponentRole)> globalIdToRoleId = [this](unsigned int dict_id, TripleComponentRole pos){
@@ -130,28 +141,27 @@ public:
 				else
 					throw std::logic_error("Incorrect dict_id for SUBJECT");
 			case OBJECT:
-				if (dict_id>=1 && dict_id <= Tsh+Gsh)
-				{
-					return dict_id; 
+				if (getMapping() == MAPPING2 && dict_id>=1 && dict_id <= getNobjects()) return dict_id;
+				else if (getMapping() == MAPPING1) {
+					if (dict_id>=1 && dict_id <= Tsh+Gsh) return dict_id; 
+					else if (dict_id>getNsubjects() && dict_id<=getMaxObjectID()) return dict_id-Tsubj-Gsubj;
+					else throw std::logic_error("Incorrect dict_id for OBJECT");
 				}
-				else if (dict_id>getNsubjects() && dict_id<=getMaxObjectID())
-				{
-					return dict_id - Tsubj - Gsubj;
-				}
-				else
-				{
-					throw std::logic_error("Incorrect dict_id for OBJECT");
-				}
+				else throw std::logic_error("Incorrect mapping " + getMapping());
+
 			case GRAPH:
-				if (dict_id > Tsh && dict_id <= Tsh+Gsh)
-					return  dict_id - Tsh;
-				else if (dict_id > Tsh+Gsh+Tsubj && dict_id <= Tsh+Gsh+Tsubj+Gsubj)
-					return dict_id - Tsh - Tsubj;
-				else if(dict_id > Tsh+Gsh+Tsubj+Gsubj+Tobj && dict_id <= Tsh+Gsh+Tsubj+Gsubj+Tobj+Gobj+Gun)
-					return dict_id - Tsh - Tsubj -Tobj;
-				else
-					throw std::logic_error("Incorrect dict_id for GRAPH");
-				
+				if (getMapping() == MAPPING2 && dict_id>=1 && dict_id<+getNgraphs()) return dict_id;
+				if (getMapping() == MAPPING2) {
+					if (dict_id > Tsh && dict_id <= Tsh+Gsh)
+						return  dict_id - Tsh;
+					else if (dict_id > Tsh+Gsh+Tsubj && dict_id <= Tsh+Gsh+Tsubj+Gsubj)
+						return dict_id - Tsh - Tsubj;
+					else if(dict_id > Tsh+Gsh+Tsubj+Gsubj+Tobj && dict_id <= Tsh+Gsh+Tsubj+Gsubj+Tobj+Gobj+Gun)
+						return dict_id - Tsh - Tsubj -Tobj;
+					else
+						throw std::logic_error("Incorrect dict_id for GRAPH");
+				}
+				else throw std::logic_error("Incorrect mapping " + getMapping());
 		}	
 	};
 

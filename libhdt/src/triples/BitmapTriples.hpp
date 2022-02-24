@@ -260,15 +260,16 @@ private:
 
 	AdjacencyList adjY, adjZ, adjIndex;
 	unsigned int patX, patY, patZ;
-    size_t posIndex;
+    size_t posIndex, posY;
     //size_t predicateOcurrence, numOcurrences;
 	long long minIndex, maxIndex;
 	unsigned int x, y, z;
 
 	void updateOutput();
 	void calculateRange();
-	unsigned int getPosZ(unsigned int index);
-	unsigned int getY(unsigned int index);
+	size_t getPosZ(unsigned int index);
+	size_t getPosZ();
+	size_t getY(unsigned int index);
 public:
 	ObjectIndexIterator(BitmapTriples *triples, TripleID &pat);
 

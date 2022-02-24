@@ -53,7 +53,7 @@ void HDTSpecification::setOptions(const std::string& options) {
 		if(pos!=std::string::npos) {
 			std::string property = singleOption.substr(0, pos);
 			std::string value = singleOption.substr(pos+1);
-			//std::cout << "Property= "<< property << "\tValue= " << value << std::endl;
+			std::cout << "Property= "<< property << "\tValue= " << value << std::endl;
 			map[property] = value;
 		}
 	}

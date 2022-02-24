@@ -29,6 +29,7 @@
  *
  */
 #include <stdexcept>
+
 #include "BitmapTriples.hpp"
 
 #include "TripleIterators.hpp"
@@ -344,7 +345,7 @@ void BitmapTriples::generateIndexMemory(ProgressListener *listener) {
 	objectArray->resize(arrayZ->getNumberOfElements());
 
     for(size_t i=0;i<arrayZ->getNumberOfElements(); i++) {
-			unsigned int objectValue = arrayZ->get(i);
+			unsigned int objectValue = toRoleID(arrayZ->get(i),OBJECT);
             size_t posY = i>0 ?  bitmapZ->rank1(i-1) : 0;
 
             size_t insertBase = objectValue==1 ? 0 : bitmapIndex->select1(objectValue-1)+1;

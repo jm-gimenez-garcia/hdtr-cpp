@@ -146,9 +146,9 @@ void BaseFourSectionDictionary::loadControlInfo(istream & input, ControlInformat
 	if(format!=getType()) {
 		throw runtime_error("Trying to read a BaseFourSectionDictionary but the data is not BaseFourSectionDictionary");
 	}
-	//this->mapping = ci.getUint("mapping");
-	this->mapping = MAPPING2;
-	//this->sizeStrings = ci.getUint("sizeStrings");
+	this->mapping = ci.getUint("mapping");
+	//this->mapping = MAPPING2;
+	this->sizeStrings = ci.getUint("sizeStrings");
 }
 
 void BaseFourSectionDictionary::loadShared(istream & input, IntermediateListener& iListener)
@@ -203,9 +203,9 @@ void BaseFourSectionDictionary::loadControlInfo(unsigned char *ptr, unsigned cha
     ControlInformation ci;
     count += ci.load(&ptr[count], ptrMax);
 
-    //this->mapping = ci.getUint("mapping");
-    this->mapping = MAPPING2;
-    //this->sizeStrings = ci.getUint("sizeStrings");
+    this->mapping = ci.getUint("mapping");
+    //this->mapping = MAPPING2;
+    this->sizeStrings = ci.getUint("sizeStrings");
 }
 
 void BaseFourSectionDictionary::loadShared(unsigned char *ptr, unsigned char *ptrMax, size_t& count, IntermediateListener& iListener)
