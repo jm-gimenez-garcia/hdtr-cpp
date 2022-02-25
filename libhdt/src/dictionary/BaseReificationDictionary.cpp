@@ -372,77 +372,7 @@ unsigned int BaseReificationDictionary::getGlobalId(unsigned int mapping_type, u
 // id is the global ID in the ReificationDictionary and the return value is the local id in the Triples/Graphs Dictionary
 unsigned int BaseReificationDictionary::getLocalId(unsigned int id, TripleComponentRole position)const
 {
-	// cout << "we reach here" << endl;
-	switch(position){
-		case SUBJECT:
-		// cout << "subject" << endl;
-			if(id > 0 && id <= Tsh)
-				return id;
-			else if (id <= Tsh + Gsh)
-				return id-Tsh;
-			else if (id <= Tsh + Gsh + Tsubj)
-				return id-Tsh-Gsh;
-			else if (id <= Tsh + Gsh + Tsubj + Gsubj)
-				return id-Tsh-Gsh-Tsubj;
-			else
-				throw std::logic_error("getLocalId:Id too high to be a subject");
-			break;
-		case OBJECT:
-		// cout << "object=" << id << endl;
-			if(id <= Tsh)
-				return id;
-			else if (id <= Tsh + Gsh)
-				return id-Tsh;
-			else if (this->getMapping() == MAPPING2) {
-				if (id <= Tsh + Gsh + Tobj)
-					return id-Tsh-Gsh;
-				else if (id <= Tsh + Gsh + Tobj + Gobj)
-					return id-Tsh-Gsh-Tobj;
-			}
-			else if (this->getMapping() == MAPPING1) {
-				if (id <= Tsh + Gsh + Tsubj + Tobj)
-					return id-Tsh-Gsh-Tsubj;
-				else if (id <= Tsh + Gsh + Tsubj + Tobj + Gsubj + Gobj)
-					return id-Tsh-Gsh-Tsubj-Tobj-Gsubj;
-			} else {
-				throw std::logic_error("getLocalId:Unkown type of mapping");
-			}
-		case PREDICATE:
-		// cout << "predicate" << endl;
-			if (id <= getTriplesDictionaryPtr()->getNpredicates())
-				return id;
-			else
-				throw std::logic_error("getLocalId:Id too high to be a predicate");
-			break;
-		case GRAPH:
-		// cout << "graph" << endl;
-			if (this->getMapping() == MAPPING2) {
-				if(id > 0 && id <= Gsh)
-					return id;
-				else if (id <= Gsh + Gsubj)
-					return id-Gsh;
-				else if (id <= Gsh + Gsubj + Gobj)
-					return id-Gsh-Gsubj;
-				else if (id <= Gsh + Gsubj + Gobj + Gun)
-					return id-Gsh-Gsubj-Gobj;
-				else
-					throw std::logic_error("getLocalId:Id too high to be a graph");
-			} else if (this->getMapping() == MAPPING1) {
-				if(id > 0 && id <= Tsh + Gsh)
-					return id-Tsh;
-				else if (id <= Tsh + Gsh + Tsubj+ Gsubj)
-					return id-Tsh-Gsh-Tsubj;
-				else if (id <= Tsh + Gsh + Tsubj + Gsubj + Tobj + Gobj)
-					return id-Tsh-Gsh-Tsubj-Gsubj-Tobj;
-				else if (id <= Tsh + Gsh + Tsubj + Gsubj + Tobj + Gobj + Gun)
-					return id-Tsh-Gsh-Tsubj-Gsubj-Tobj-Gobj;
-				else
-					throw std::logic_error("getLocalId:Id too high to be a graph");
-			} else
-				throw std::logic_error("getLocalId:Unkown type of mapping");
-			break;
-	}
-	return 0;
+	return getLocalId(this->getMapping(), id, position);
 }
 
 
@@ -525,9 +455,81 @@ unsigned int BaseReificationDictionary::getLocalId(unsigned int id, TripleCompon
 // }
 
 
-unsigned int BaseReificationDictionary::getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position)const{
-	return BaseReificationDictionary::getLocalId(id, position);
+unsigned int BaseReificationDictionary::getLocalId(unsigned int mapping, unsigned int id, TripleComponentRole position)const
+{
+	// cout << "we reach here" << endl;
+	switch(position){
+		case SUBJECT:
+		// cout << "subject" << endl;
+			if(id > 0 && id <= Tsh)
+				return id;
+			else if (id <= Tsh + Gsh)
+				return id-Tsh;
+			else if (id <= Tsh + Gsh + Tsubj)
+				return id-Tsh-Gsh;
+			else if (id <= Tsh + Gsh + Tsubj + Gsubj)
+				return id-Tsh-Gsh-Tsubj;
+			else
+				throw std::logic_error("getLocalId:Id too high to be a subject");
+			break;
+		case OBJECT:
+		// cout << "object=" << id << endl;
+			if(id <= Tsh)
+				return id;
+			else if (id <= Tsh + Gsh)
+				return id-Tsh;
+			else if (mapping == MAPPING2) {
+				if (id <= Tsh + Gsh + Tobj)
+					return id-Tsh-Gsh;
+				else if (id <= Tsh + Gsh + Tobj + Gobj)
+					return id-Tsh-Gsh-Tobj;
+			}
+			else if (mapping == MAPPING1) {
+				if (id <= Tsh + Gsh + Tsubj + Tobj)
+					return id-Tsh-Gsh-Tsubj;
+				else if (id <= Tsh + Gsh + Tsubj + Tobj + Gsubj + Gobj)
+					return id-Tsh-Gsh-Tsubj-Tobj-Gsubj;
+			} else {
+				throw std::logic_error("getLocalId:Unkown type of mapping");
+			}
+		case PREDICATE:
+		// cout << "predicate" << endl;
+			if (id <= getTriplesDictionaryPtr()->getNpredicates())
+				return id;
+			else
+				throw std::logic_error("getLocalId:Id too high to be a predicate");
+			break;
+		case GRAPH:
+		// cout << "graph" << endl;
+			if (mapping == MAPPING2) {
+				if(id > 0 && id <= Gsh)
+					return id;
+				else if (id <= Gsh + Gsubj)
+					return id-Gsh;
+				else if (id <= Gsh + Gsubj + Gobj)
+					return id-Gsh-Gsubj;
+				else if (id <= Gsh + Gsubj + Gobj + Gun)
+					return id-Gsh-Gsubj-Gobj;
+				else
+					throw std::logic_error("getLocalId:Id too high to be a graph");
+			} else if (mapping == MAPPING1) {
+				if(id > 0 && id <= Tsh + Gsh)
+					return id-Tsh;
+				else if (id <= Tsh + Gsh + Tsubj+ Gsubj)
+					return id-Tsh-Gsh-Tsubj;
+				else if (id <= Tsh + Gsh + Tsubj + Gsubj + Tobj + Gobj)
+					return id-Tsh-Gsh-Tsubj-Gsubj-Tobj;
+				else if (id <= Tsh + Gsh + Tsubj + Gsubj + Tobj + Gobj + Gun)
+					return id-Tsh-Gsh-Tsubj-Gsubj-Tobj-Gobj;
+				else
+					throw std::logic_error("getLocalId:Id too high to be a graph");
+			} else
+				throw std::logic_error("getLocalId:Unkown type of mapping");
+			break;
+	}
+	return 0;
 }
+
 
 unsigned int BaseReificationDictionary::getMaxSubjectID()const{
 	return getNsubjects(); 

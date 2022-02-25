@@ -128,6 +128,7 @@ public:
 				else throw std::logic_error("Incorrect mapping " + getMapping());
 		}
 	};
+
 	std::function<unsigned int (unsigned int,TripleComponentRole)> globalIdToRoleId = [this](unsigned int dict_id, TripleComponentRole pos){
 		switch(pos){
 			case PREDICATE:
@@ -164,7 +165,6 @@ public:
 				else throw std::logic_error("Incorrect mapping " + getMapping());
 		}	
 	};
-
 
 
 protected:
