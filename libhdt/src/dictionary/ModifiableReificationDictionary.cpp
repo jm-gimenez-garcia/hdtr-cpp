@@ -71,7 +71,7 @@ unsigned int ModifiableReificationDictionary::insert(const std::string & str, co
 			//cout << " Add new predicate: " << str.c_str() << endl;
 
 			hashPredicate[entry->str] = entry;
-			triplesModifDict->push_back(entry, NOT_SHARED_PREDICATE); // push_back set also entry->id for PREDICATE only
+			triplesModifDict->push_back(entry, NOT_SHARED_PREDICATES); // push_back set also entry->id for PREDICATE only
 			return entry->id;
 		}
 	}
@@ -169,25 +169,25 @@ void ModifiableReificationDictionary::insert(const string& str, const Dictionary
 		triplesModifDict->push_back(entry, pos);
 
 	switch(pos) {
-	case SHARED_SUBJECT:
-	case SHARED_OBJECT:
-	case SHARED_SUBJECT_GRAPH:
-	case SHARED_OBJECT_GRAPH:
+	case SHARED_SUBJECTS:
+	case SHARED_OBJECTS:
+	case SHARED_SUBJECTS_GRAPHS:
+	case SHARED_OBJECTS_GRAPHS:
 		//entry->id = subjects_shared.size();
 		hashSubject[entry->str] = entry;
 		hashObject[entry->str] = entry;
 		break;
-	case NOT_SHARED_SUBJECT:
-	case NOT_SHARED_SUBJECT_GRAPH:
+	case NOT_SHARED_SUBJECTS:
+	case NOT_SHARED_SUBJECTS_GRAPHS:
 		//entry->id = subjects_shared.size()+subjects_not_shared.size();
 		hashSubject[entry->str] = entry;
 		break;
-	case NOT_SHARED_OBJECT:
-	case NOT_SHARED_OBJECT_GRAPH:
+	case NOT_SHARED_OBJECTS:
+	case NOT_SHARED_OBJECTS_GRAPHS:
 		//entry->id = subjects_shared.size()+objects_not_shared.size();
 		hashObject[entry->str] = entry;
 		break;
-	case UNUSED_GRAPH:
+	case GRAPHS_UNUSED:
 		break;
 	default:
 		throw std::runtime_error("ModifiableReificationDictionary::insert : uknown DictionarySection");
@@ -214,10 +214,10 @@ void ModifiableReificationDictionary::split(ProgressListener *listener) {
 	
 			if(obj_it == hashObject.end()) {
 				// Only subject in triples dictionary
-				triplesModifDict->push_back(subj_it->second, NOT_SHARED_SUBJECT);
+				triplesModifDict->push_back(subj_it->second, NOT_SHARED_SUBJECTS);
 			} else {
 				// subject+object in triples dictionary
-				triplesModifDict->push_back(subj_it->second, SHARED_SUBJECT);
+				triplesModifDict->push_back(subj_it->second, SHARED_SUBJECTS);
 			}
 		}else{
 			//cout << "Check Subj: " << subj_it->first << endl;
@@ -225,10 +225,10 @@ void ModifiableReificationDictionary::split(ProgressListener *listener) {
 	
 			if(other==hashObject.end()) {
 				// Only subject in graphs dictionary
-				graphsModifDict->push_back(subj_it->second, NOT_SHARED_SUBJECT_GRAPH);
+				graphsModifDict->push_back(subj_it->second, NOT_SHARED_SUBJECTS_GRAPHS);
 			} else {
 				// subject+object in graphs dictionary
-				graphsModifDict->push_back(subj_it->second, SHARED_SUBJECT_GRAPH);
+				graphsModifDict->push_back(subj_it->second, SHARED_SUBJECTS_GRAPHS);
 			}
 			NOTIFYCOND(listener, "Extracting shared subjects", count, total);
 		}
@@ -243,10 +243,10 @@ void ModifiableReificationDictionary::split(ProgressListener *listener) {
 			DictEntryIt grIt = hashGraph.find(obj_it->first);
 			if(grIt==hashGraph.end()){
 				// Only object in triples dictionary
-				triplesModifDict->push_back(obj_it->second, NOT_SHARED_OBJECT);
+				triplesModifDict->push_back(obj_it->second, NOT_SHARED_OBJECTS);
 			}else{
 				// Only object in graphs dictionary
-				graphsModifDict->push_back(obj_it->second, NOT_SHARED_OBJECT_GRAPH);
+				graphsModifDict->push_back(obj_it->second, NOT_SHARED_OBJECTS_GRAPHS);
 			}
 		}
 		count++;
@@ -259,7 +259,7 @@ void ModifiableReificationDictionary::split(ProgressListener *listener) {
 		DictEntryIt objIt = hashObject.find(gr_it->first);
 		if(subjIt==hashSubject.end() && objIt==hashObject.end()){
 			// unused graph in graphs dictionary
-			graphsModifDict->push_back(gr_it->second, UNUSED_GRAPH);
+			graphsModifDict->push_back(gr_it->second, GRAPHS_UNUSED);
 		}
 	}
 	count++;

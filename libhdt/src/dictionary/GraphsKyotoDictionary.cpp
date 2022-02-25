@@ -75,7 +75,7 @@ unsigned int GraphsKyotoDictionary::getGlobalId(unsigned int mapping, unsigned i
 
 	switch(position)
 	{
-		case UNUSED_GRAPH:
+		case GRAPHS_UNUSED:
 			if(mapping==MAPPING1)
 				return shared.count()+subjects.count()+objects.count()+id+1;
 			else if(mapping==MAPPING2)
@@ -86,10 +86,10 @@ unsigned int GraphsKyotoDictionary::getGlobalId(unsigned int mapping, unsigned i
 			else
 				throw std::runtime_error("Unknown mapping");
 			break;
-		case NOT_SHARED_SUBJECT_GRAPH:
-		case NOT_SHARED_OBJECT_GRAPH:
-		case SHARED_OBJECT_GRAPH:
-		case SHARED_SUBJECT_GRAPH:
+		case NOT_SHARED_SUBJECTS_GRAPHS:
+		case NOT_SHARED_OBJECTS_GRAPHS:
+		case SHARED_OBJECTS_GRAPHS:
+		case SHARED_SUBJECTS_GRAPHS:
 			return BaseKyotoDictionary::getGlobalId(mapping, id, position);
 		default:
 			throw runtime_error("Invalid DictionarySection in GraphsDictionary");

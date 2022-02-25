@@ -101,23 +101,23 @@ unsigned int BaseFourSectionDictionary::stringToId(const string &key, const Trip
 		ret = shared->locate((const unsigned char *)key.c_str(), key.length());
 		if( ret != 0) 
 		{
-			return getGlobalId(ret,SHARED_SUBJECT);
+			return getGlobalId(ret,SHARED_SUBJECTS);
 		}
 		ret = subjects->locate((const unsigned char *)key.c_str(), key.length());
 		if(ret != 0) 
-			return getGlobalId(ret,NOT_SHARED_SUBJECT);
+			return getGlobalId(ret,NOT_SHARED_SUBJECTS);
         	return 0;
 	}
 	else if (position==OBJECT){
 		ret = shared->locate((const unsigned char *)key.c_str(), key.length());
 		if( ret != 0) 
 		{
-			return getGlobalId(ret,SHARED_OBJECT);
+			return getGlobalId(ret,SHARED_OBJECTS);
 		}
 		ret = objects->locate((const unsigned char *)key.c_str(), key.length());
 		if(ret != 0) 
 		{
-			return getGlobalId(ret,NOT_SHARED_OBJECT);
+			return getGlobalId(ret,NOT_SHARED_OBJECTS);
 		}
         return 0;
 	}
@@ -423,17 +423,17 @@ csd::CSD *BaseFourSectionDictionary::getDictionarySection(unsigned int id, Tripl
 csd::CSD *BaseFourSectionDictionary::getDictionarySection(DictionarySection section) const{
 	switch(section){
 		case SHARED:
-		case SHARED_OBJECT:
-		case SHARED_SUBJECT:
-		case SHARED_GRAPH:
-		case SHARED_SUBJECT_GRAPH:
-		case SHARED_OBJECT_GRAPH:
+		case SHARED_OBJECTS:
+		case SHARED_SUBJECTS:
+		case SHARED_GRAPHS:
+		case SHARED_SUBJECTS_GRAPHS:
+		case SHARED_OBJECTS_GRAPHS:
 			return shared;
-		case NOT_SHARED_SUBJECT:
-		case NOT_SHARED_SUBJECT_GRAPH:
+		case NOT_SHARED_SUBJECTS:
+		case NOT_SHARED_SUBJECTS_GRAPHS:
 			return subjects;
-		case NOT_SHARED_OBJECT:
-		case NOT_SHARED_OBJECT_GRAPH:
+		case NOT_SHARED_OBJECTS:
+		case NOT_SHARED_OBJECTS_GRAPHS:
 			return objects;
 		default:
 			throw runtime_error("Item not found");
@@ -442,23 +442,30 @@ csd::CSD *BaseFourSectionDictionary::getDictionarySection(DictionarySection sect
 
 unsigned int BaseFourSectionDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) const{
 	switch (position) {
-		case NOT_SHARED_SUBJECT:
-		case NOT_SHARED_SUBJECT_GRAPH:
-			if(id > getNsubjects() - getNshared())
-				throw std::logic_error("NOT_SHARED_SUBJECT idx exceeds dimension");
-			return shared->getLength()+id;
-		case NOT_SHARED_OBJECT:
-		case NOT_SHARED_OBJECT_GRAPH:
-			if(id > getNobjects() - getNshared())
-				throw std::logic_error("NOT_SHARED_OBJECT idx exceeds dimension");
-			return (mapping==MAPPING2) ? shared->getLength()+id : shared->getLength()+subjects->getLength()+id;
-		case SHARED_SUBJECT:
-		case SHARED_OBJECT:
-		case SHARED_SUBJECT_GRAPH:
-		case SHARED_OBJECT_GRAPH:
+		case SHARED:
+		case SHARED_OBJECTS:
+		case SHARED_SUBJECTS:
+		case SHARED_TRIPLES:
+		case SHARED_OBJECTS_TRIPLES:
+		case SHARED_SUBJECTS_TRIPLES:
+		case SHARED_GRAPHS:
+		case SHARED_SUBJECTS_GRAPHS:
+		case SHARED_OBJECTS_GRAPHS:
 			if(id > getNshared())
 				throw std::logic_error("SHARED_OBJECT idx exceeds dimension");
 			return id;
+		case NOT_SHARED_SUBJECTS:
+		case NOT_SHARED_SUBJECTS_TRIPLES:
+		case NOT_SHARED_SUBJECTS_GRAPHS:
+			if(id > getNsubjects() - getNshared())
+				throw std::logic_error("NOT_SHARED_SUBJECT idx exceeds dimension");
+			return shared->getLength()+id;
+		case NOT_SHARED_OBJECTS:
+		case NOT_SHARED_OBJECTS_TRIPLES:
+		case NOT_SHARED_OBJECTS_GRAPHS:
+			if(id > getNobjects() - getNshared())
+				throw std::logic_error("NOT_SHARED_OBJECT idx exceeds dimension");
+			return (mapping==MAPPING2) ? shared->getLength()+id : shared->getLength()+subjects->getLength()+id;
 		default:
 			throw runtime_error("Item not found");
 			return 0;

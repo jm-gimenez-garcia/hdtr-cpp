@@ -55,7 +55,7 @@ unsigned int TriplesLiteralDictionary::stringToId(const std::string &key, const 
 		unsigned int ret;
 		ret = predicates->locate((const unsigned char *) key.c_str(), key.length());
 		if (ret != 0) 
-			return getGlobalId(ret, NOT_SHARED_PREDICATE);
+			return getGlobalId(ret, NOT_SHARED_PREDICATES);
 	}
     return 0;
 }
@@ -157,12 +157,12 @@ csd::CSD *TriplesLiteralDictionary::getDictionarySection(unsigned int id, Triple
 unsigned int TriplesLiteralDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) const{
 	switch(position)
 	{
-		case NOT_SHARED_PREDICATE:
+		case NOT_SHARED_PREDICATES:
 			return id;
-		case SHARED_SUBJECT:
-		case NOT_SHARED_SUBJECT:
-		case SHARED_OBJECT:
-		case NOT_SHARED_OBJECT:
+		case SHARED_SUBJECTS:
+		case NOT_SHARED_SUBJECTS:
+		case SHARED_OBJECTS:
+		case NOT_SHARED_OBJECTS:
 			return BaseLiteralDictionary::getGlobalId(mapping, id, position);
 		default:
 			throw runtime_error("Invalid DictionarySection in TriplesDictionary");

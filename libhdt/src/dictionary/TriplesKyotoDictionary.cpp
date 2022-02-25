@@ -44,7 +44,7 @@ unsigned int TriplesKyotoDictionary::stringToId(const std::string &key, const Tr
 		if(key.length()==0 || key.at(0) == '?') 
 			return 0;
 		if(predicates.get((const char *)key.c_str(),(size_t)key.length(), (char *) &ret, sizeof(ret)))
-			return getGlobalId(ret, NOT_SHARED_PREDICATE);
+			return getGlobalId(ret, NOT_SHARED_PREDICATES);
 		else
 			return 0;
 	}
@@ -82,12 +82,12 @@ unsigned int TriplesKyotoDictionary::insert(const std::string & str, const Tripl
 unsigned int TriplesKyotoDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) const{
 	switch(position)
 	{
-		case NOT_SHARED_PREDICATE:
+		case NOT_SHARED_PREDICATES:
 			return id+1;
-		case SHARED_SUBJECT:
-		case NOT_SHARED_SUBJECT:
-		case SHARED_OBJECT:
-		case NOT_SHARED_OBJECT:
+		case SHARED_SUBJECTS:
+		case NOT_SHARED_SUBJECTS:
+		case SHARED_OBJECTS:
+		case NOT_SHARED_OBJECTS:
 			return BaseKyotoDictionary::getGlobalId(mapping, id, position);
 		default:
 			throw runtime_error("Invalid DictionarySection in TriplesDictionary");
