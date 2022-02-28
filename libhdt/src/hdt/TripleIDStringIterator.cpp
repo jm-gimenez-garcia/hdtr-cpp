@@ -26,19 +26,17 @@ TripleString *TripleIDStringIterator::next() {
 	const TripleID *tid = iterator->next();
 	if(tid->hasGraph())
 	{
-		// StopWatch st;
 		const QuadID qid = tid->to_QuadID();
 		// cout << tid->to_QuadID().getSubject() << "," << tid->to_QuadID().getPredicate() << ","  << tid->to_QuadID().getObject() << "," <<  tid->to_QuadID().getGraph() << endl;
 		dict->quadIDtoQuadString(&qid, &result_qs);
-		// cerr << "Time to retrieve Quad String: " << st << endl;
+		// cout << result_qs.getSubject() << "," << result_qs.getPredicate() << ","  << result_qs.getObject() << "," <<  result_qs.getGraph() << endl;
 		return &result_qs;
 	}
 	else
 	{
-		// StopWatch st;
 		// cout << tid->to_QuadID().getSubject() << "," << tid->to_QuadID().getPredicate() << ","  << tid->to_QuadID().getObject() << endl;
 		dict->tripleIDtoTripleString(tid, &result_ts);
-		// cerr << "Time to retrieve Triple String: " << st << endl;
+		// cout << result_ts.getSubject() << "," << result_ts.getPredicate() << ","  << result_ts.getObject() << endl;
 		return &result_ts;
 	}
 }

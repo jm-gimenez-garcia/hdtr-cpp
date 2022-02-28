@@ -2,6 +2,7 @@
 #define BITMAPQUADITERATORWRAPPER_HPP
 
 #include <Iterator.hpp>
+#include "../dictionary/TripleTranslator.hpp"
 
 namespace hdt{
 class BitmapQuads;
@@ -9,7 +10,7 @@ class Permutation;
 class BitSequence375;
 class TripleID;
 
-class BitmapQuadIteratorWrapper : public IteratorTripleID{
+class BitmapQuadIteratorWrapper : public TripleTranslator, public IteratorTripleID{
 	private:
 		IteratorTripleID* it;
 		BitmapQuads* quads;

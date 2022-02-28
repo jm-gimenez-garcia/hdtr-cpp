@@ -51,11 +51,7 @@ unsigned int GraphsFourSectionDictionary::stringToId(const string &key, const Tr
 
 	switch (position)
 	{
-	case GRAPHS:
-	case GRAPHS_SHARED:
-	case GRAPHS_SUBJECTS:
-	case GRAPHS_OBJECTS:
-	case GRAPHS_UNUSED:
+	case GRAPH:
 		ret = shared->locate((const unsigned char *)key.c_str(), key.length());
 		if (ret!=0) return ret;
 		ret = subjects->locate((const unsigned char *)key.c_str(), key.length());

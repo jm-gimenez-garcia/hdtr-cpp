@@ -112,9 +112,9 @@ public:
 					else
 						throw std::logic_error("Incorrect array_id for OBJECT");
 				}
-				else throw std::logic_error("Incorrect mapping " + getMapping());
+				else throw std::logic_error("Incorrect mapping [" + std::to_string(getMapping()) + "] for OBJECT ID [" +  std::to_string(arr_id) + "]");
 			case GRAPH:
-				if (getMapping() == MAPPING2 && arr_id>=1 && arr_id<+getNgraphs()) return arr_id;
+				if (getMapping() == MAPPING2 && arr_id>=1 && arr_id<=getNgraphs()) return arr_id;
 				else if (getMapping() == MAPPING1) {
 					if (arr_id>=1 && arr_id <= Gsh)
 						return arr_id + Tsh;
@@ -125,7 +125,7 @@ public:
 					else
 						throw std::logic_error("Incorrect array_id for GRAPH");
 				}
-				else throw std::logic_error("Incorrect mapping " + getMapping());
+				else throw std::logic_error("Incorrect mapping [" + std::to_string(getMapping()) + "] for graph ID [" +  std::to_string(arr_id) + "]");
 		}
 	};
 
@@ -148,11 +148,11 @@ public:
 					else if (dict_id>getNsubjects() && dict_id<=getMaxObjectID()) return dict_id-Tsubj-Gsubj;
 					else throw std::logic_error("Incorrect dict_id for OBJECT");
 				}
-				else throw std::logic_error("Incorrect mapping " + getMapping());
+				else throw std::logic_error("Incorrect mapping [" + std::to_string(getMapping()) + "] for OBJECT ID [" +  std::to_string(dict_id) + "]");
 
 			case GRAPH:
-				if (getMapping() == MAPPING2 && dict_id>=1 && dict_id<+getNgraphs()) return dict_id;
-				if (getMapping() == MAPPING2) {
+				if (getMapping() == MAPPING2 && dict_id>=1 && dict_id<=getNgraphs()) return dict_id;
+				if (getMapping() == MAPPING1) {
 					if (dict_id > Tsh && dict_id <= Tsh+Gsh)
 						return  dict_id - Tsh;
 					else if (dict_id > Tsh+Gsh+Tsubj && dict_id <= Tsh+Gsh+Tsubj+Gsubj)
@@ -162,7 +162,7 @@ public:
 					else
 						throw std::logic_error("Incorrect dict_id for GRAPH");
 				}
-				else throw std::logic_error("Incorrect mapping " + getMapping());
+				else throw std::logic_error("Incorrect mapping [" + std::to_string(getMapping()) + "] for graph ID [" +  std::to_string(dict_id) + "]");
 		}	
 	};
 

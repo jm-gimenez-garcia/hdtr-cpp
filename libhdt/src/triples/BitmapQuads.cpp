@@ -63,7 +63,7 @@ void BitmapQuads::load(ModifiableTriples &triples, ProgressListener *listener/*=
 		if (qid.hasGraph())
 		{
 			// gr = toRoleID(qid.getGraph(), GRAPH); // returns 0 if triple is a TripleID
-			gr = qid.getGraph();
+			gr = toRoleID(qid.getGraph(),GRAPH);
 		}
 		else
 			gr = 0;
@@ -141,7 +141,6 @@ void BitmapQuads::load(ModifiableTriples &triples, ProgressListener *listener/*=
 
 
 	permutation = new PermutationMRRR(permId_tmp, 8);
-
 
 
 #if 0

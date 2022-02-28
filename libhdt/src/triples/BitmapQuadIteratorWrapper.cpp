@@ -15,8 +15,8 @@ BitmapQuadIteratorWrapper::BitmapQuadIteratorWrapper(BitmapQuads* bmq, IteratorT
 	returnTriple(NULL),
 	pattG(patternG),
 	hasNext_called(false),
-	hasPrevious_called(false){
-	}
+	hasPrevious_called(false)
+	{toGlobalID = bmq->getToGlobalIDFunction();}
 
 BitmapQuadIteratorWrapper::~BitmapQuadIteratorWrapper(){
 	if (previousTriple)
@@ -74,7 +74,7 @@ bool BitmapQuadIteratorWrapper::BitmapQuadIteratorWrapper::hasNext()
 		}
 
 		if (gr)
-			tid_ptr = new QuadID(*tid, gr);
+			tid_ptr = new QuadID(*tid, toGlobalID(gr,GRAPH));
 		else
 			tid_ptr = new TripleID(*tid);
 	

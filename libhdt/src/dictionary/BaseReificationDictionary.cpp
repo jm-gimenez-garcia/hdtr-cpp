@@ -143,7 +143,7 @@ unsigned int BaseReificationDictionary::getGlobalId(unsigned int mapping_type, u
 				if (mapping_type==MAPPING2) {
 					ret=locid+Tsh+Gsh;
 				} else if (mapping_type==MAPPING1) {
-					ret=locid+Tsh+Gsh+Tsubj;
+					ret=locid+Tsh+Gsh+Tsubj+Gsubj;
 				} else throw std::logic_error("Unkown type of mapping");
 			}
 			else {
@@ -636,8 +636,8 @@ std::string BaseReificationDictionary::idToString(const unsigned int id, const T
 					throw std::logic_error("idToString:Id too high to be a subject");
 			}
 			else if (this->getMapping() == MAPPING1) {
-				if (id <= Tsh + Gsh + Tsubj + Tobj)
-					return getTriplesDictionaryPtr()->getObjects()->getStr(id-Tsh-Gsh-Tsubj);
+				if (id <= Tsh + Gsh + Tsubj + Gsubj + Tobj)
+					return getTriplesDictionaryPtr()->getObjects()->getStr(id-Tsh-Gsh-Tsubj-Gsubj);
 				else if (id <= Tsh + Gsh + Tsubj + Tobj + Gsubj + Gobj)
 					return getGraphsDictionaryPtr()->getObjects()->getStr(id-Tsh-Gsh-Tsubj-Tobj-Gsubj);
 				else
@@ -664,13 +664,13 @@ std::string BaseReificationDictionary::idToString(const unsigned int id, const T
 				else
 					throw std::logic_error("idToString:Id too high to be a graph");
 			} else if (this->getMapping() == MAPPING1) {
-				if(id > 0 && id <= Gsh)
+				if(id > 0 && id <= Tsh + Gsh)
 					return getGraphsDictionaryPtr()->getShared()->getStr(id-Tsh);
-				else if (id <= Gsh + Gsubj)
+				else if (id <= Tsh + Gsh + Tsubj + Gsubj)
 					return getGraphsDictionaryPtr()->getSubjects()->getStr(id-Tsh-Gsh-Tsubj);
-				else if (id <= Gsh + Gsubj + Gobj)
+				else if (id <= Tsh + Gsh + Tsubj + Gsubj + Gobj)
 					return getGraphsDictionaryPtr()->getObjects()->getStr(id-Tsh-Gsh-Tsubj-Gsubj-Tobj);
-				else if (id <= Gsh + Gsubj + Gobj + Gun)
+				else if (id <= Tsh + Gsh + Tsubj + Gsubj + Gobj + Gun)
 					return getGraphsDictionaryPtr()->getGraphs()->getStr(id-Tsh-Gsh-Tsubj-Gsubj-Tobj-Gobj);
 				else
 					throw std::logic_error("idToString:Id too high to be a graph");
