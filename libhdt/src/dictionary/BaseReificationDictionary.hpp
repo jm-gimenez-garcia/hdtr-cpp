@@ -114,7 +114,7 @@ public:
 				}
 				else throw std::logic_error("Incorrect mapping " + getMapping());
 			case GRAPH:
-				if (getMapping() == MAPPING2 && arr_id>=1 && arr_id<+getNgraphs()) return arr_id;
+				if (getMapping() == MAPPING2 && arr_id>=1 && arr_id<=getNgraphs()) return arr_id;
 				else if (getMapping() == MAPPING1) {
 					if (arr_id>=1 && arr_id <= Gsh)
 						return arr_id + Tsh;
@@ -151,7 +151,7 @@ public:
 				else throw std::logic_error("Incorrect mapping " + getMapping());
 
 			case GRAPH:
-				if (getMapping() == MAPPING2 && dict_id>=1 && dict_id<+getNgraphs()) return dict_id;
+				if (getMapping() == MAPPING2 && dict_id>=1 && dict_id<=getNgraphs()) return dict_id;
 				if (getMapping() == MAPPING2) {
 					if (dict_id > Tsh && dict_id <= Tsh+Gsh)
 						return  dict_id - Tsh;

@@ -143,7 +143,7 @@ unsigned int BaseReificationDictionary::getGlobalId(unsigned int mapping_type, u
 				if (mapping_type==MAPPING2) {
 					ret=locid+Tsh+Gsh;
 				} else if (mapping_type==MAPPING1) {
-					ret=locid+Tsh+Gsh+Tsubj;
+					ret=locid+Tsh+Gsh+Tsubj+Gsubj;
 				} else throw std::logic_error("Unkown type of mapping");
 			}
 			else {
