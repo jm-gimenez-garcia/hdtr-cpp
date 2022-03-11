@@ -59,6 +59,7 @@ void help() {
 	cout << "$ hdtSearch [options] <hdtfile> " << endl;
 	cout << "\t-h\t\t\tThis help" << endl;
 	cout << "\t-q\t<query>\t\tLaunch query and exit." << endl;
+	cout << "\t-i\t<input>\t\tLaunch queries from input file." << endl;
 	cout << "\t-o\t<output>\tSave query output to file." << endl;
     cout << "\t-f\t<offset>\tLimit the result list starting after the offset." << endl;
 	cout << "\t-m\t\t\tDo not show results, just measure query time." << endl;
@@ -136,18 +137,21 @@ void iterate(HDT *hdt, char *query, ostream &out, bool measure, uint32_t offset)
 
 int main(int argc, char **argv) {
 	int c;
-	string query, inputFile, outputFile;
+	string query, inputFile, outputFile, queryFile;
     stringstream sstream;
     uint32_t offset = 0;
 	bool measure = false;
 
-	while( (c = getopt(argc,argv,"hq:o:f:mV"))!=-1) {
+	while( (c = getopt(argc,argv,"hq:i:o:f:mV"))!=-1) {
 		switch(c) {
 		case 'h':
 			help();
 			break;
 		case 'q':
 			query = optarg;
+			break;
+		case 'i':
+			queryFile = optarg;
 			break;
 		case 'o':
 			outputFile = optarg;
@@ -194,7 +198,16 @@ int main(int argc, char **argv) {
 			out = &cout;
 		}
 
-		if(query!="") {
+		if(queryFile!="") {
+			ifstream queryStream(queryFile);
+			string line;
+			while (getline(queryStream,line))
+			{
+				char linechar[1024*10];
+				strcpy(linechar, line.c_str());
+				iterate(hdt, linechar, *out, measure, offset);
+			}
+		} else if(query!="") {
 			// Supplied query, search and exit.
 			iterate(hdt, (char*)query.c_str(), *out, measure, offset);
 		} else {
