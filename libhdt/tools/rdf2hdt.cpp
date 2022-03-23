@@ -224,9 +224,9 @@ int main(int argc, char **argv) {
 		globalTimer.stop();
 		vout << "HDT Successfully generated." << endl;
 		vout << "Total processing time: ";
-		vout << "Clock(" << globalTimer.getRealStr();
-		vout << ")  User(" << globalTimer.getUserStr();
-		vout << ")  System(" << globalTimer.getSystemStr() << ")" << endl;
+		vout << "Clock(" << globalTimer.getReal();
+		vout << ")  User(" << globalTimer.getUser();
+		vout << ")  System(" << globalTimer.getSystem() << ")" << endl;
 
 		if(generateIndex) {
 			hdt = HDTManager::indexedHDT(hdt, progress);
