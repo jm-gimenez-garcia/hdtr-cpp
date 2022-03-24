@@ -121,7 +121,7 @@ void iterate(HDT *hdt, char *query, ostream &out, bool measure, uint32_t offset)
 				out << *ts << endl;
 			numTriples++;
 		}
-		cerr << numTriples << " results in " << st << endl;
+		cerr << numTriples << " results in " << st.stopReal() << endl;
 		delete it;
 
 		interruptSignal=0;	// Interrupt caught, enable again.
@@ -182,7 +182,7 @@ int main(int argc, char **argv) {
 		StdoutProgressListener prog;
 		st.reset();
 		HDT *hdt = HDTManager::mapIndexedHDT(inputFile.c_str(), &prog);
-		cerr << endl << " HDT loaded in " << st << endl;
+		cerr << endl << " HDT loaded in " << st.stopReal() << endl;
 
 		ostream *out;
 		ofstream outF;

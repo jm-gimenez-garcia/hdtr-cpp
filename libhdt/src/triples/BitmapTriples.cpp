@@ -251,7 +251,7 @@ void BitmapTriples::generateIndex(ProgressListener *listener) {
     generateIndexMemory(&iListener);
    	//generateIndexMemoryFast(listener);
 
-	cerr << "Index generated in "<< global << endl;
+	cerr << "Index generated in "<< global.stopReal() << endl;
 }
 
 void BitmapTriples::generateIndexMemory(ProgressListener *listener) {
@@ -560,7 +560,7 @@ void BitmapTriples::generateIndexFast(ProgressListener *listener) {
     }
 #endif
 
-	cerr << "Index generated in " << st << endl;
+	cerr << "Index generated in " << st.stopReal() << endl;
 
 	cerr << "Num triples: " << getNumberOfElements() << endl;
 	cerr << "Order: " << getOrderStr(order) << endl;
