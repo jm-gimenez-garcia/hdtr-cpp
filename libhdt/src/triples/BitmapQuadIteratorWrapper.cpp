@@ -149,7 +149,7 @@ unsigned int BitmapQuadIteratorWrapper::getGraphID(const size_t triplePosition) 
 	if(bitmapPerm->access(triplePosition-1)!=0)
 		gr = perm->pi(bitmapPerm->rank1(triplePosition-1));
 		
-	return toGlobalID(gr,GRAPH);
+	return gr == 0 ? gr : toGlobalID(gr,GRAPH);
 }
 
 unsigned int BitmapQuadIteratorWrapper::getGraphID(const TripleID& tid){
@@ -208,8 +208,8 @@ unsigned int BitmapQuadIteratorWrapper::getGraphIDNewTriple(const TripleID& tid)
 
 	if(bitmapPerm->access(objPos)!=0)
 		gr = perm->pi(bitmapPerm->rank1(objPos));
-		
-	return toGlobalID(gr,GRAPH);
+	
+	return gr == 0 ? gr : toGlobalID(gr,GRAPH);
 }
 
 
