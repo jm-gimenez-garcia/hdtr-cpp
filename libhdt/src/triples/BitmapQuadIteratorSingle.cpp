@@ -23,7 +23,9 @@ BitmapQuadIteratorSingle::BitmapQuadIteratorSingle(BitmapQuads* bmq, QuadID patt
 	subj(0), pred(0), obj(0),
 	has_next(false), has_previous(false)
 	{
-		goToStart();}
+		toRoleID = bmq->getToRoleIDFunction();
+		goToStart();
+	}
 
 
 
@@ -54,7 +56,7 @@ void BitmapQuadIteratorSingle::goToStart(){
 	const int patG = pattern.getGraph();
 
 
-	const unsigned int numReifiedTriple = perm->revpi(patG)-1;
+	const unsigned int numReifiedTriple = perm->revpi(toRoleID(patG,GRAPH))-1;
 	const unsigned int posZ = bitmapPerm->select1(numReifiedTriple+1);
 	obj = quads->getAdjZ().get(posZ);
 

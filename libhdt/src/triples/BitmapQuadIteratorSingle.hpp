@@ -3,13 +3,14 @@
 
 #include <Iterator.hpp>
 #include <SingleQuad.hpp>
+#include "../dictionary/TripleTranslator.hpp"
 
 namespace hdt{
 class BitmapQuads;
 class Permutation;
 class BitSequence375;
 
-class BitmapQuadIteratorSingle : public IteratorTripleID{
+class BitmapQuadIteratorSingle : public TripleTranslator, public IteratorTripleID{
 	private:
 		BitmapQuads *quads;
 		Permutation* perm;
