@@ -74,7 +74,7 @@ bool BitmapQuadIteratorWrapper::BitmapQuadIteratorWrapper::hasNext()
 		}
 
 		if (gr)
-			tid_ptr = new QuadID(*tid, toGlobalID(gr,GRAPH));
+			tid_ptr = new QuadID(*tid, gr);
 		else
 			tid_ptr = new TripleID(*tid);
 	

@@ -585,6 +585,7 @@ unsigned int BaseReificationDictionary::stringToId(const std::string &key, Tripl
                 ret = getTriplesDictionaryPtr()->stringToId(key, position);
 				break;
 			case GRAPH:
+				cout << "stringToId:Id =" << std::to_string(ret);
 				if (this->getMapping()==MAPPING2) ret = getGraphsDictionaryPtr()->stringToId(key, position);
 				else if (this->getMapping() == MAPPING1) {
 					ret = getGraphsDictionaryPtr()->stringToId(key,position);
@@ -668,12 +669,12 @@ std::string BaseReificationDictionary::idToString(const unsigned int id, const T
 					return getGraphsDictionaryPtr()->getShared()->getStr(id-Tsh);
 				else if (id <= Tsh + Gsh + Tsubj + Gsubj)
 					return getGraphsDictionaryPtr()->getSubjects()->getStr(id-Tsh-Gsh-Tsubj);
-				else if (id <= Tsh + Gsh + Tsubj + Gsubj + Gobj)
+				else if (id <= Tsh + Gsh + Tsubj + Gsubj + Tobj + Gobj)
 					return getGraphsDictionaryPtr()->getObjects()->getStr(id-Tsh-Gsh-Tsubj-Gsubj-Tobj);
-				else if (id <= Tsh + Gsh + Tsubj + Gsubj + Gobj + Gun)
+				else if (id <= Tsh + Gsh + Tsubj + Gsubj + Tobj + Gobj + Gun)
 					return getGraphsDictionaryPtr()->getGraphs()->getStr(id-Tsh-Gsh-Tsubj-Gsubj-Tobj-Gobj);
 				else
-					throw std::logic_error("idToString:Id too high to be a graph");
+					throw std::logic_error("idToString:Id " + std::to_string(id) + " too high to be a graph");
 			} else throw std::logic_error("idToString:Unkown type of mapping");
 		break;
 	}
