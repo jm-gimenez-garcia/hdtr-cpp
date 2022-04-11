@@ -547,60 +547,64 @@ unsigned int BaseReificationDictionary::getMaxGraphID()const
 
 unsigned int BaseReificationDictionary::stringToId(const std::string &key, TripleComponentRole position)const
 {
-        unsigned int ret;
+	unsigned int ret;
 
-        if(key.length()==0) {
-			return 0;
-        }
-		bool sub_dict_is_triples;
-		
-        switch (position) {
-			case SUBJECT:
-                ret = getTriplesDictionaryPtr()->stringToId(key, position);
-				if( ret == 0) {
-                	ret = getGraphsDictionaryPtr()->stringToId(key,position);
-					if (ret != 0 && ret <= Gsh) ret += Tsh;
+	if(key.length()==0) {
+		return 0;
+	}
+	bool sub_dict_is_triples;
+	
+	switch (position) {
+		case SUBJECT:
+			ret = getTriplesDictionaryPtr()->stringToId(key, position);
+			if( ret == 0) {
+				ret = getGraphsDictionaryPtr()->stringToId(key,position);
+				if (ret != 0) {
+					if (ret <= Gsh) ret += Tsh;
 					else if (ret <= Gsh+Gsubj) ret += Tsh+Tsubj;
 					else throw std::logic_error("stringToId: ID " + std::to_string(ret) + " too high to be a subject.");
-				}
-				else if (ret <= Tsh); //do nothing, ret is already the correct ID
-				else if (ret <= Tsh+Tsubj) ret += Gsh;
-				else throw std::logic_error("stringToId: Subject ID " + std::to_string(ret) + " not found.");
-				break;
-			case OBJECT:
-                ret = getTriplesDictionaryPtr()->stringToId(key, position);
-				if( ret == 0) {
-                	ret = getGraphsDictionaryPtr()->stringToId(key,position);
-					if (ret != 0 && ret <= Gsh) ret += Tsh;
+				} 
+			}
+			else if (ret <= Tsh); //do nothing, ret is already the correct ID
+			else if (ret <= Tsh+Tsubj) ret += Gsh;
+			else throw std::logic_error("stringToId: Subject ID " + std::to_string(ret) + " not found.");
+			break;
+		case OBJECT:
+			ret = getTriplesDictionaryPtr()->stringToId(key, position);
+			if( ret == 0) {
+				ret = getGraphsDictionaryPtr()->stringToId(key,position);
+				if (ret != 0) {
+					if (ret <= Gsh) ret += Tsh;
 					else if (this->getMapping() == MAPPING2 && ret <= Gsh+Gobj) ret += Tsh+Tobj;
 					else if (this->getMapping() == MAPPING1 && ret <= Gsh+Gsubj+Gobj) ret += Tsh+Tsubj+Tobj;
 					else throw std::logic_error("stringToId: ID " + std::to_string(ret) + " too high to be an object.");
 				}
-				else if (ret <= Tsh); //do nothing, ret is already the correct ID
-				else if (this->getMapping() == MAPPING2 && ret <= Tsh+Tobj) ret += Gsh;
-				else if (this->getMapping() == MAPPING1 && ret <= Tsh+Tsubj+Tobj) ret += Gsh+Gsubj;
-				else throw std::logic_error("stringToId: Object ID " + std::to_string(ret) + " not found.");
-				break;
-			case PREDICATE:
-                ret = getTriplesDictionaryPtr()->stringToId(key, position);
-				break;
-			case GRAPH:
-				cout << "stringToId:Id =" << std::to_string(ret);
-				if (this->getMapping()==MAPPING2) ret = getGraphsDictionaryPtr()->stringToId(key, position);
-				else if (this->getMapping() == MAPPING1) {
-					ret = getGraphsDictionaryPtr()->stringToId(key,position);
-					if(ret <= Gsh) ret += Tsh;
-					else if (ret <= Gsh + Gsubj) ret += Tsh+Tsubj;
-					// else if (ret <= Gsh + Gsubj + Gobj) ret += Tsh+Tsubj+Tobj;
-					else if (ret <= Gsh + Gsubj + Gobj + Gun) ret += Tsh+Tsubj+Tobj;
-					else
-						throw std::logic_error("stringToId: Graph ID " + std::to_string(ret) + " not found.");
-				} else throw std::logic_error("idToString:Unkown type of mapping");
-				break;
-			default:
-                throw std::logic_error("stringToId: Unrecognised role");
-				break;
-        }
+			}
+			else if (ret <= Tsh); //do nothing, ret is already the correct ID
+			else if (this->getMapping() == MAPPING2 && ret <= Tsh+Tobj) ret += Gsh;
+			else if (this->getMapping() == MAPPING1 && ret <= Tsh+Tsubj+Tobj) ret += Gsh+Gsubj;
+			else throw std::logic_error("stringToId: Object ID " + std::to_string(ret) + " not found.");
+			break;
+		case PREDICATE:
+			ret = getTriplesDictionaryPtr()->stringToId(key, position);
+			break;
+		case GRAPH:
+			cout << "stringToId:Id =" << std::to_string(ret);
+			if (this->getMapping()==MAPPING2) ret = getGraphsDictionaryPtr()->stringToId(key, position);
+			else if (this->getMapping() == MAPPING1) {
+				ret = getGraphsDictionaryPtr()->stringToId(key,position);
+				if(ret <= Gsh) ret += Tsh;
+				else if (ret <= Gsh + Gsubj) ret += Tsh+Tsubj;
+				// else if (ret <= Gsh + Gsubj + Gobj) ret += Tsh+Tsubj+Tobj;
+				else if (ret <= Gsh + Gsubj + Gobj + Gun) ret += Tsh+Tsubj+Tobj;
+				else
+					throw std::logic_error("stringToId: Graph ID " + std::to_string(ret) + " not found.");
+			} else throw std::logic_error("idToString:Unkown type of mapping");
+			break;
+		default:
+			throw std::logic_error("stringToId: Unrecognised role");
+			break;
+	}
 	return ret;
 	// return getGlobalIdFromTrGrGlobalId(ret, position, sub_dict);	
 }
