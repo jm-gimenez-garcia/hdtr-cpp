@@ -384,10 +384,12 @@ unsigned int BaseReificationDictionary::stringToId(const std::string &key, Tripl
 			case SUBJECT:
                 ret = getTriplesDictionaryPtr()->stringToId(key, position);
 				if( ret == 0) {
-                	ret = getGraphsDictionaryPtr()->stringToId(key,position);
-					if (ret != 0 && ret <= Gsh) ret += Tsh;
-					else if (ret <= Gsh+Gsubj) ret += Tsh+Tsubj;
-					else throw std::logic_error("stringToId: ID " + std::to_string(ret) + " too high to be a subject.");
+					ret = getGraphsDictionaryPtr()->stringToId(key,position);
+					if (ret != 0) {
+						if (ret <= Gsh) ret += Tsh;
+						else if (ret <= Gsh+Gsubj) ret += Tsh+Tsubj;
+						else throw std::logic_error("stringToId: ID " + std::to_string(ret) + " too high to be a subject.");
+					} 
 				}
 				else if (ret <= Tsh); //do nothing, ret is already the correct ID
 				else if (ret <= Tsh+Tsubj) ret += Gsh;
@@ -396,11 +398,13 @@ unsigned int BaseReificationDictionary::stringToId(const std::string &key, Tripl
 			case OBJECT:
                 ret = getTriplesDictionaryPtr()->stringToId(key, position);
 				if( ret == 0) {
-                	ret = getGraphsDictionaryPtr()->stringToId(key,position);
-					if (ret != 0 && ret <= Gsh) ret += Tsh;
-					else if (this->getMapping() == MAPPING2 && ret <= Gsh+Gobj) ret += Tsh+Tobj;
-					else if (this->getMapping() == MAPPING1 && ret <= Gsh+Gsubj+Gobj) ret += Tsh+Tsubj+Tobj;
-					else throw std::logic_error("stringToId: ID " + std::to_string(ret) + " too high to be an object.");
+					ret = getGraphsDictionaryPtr()->stringToId(key,position);
+					if (ret != 0) {
+						if (ret <= Gsh) ret += Tsh;
+						else if (this->getMapping() == MAPPING2 && ret <= Gsh+Gobj) ret += Tsh+Tobj;
+						else if (this->getMapping() == MAPPING1 && ret <= Gsh+Gsubj+Gobj) ret += Tsh+Tsubj+Tobj;
+						else throw std::logic_error("stringToId: ID " + std::to_string(ret) + " too high to be an object.");
+					}
 				}
 				else if (ret <= Tsh); //do nothing, ret is already the correct ID
 				else if (this->getMapping() == MAPPING2 && ret <= Tsh+Tobj) ret += Gsh;
