@@ -589,7 +589,6 @@ unsigned int BaseReificationDictionary::stringToId(const std::string &key, Tripl
 			ret = getTriplesDictionaryPtr()->stringToId(key, position);
 			break;
 		case GRAPH:
-			cout << "stringToId:Id =" << std::to_string(ret);
 			if (this->getMapping()==MAPPING2) ret = getGraphsDictionaryPtr()->stringToId(key, position);
 			else if (this->getMapping() == MAPPING1) {
 				ret = getGraphsDictionaryPtr()->stringToId(key,position);
