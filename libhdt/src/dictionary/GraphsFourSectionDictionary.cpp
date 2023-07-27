@@ -150,20 +150,12 @@ csd::CSD *GraphsFourSectionDictionary::getDictionarySection(unsigned int id, Tri
 unsigned int GraphsFourSectionDictionary::getGlobalId(unsigned int mapping, unsigned int id, DictionarySection position) const{
 	switch(position)
 	{
-		case SHARED_SUBJECTS:
-		case SHARED_SUBJECTS_GRAPHS:
-		case SHARED_OBJECTS:
-		case SHARED_OBJECTS_GRAPHS:
 		case GRAPHS_SHARED:
 			return id;
 			break;
-		case NOT_SHARED_SUBJECTS:
-		case NOT_SHARED_SUBJECTS_GRAPHS:
 		case GRAPHS_SUBJECTS:
 			return id+shared->getLength();
 			break;
-		case NOT_SHARED_OBJECTS:
-		case NOT_SHARED_OBJECTS_GRAPHS:
 		case GRAPHS_OBJECTS:
 			return id+shared->getLength()+subjects->getLength();
 			break;
