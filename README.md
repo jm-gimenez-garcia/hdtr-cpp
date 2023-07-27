@@ -1,9 +1,6 @@
-[![Join the chat at https://gitter.im/rdfhdt](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/rdfhdt)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.580298.svg)](https://doi.org/10.5281/zenodo.580298)
+# C++ library for HDTr
 
-# C++ library for the HDT triple format
-
-HDT keeps big RDF datasets compressed while maintaining efficient search and browse operations.
+HDTr is an extension of HDT for reified triples.
 
 ## Getting Started
 ### Prerequisites
@@ -25,7 +22,7 @@ The following commands should install both packages:
 
 ### Installing
 
-To compile and install, run the following commands under the directory `hdt-cpp`. This will generate the library and tools.
+To compile and install, run the following commands under the directory `hdtr-cpp`. This will generate the library and tools.
 
 First run the following script to generate all necessary installation files with autotools:
 
@@ -38,69 +35,39 @@ Then, run:
 
 ## Running
 
-After building, these are the typical operations that you will perform:
-
+After building, these are the typical operations that you will perform (you need to change directory to `libhdt` first):
+ 
 - Convert your RDF data to HDT:
     
-    NB: the input stream is assumed to be valid RDF, so you should validate your data before feeding it into rdf2hdt.
+    NB: the input stream is assumed to be valid n-quads, so you should validate your data before feeding it into rdf2hdt.
     
     ```
-    $ tools/rdf2hdt data/test.nt data/test.hdt
+    $ tools/rdf2hdt data/tests.nq data/tests.hdt
     ```
 
 - Create only the index of an HDT file:
 
     ```
-    $ tools/hdtSearch -q 0 data/test.hdt
+    $ tools/hdtSearch -q 0 data/tests.hdt
     ```
 
-- Convert an HDT to another RDF serialization format, such as N-Triples:
+- Open a terminal to search quad patterns within an HDT file:
 
     ```
-    $ tools/hdt2rdf data/test.hdt data/test.hdtexport.nt
-    ```
+    $ tools/hdtSearch data/tests.hdt
 
-- Open a terminal to search triple patterns within an HDT file:
+    >> ? ? ? http://example.org/G7
+    http://example.org/C1 http://example.org/link1 http://example.org/G3 http://example.org/G7
 
-    ```
-    $ tools/hdtSearch data/test.hdt
-    >> ? ? ?
-    http://example.org/uri3 http://example.org/predicate3 http://example.org/uri4
-    http://example.org/uri3 http://example.org/predicate3 http://example.org/uri5
-    http://example.org/uri4 http://example.org/predicate4 http://example.org/uri5
-    http://example.org/uri1 http://example.org/predicate1 "literal1"
-    http://example.org/uri1 http://example.org/predicate1 "literalA"
-    http://example.org/uri1 http://example.org/predicate1 "literalB"
-    http://example.org/uri1 http://example.org/predicate1 "literalC"
-    http://example.org/uri1 http://example.org/predicate2 http://example.org/uri3
-    http://example.org/uri1 http://example.org/predicate2 http://example.org/uriA3
-    http://example.org/uri2 http://example.org/predicate1 "literal1"
-    9 results shown.
+    1 results in 71
+    
+    >> http://example.org/G7 ? ? ?
+    http://example.org/G7 http://example.org/link4 http://example.org/O1
+    http://example.org/G7 http://example.org/link6 http://example.org/G9
+    http://example.org/G7 http://example.org/link6 http://example.org/G2
+    http://example.org/G7 http://example.org/link6 http://example.org/G3
 
-    >> http://example.org/uri3 ? ?
-    http://example.org/uri3 http://example.org/predicate3 http://example.org/uri4
-    http://example.org/uri3 http://example.org/predicate3 http://example.org/uri5
-    2 results shown.
+    4 results in 366
 
     >> exit
     ```
-
-- Extract the Header of an HDT file:
-
-    ```
-    $ tools/hdtInfo data/test.hdt > header.nt
-    ```
-
-- Replace the Header of an HDT file with a new one. For example, by editing the existing one as extracted using `hdtInfo`:
-
-    ```
-    $ tools/replaceHeader data/test.hdt data/testOutput.hdt newHeader.nt
-    ```
-
-## Contributing
-
-Contributions and PRs should be sent to the `develop` branch, and not to `master`.
-
-## License
-
-`hdt-cpp` is free software licensed as GNU Lesser General Public License. See `libhdt/COPYRIGHT`
